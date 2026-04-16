@@ -20,7 +20,7 @@
 
 ## Tổng quan
 
-**RedShark Android Native** là ứng dụng cộng tác cho nhóm nhỏ, tập trung vào theo dõi **Idea/Issue** và tương tác trong nhóm qua **Comment, Notification, Message**.
+**RedShark Android Native** là ứng dụng cộng tác cho nhóm nhỏ, tập trung vào theo dõi **ý tưởng/công việc** và tương tác trong nhóm qua **bình luận, thông báo, nhắn tin**.
 
 Định hướng hệ thống:
 - 100% Kotlin Android Native + Jetpack Compose
@@ -30,33 +30,34 @@
 - Cloudflare R2 (S3-compatible) cho media/avatar
 
 Mục tiêu chất lượng chính:
-- Cold start đến Home (đã login) <= 3s
-- Crash-free session rate >= 99%
-- Upload avatar 1MB <= 3s trên 4G
-- Unit test coverage (domain + data) >= 60%
+- Khởi động nguội đến màn hình Home (đã đăng nhập) <= 3 giây
+- Tỷ lệ phiên sử dụng không gặp sự cố >= 99%
+- Tải ảnh đại diện 1MB <= 3 giây trên 4G
+- Độ bao phủ kiểm thử đơn vị (domain + data) >= 60%
 
 ---
 
 ## Thông tin học phần
 
-| Hạng mục             | Thông tin                                         |
-|----------------------|---------------------------------------------------|
-| Môn học              | Phát triển ứng dụng trên thiết bị di động (NT118) |
-| Lớp                  | NT118.Q22 - HK2 2025-2026                         |
-| Giảng viên           | ThS. Trần Hồng Nghi - nghith@uit.edu.vn           |
-| Đề tài               | RedShark Android Native (Kotlin)                  |
-| Thời gian dự án      | 05/04/2026 -> 17/05/2026 (6 tuần)                 |
-| Milestone quan trọng | Hoàn thiện module Authentication trước 20/04/2026 |
+| Hạng mục        | Thông tin                                                        |
+|-----------------|------------------------------------------------------------------|
+| Môn học         | Phát triển ứng dụng trên thiết bị di động (NT118)                |
+| Lớp             | NT118.Q22 - HK2 2025-2026                                        |
+| Giảng viên      | ThS. Trần Hồng Nghi - nghith@uit.edu.vn                          |
+| Đề tài          | RedShark Android Native (Kotlin)                                 |
+| Thời gian dự án | 16/03/2026 -> 17/05/2026 (9 tuần)                                |
+| Mốc khởi tạo    | Commit khởi tạo dự án ngày 15/04/2026 (Sỹ)                       |
+| Mốc quan trọng  | Bắt buộc có ít nhất 1 commit tính năng xác thực trước 21/04/2026 |
 
 ---
 
 ## Thành viên nhóm
 
-| STT |     MSSV | Họ và Tên      | Vai trò                                  | GitHub                                        |
-|-----|---------:|----------------|------------------------------------------|-----------------------------------------------|
-| 1   | 23521367 | Ngô Tiến Sỹ    | Android Developer, PM / QA / Docs        | [helios-ryuu](https://github.com/helios-ryuu) |
-| 2   | 24520442 | Phạm Tuấn Hải  | Android Developer                        | [haiphamt](https://github.com/haiphamt)       |
-| 3   | 23520982 | Nguyễn Văn Nam | Android Developer                        | [Sinister-VN](https://github.com/Sinister-VN) |
+| STT |     MSSV | Họ và Tên      | Vai trò                                                   | GitHub                                        |
+|-----|---------:|----------------|-----------------------------------------------------------|-----------------------------------------------|
+| 1   | 23521367 | Ngô Tiến Sỹ    | Lập trình viên Android, quản lý tiến độ/kiểm thử/tài liệu | [helios-ryuu](https://github.com/helios-ryuu) |
+| 2   | 24520442 | Phạm Tuấn Hải  | Lập trình viên Android                                    | [haiphamt](https://github.com/haiphamt)       |
+| 3   | 23520982 | Nguyễn Văn Nam | Lập trình viên Android                                    | [Sinister-VN](https://github.com/Sinister-VN) |
 
 ---
 
@@ -89,49 +90,49 @@ Mục tiêu chất lượng chính:
 ```
 
 Nguyên tắc kiến trúc:
-- Tách rõ 3 layer: `data`, `domain`, `ui`
-- Domain layer thuần Kotlin, không phụ thuộc Android SDK
-- Repository interface ở domain, implementation ở data
-- ViewModel expose `StateFlow<UiState>`, UI consume theo UDF
-- Security/ownership enforce server-side qua Data Connect auth rule
+- Tách rõ 3 tầng: `data`, `domain`, `ui`
+- Tầng `domain` thuần Kotlin, không phụ thuộc Android SDK
+- Giao diện kho dữ liệu đặt ở `domain`, phần cài đặt đặt ở `data`
+- `ViewModel` cung cấp `StateFlow<UiState>`, giao diện đọc trạng thái theo luồng dữ liệu một chiều (UDF)
+- Quy tắc bảo mật và quyền sở hữu dữ liệu được kiểm soát phía máy chủ qua Data Connect
 
 ---
 
 ## Phạm vi chức năng
 
-| Module         | Chức năng chính                                                                           |
-|----------------|-------------------------------------------------------------------------------------------|
-| Authentication | Đăng nhập Google, hoàn thiện hồ sơ lần đầu (`displayName` 3..50), persist session, logout |
-| Profile        | Xem/sửa profile, chọn skills, upload avatar R2, xem profile công khai                     |
-| Ideas          | CRUD idea, soft delete, trạng thái ACTIVE/CLOSED/CANCELLED                                |
-| Issues         | CRUD issue, soft delete, state machine, giới hạn 20 issue active/user                     |
-| Comments       | Bình luận trên idea (1..1000 ký tự), sắp xếp theo thời gian                               |
-| Notifications  | Danh sách thông báo, badge chưa đọc, mark read, xử lý collab request                      |
-| Messages       | Hội thoại DIRECT 1-1, gửi/nhận tin nhắn, tránh trùng conversation                         |
-| Lookup         | Danh sách tags/skills PUBLIC, hỗ trợ filter ideas/issues                                  |
+| Nhóm chức năng | Chức năng chính                                                                                   |
+|----------------|---------------------------------------------------------------------------------------------------|
+| Xác thực       | Đăng nhập Google, hoàn thiện hồ sơ lần đầu (`displayName` 3..50), duy trì phiên, đăng xuất        |
+| Hồ sơ          | Xem/sửa hồ sơ, chọn kỹ năng, tải ảnh đại diện lên R2, xem hồ sơ công khai                         |
+| Ý tưởng        | Tạo/xem/sửa/xóa mềm ý tưởng, quản lý trạng thái ACTIVE/CLOSED/CANCELLED                           |
+| Công việc      | Tạo/xem/sửa/xóa mềm công việc, kiểm soát máy trạng thái, giới hạn 20 công việc đang mở/người dùng |
+| Bình luận      | Bình luận trên ý tưởng (1..1000 ký tự), sắp xếp theo thời gian                                    |
+| Thông báo      | Danh sách thông báo, huy hiệu chưa đọc, đánh dấu đã đọc, xử lý yêu cầu cộng tác                   |
+| Nhắn tin       | Hội thoại trực tiếp 1-1, gửi/nhận tin nhắn, tránh tạo trùng hội thoại                             |
+| Tra cứu        | Danh sách thẻ/kỹ năng công khai, hỗ trợ lọc ý tưởng/công việc                                     |
 
-Out-of-scope:
+Ngoài phạm vi:
 - iOS/Web
-- Push notification FCM (hiện tại dùng polling)
-- Group conversation (> 2 members)
-- Payment/subscription
+- Thông báo đẩy FCM (hiện tại dùng cơ chế cập nhật theo chu kỳ)
+- Hội thoại nhóm (> 2 thành viên)
+- Thanh toán/gói thuê bao
 
 ---
 
 ## Công nghệ
 
-| Layer        | Công nghệ                                    |
-|--------------|----------------------------------------------|
-| Mobile       | Kotlin + Android Native                      |
-| UI           | Jetpack Compose + Material 3                 |
-| Architecture | Clean Architecture + MVVM + UDF              |
-| DI           | Hilt                                         |
-| Async        | Kotlin Coroutines + Flow                     |
-| Auth         | Firebase Authentication                      |
-| Data         | Firebase Data Connect + Cloud SQL PostgreSQL |
-| Storage      | Cloudflare R2 (S3-compatible)                |
-| Build        | Gradle Kotlin DSL                            |
-| Quality      | Ktlint + Detekt + Unit tests                 |
+| Tầng kỹ thuật    | Công nghệ                                    |
+|------------------|----------------------------------------------|
+| Ứng dụng di động | Kotlin + Android Native                      |
+| Giao diện        | Jetpack Compose + Material 3                 |
+| Kiến trúc        | Clean Architecture + MVVM + UDF              |
+| Tiêm phụ thuộc   | Hilt                                         |
+| Bất đồng bộ      | Kotlin Coroutines + Flow                     |
+| Xác thực         | Firebase Authentication                      |
+| Dữ liệu          | Firebase Data Connect + Cloud SQL PostgreSQL |
+| Lưu trữ          | Cloudflare R2 (tương thích S3)               |
+| Biên dịch        | Gradle Kotlin DSL                            |
+| Chất lượng mã    | Ktlint + Detekt + kiểm thử đơn vị            |
 
 ---
 
@@ -144,19 +145,19 @@ Out-of-scope:
 - Tài khoản Firebase project và Cloudflare R2
 
 ### 2) Cấu hình dịch vụ
-- Thiết lập Google Sign-In cho Android app (SHA-1 debug/release + OAuth Client ID)
-- Thiết lập Firebase Data Connect connector
-- Thiết lập Cloudflare R2 bucket và endpoint cho avatar/media
+- Thiết lập Google Sign-In cho ứng dụng Android (SHA-1 debug/phát hành + OAuth Client ID)
+- Thiết lập bộ kết nối Firebase Data Connect
+- Thiết lập bucket và endpoint Cloudflare R2 cho ảnh đại diện/tệp phương tiện
 - Danh sách biến cấu hình hiện dùng: xem `docs/SECRET.md`
 
-### 3) Data Connect workflow
+### 3) Quy trình Data Connect
 ```powershell
 firebase emulators:start --only dataconnect
 firebase dataconnect:sdk:generate
 firebase deploy --only dataconnect
 ```
 
-### 4) Build và quality gates
+### 4) Biên dịch và kiểm tra chất lượng
 ```powershell
 ./gradlew lint
 ./gradlew testDebugUnitTest
@@ -167,14 +168,14 @@ firebase deploy --only dataconnect
 
 ## Quy trình phát triển
 
-- Quy trình iterative theo 5 phase:
-  - Phase 1: Foundation
-  - Phase 2: Authentication + Profile
-  - Phase 3: Ideas + Issues + Comments
-  - Phase 4: Notifications + Messages
-  - Phase 5: QA, Cleanup, Release
-- Branching: feature branch + pull request vào `main`
-- Commit message theo Conventional Commits:
+- Quy trình lặp tăng dần theo 5 giai đoạn:
+  - Giai đoạn 1: Nền tảng
+  - Giai đoạn 2: Xác thực + Hồ sơ
+  - Giai đoạn 3: Ý tưởng + Công việc + Bình luận
+  - Giai đoạn 4: Thông báo + Nhắn tin
+  - Giai đoạn 5: Kiểm thử, dọn dẹp, phát hành
+- Mô hình nhánh: tạo nhánh tính năng và gửi pull request để hợp nhất theo quy ước tại `docs/GIT.md`
+- Quy ước thông điệp commit theo Conventional Commits:
 
 ```text
 feat(auth): add Google Sign-In flow
@@ -183,17 +184,18 @@ refactor(data): extract FDC error mapper
 docs: update timeline and test checklist
 ```
 
-Review checklist bắt buộc:
-- Không hardcode thông tin nhạy cảm
-- Có xử lý error state + retry
-- Không vi phạm state machine nghiệp vụ
-- Lint/test xanh trước khi merge
+Danh sách kiểm tra bắt buộc khi rà soát:
+- Không ghi cứng thông tin nhạy cảm trong mã nguồn
+- Có xử lý trạng thái lỗi và cơ chế thử lại
+- Không vi phạm máy trạng thái nghiệp vụ
+- `lint` và `test` đạt yêu cầu trước khi hợp nhất
 
 Tài liệu chi tiết:
 - Tổng quan tài liệu: `docs/README.md`
-- Charter: `docs/PROJECT_CHARTER.md`
+- WBS tổng thể: `docs/WBS.md`
+- Tuyên ngôn dự án: `docs/PROJECT_CHARTER.md`
 - Kiến trúc mã nguồn: `docs/STRUCTURE.md`
-- Requirement: `docs/REQUIREMENT-1-FUNCTIONAL.md`, `docs/REQUIREMENT-2-NONFUNCTIONAL.md`
+- Yêu cầu: `docs/REQUIREMENT-1-FUNCTIONAL.md`, `docs/REQUIREMENT-2-NONFUNCTIONAL.md`
 - Quy trình nghiệp vụ: `docs/PROCESS-1-AUTH.md`, `docs/PROCESS-2-CONTENT.md`, `docs/PROCESS-3-INTERACTION.md`
-- Test checklist: `docs/CHECK-1-AUTH.md`, `docs/CHECK-2-CONTENT.md`, `docs/CHECK-3-INTERACTION.md`
+- Danh sách kiểm thử: `docs/CHECK-1-AUTH.md`, `docs/CHECK-2-CONTENT.md`, `docs/CHECK-3-INTERACTION.md`
 - Báo cáo: `docs/REPORT.md`

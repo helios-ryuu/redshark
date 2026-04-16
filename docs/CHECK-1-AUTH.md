@@ -1,4 +1,6 @@
-# CHECK-1-AUTH.md — Manual Test: Auth & Profile
+# CHECK-1-AUTH.md — Kiểm thử thủ công: Xác thực và Hồ sơ
+
+WBS tham chiếu: [WBS.md](WBS.md) — kiểm thử cho nhóm công việc `3.0`.
 
 | ID     | Chức năng                         | Các bước                                               | Kết quả mong đợi                                              | Trạng thái |
 |--------|-----------------------------------|--------------------------------------------------------|---------------------------------------------------------------|------------|
@@ -10,7 +12,7 @@
 | TC-A06 | Validate `displayName` quá ngắn   | Nhập `displayName` < 3 ký tự                           | Bị chặn, không gọi mutation                                   | ⬜          |
 | TC-A07 | Validate `displayName` quá dài    | Nhập `displayName` > 50 ký tự                          | Bị chặn, không gọi mutation                                   | ⬜          |
 | TC-A08 | Hoàn thiện hồ sơ lần đầu hợp lệ   | Nhập `displayName` 3..50 → lưu                         | `UpdateProfile` thành công, điều hướng Home                   | ⬜          |
-| TC-A09 | Persist session                   | Đăng nhập xong kill app, mở lại                        | Vẫn ở Home (không yêu cầu đăng nhập lại)                      | ⬜          |
+| TC-A09 | Duy trì phiên đăng nhập           | Đăng nhập xong tắt hẳn ứng dụng, mở lại                | Vẫn ở Home (không yêu cầu đăng nhập lại)                      | ⬜          |
 | TC-A10 | Đăng xuất                         | Tab Settings → Đăng xuất                               | Về màn hình Auth, `GetMe` không được gọi                      | ⬜          |
 | TC-A11 | Xem profile chính mình            | Tab Settings hoặc Profile                              | Hiển thị `displayName`, avatar, bio, skills                   | ⬜          |
 | TC-A12 | Edit displayName hợp lệ           | Profile Edit → đổi name (3..50) → Lưu                  | UI cập nhật, mutation `UpdateProfile` thành công              | ⬜          |

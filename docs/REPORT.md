@@ -2,7 +2,7 @@
 
 **Môn học:** NT118.Q22 — Lập trình ứng dụng di động
 **Nhóm thực hiện:** Sỹ (PM), Nam, Hải
-**Thời gian:** 05/04/2026 — 17/05/2026
+**Thời gian:** 16/03/2026 — 17/05/2026
 
 ---
 
@@ -56,7 +56,7 @@ Nhóm xin gửi lời cảm ơn sâu sắc tới:
 | Hình 4.1 | Cấu trúc thư mục dự án                   | 4      |
 | Hình 4.2 | Luồng điều hướng màn hình                | 4      |
 | Hình 4.3 | Giao diện Home / Ideas / Profile         | 4      |
-| Hình 5.1 | Kết quả crash-free session               | 5      |
+| Hình 5.1 | Kết quả tỷ lệ phiên không sự cố          | 5      |
 
 ## DANH MỤC TỪ VIẾT TẮT
 
@@ -80,7 +80,7 @@ Nhóm xin gửi lời cảm ơn sâu sắc tới:
 
 ## TÓM TẮT
 
-Đồ án xây dựng ứng dụng **RedShark** trên nền tảng Android gốc (Kotlin + Jetpack Compose), áp dụng kiến trúc **Clean Architecture + MVVM**. Dữ liệu được quản lý qua **Firebase Data Connect** (Cloud SQL PostgreSQL) với **Firebase Authentication** cho phân quyền, và **Cloudflare R2** cho lưu trữ dữ liệu đa phương tiện. Ứng dụng gồm 7 nhóm tính năng chính: Xác thực, Hồ sơ, Ý tưởng, Công việc, Bình luận, Thông báo, Nhắn tin. Toàn bộ dự án được triển khai trong 6 tuần bởi nhóm 3 người, đạt các tiêu chí: crash-free ≥ 99%, thời gian khởi động ≤ 3 giây, tỷ lệ đạt kiểm thử thủ công ≥ 95%.
+Đồ án xây dựng ứng dụng **RedShark** trên nền tảng Android gốc (Kotlin + Jetpack Compose), áp dụng kiến trúc **Clean Architecture + MVVM**. Dữ liệu được quản lý qua **Firebase Data Connect** (Cloud SQL PostgreSQL) với **Firebase Authentication** cho phân quyền, và **Cloudflare R2** cho lưu trữ dữ liệu đa phương tiện. Ứng dụng gồm 7 nhóm tính năng chính: Xác thực, Hồ sơ, Ý tưởng, Công việc, Bình luận, Thông báo, Nhắn tin. Toàn bộ dự án được triển khai trong 9 tuần bởi nhóm 3 người, đạt các tiêu chí: crash-free ≥ 99%, thời gian khởi động ≤ 3 giây, tỷ lệ đạt kiểm thử thủ công ≥ 95%.
 
 ---
 
@@ -107,8 +107,9 @@ Các nhóm dự án nhỏ thường thiếu công cụ theo dõi ý tưởng và
 - Sản phẩm: Ứng dụng Android cài đặt qua APK hoặc Google Play.
 
 ### 1.6 Phương pháp thực hiện
-- Quy trình phát triển: Lặp tăng dần (iterative) theo 5 giai đoạn (xem [PLAN-1..5](PLAN-1-FOUNDATION.md)).
-- Quản lý công việc: GitHub Issue + rà soát yêu cầu hợp nhất (PR review), theo chuẩn Conventional Commits.
+- Quy trình phát triển: Lặp tăng dần theo 5 giai đoạn (xem [PLAN-1..5](PLAN-1-FOUNDATION.md)).
+- Theo dõi tiến độ, phụ thuộc và trách nhiệm công việc theo [WBS.md](WBS.md).
+- Quản lý công việc: GitHub Issue kết hợp rà soát yêu cầu hợp nhất (PR review), theo chuẩn Conventional Commits.
 - Kiểm thử: Kiểm thử đơn vị (domain/data), kiểm thử giao diện (Compose), kiểm thử thủ công theo danh sách kiểm tra.
 
 ---
@@ -206,7 +207,7 @@ Chi tiết trong [PROCESS-1-AUTH.md](PROCESS-1-AUTH.md), [PROCESS-2-CONTENT.md](
 ## CHƯƠNG 4. HIỆN THỰC ĐỀ TÀI
 
 ### 4.1 Môi trường phát triển
-- Android Studio Iguana+, JDK 17, Kotlin 2.0, Gradle 8.x.
+- Android Studio Iguana+, JDK 17, Kotlin 2.3.20, AGP 9.1.1, Gradle 9.4.1.
 - Firebase CLI cho `dataconnect:sdk:generate`.
 - Kho mã nguồn GitHub phục vụ quản lý phiên bản.
 - Thiết bị kiểm thử: Trình giả lập Pixel 6, Samsung A54.
@@ -218,26 +219,26 @@ Chi tiết tại [STRUCTURE.md](STRUCTURE.md). Mã nguồn được tổ chức 
 
 **Module Auth:**
 - `FirebaseAuthSource` bao bọc `FirebaseAuth.getInstance()`.
-- `GoogleSignInHelper` sử dụng Credential Manager API (thay thế `GoogleSignInClient` đã lỗi thời).
+- `GoogleSignInHelper` sử dụng Credential Manager API để đồng bộ với hướng dẫn Android hiện hành.
 - Luồng đăng nhập đầu tiên bắt buộc hoàn thiện hồ sơ lần đầu với `displayName` 3..50.
 - `AuthRepositoryImpl` cung cấp `Flow<AuthState>`.
 
 **Module Idea/Issue:**
 - Bộ SDK được sinh tự động từ FDC tại `src/main/java/.../dataconnect/generated`.
-- Ràng buộc "20 issue đang hoạt động" được kiểm tra trước ở tầng use case trước khi gọi mutation.
+- Ràng buộc "20 công việc đang hoạt động" được kiểm tra trước ở tầng ca sử dụng trước khi gọi mutation.
 
-**Module Profile/Media:**
+**Nhóm chức năng Hồ sơ/Phương tiện:**
 - Nén ảnh bằng `BitmapFactory` → JPEG quality 80 → tối đa 512×512.
 - Tải tệp lên R2 qua OkHttp với `AwsV4SigningInterceptor`.
 
-**Module Notification/Message:**
-- Cập nhật tuần tự theo chu kỳ (polling) bằng `rememberCoroutineScope` + `while (isActive) { delay(...); refresh() }`.
-- Cập nhật lạc quan (optimistic update): thêm dữ liệu cục bộ trước, hoàn tác nếu thất bại.
+**Nhóm chức năng Thông báo/Nhắn tin:**
+- Cập nhật tuần tự theo chu kỳ bằng `rememberCoroutineScope` + `while (isActive) { delay(...); refresh() }`.
+- Cập nhật lạc quan: thêm dữ liệu cục bộ trước, hoàn tác nếu thất bại.
 
 ### 4.4 Tích hợp dịch vụ bên ngoài
 - **Firebase:** `google-services.json` + init trong `RedSharkApp`.
 - **R2:** Thông tin xác thực được nạp qua `BuildConfig` (từ `local.properties`).
-- **Google Sign-In:** Cần cấu hình SHA-1 debug + release keystore trên Firebase Console.
+- **Google Sign-In:** Cần cấu hình SHA-1 cho bản dựng debug và bản phát hành trên Firebase Console.
 
 ### 4.5 Bảo mật và quản lý cấu hình
 Theo [SECRET.md](SECRET.md), các biến cấu hình được lưu trong `local.properties`, không mã hóa cứng trong mã nguồn và không ghi token vào nhật ký. ProGuard được bật ở bản phát hành. Quyền sở hữu dữ liệu được kiểm soát ở phía máy chủ.
@@ -247,16 +248,16 @@ Theo [SECRET.md](SECRET.md), các biến cấu hình được lưu trong `local.
 ## CHƯƠNG 5. KIỂM THỬ
 
 ### 5.1 Chiến lược kiểm thử
-- **Kiểm thử đơn vị (unit test):** Domain use case và data repository (JUnit + MockK).
-- **Kiểm thử giao diện (UI test):** Compose Test (các màn hình Auth, IdeaDetail).
-- **Kiểm thử thủ công (manual test):** Theo CHECK-1/2/3.
+- **Kiểm thử đơn vị:** Ca sử dụng tầng `domain` và kho dữ liệu tầng `data` (JUnit + MockK).
+- **Kiểm thử giao diện:** Compose Test (các màn hình Auth, IdeaDetail).
+- **Kiểm thử thủ công:** Theo CHECK-1/2/3.
 - **Kiểm thử hiệu năng:** Android Profiler, Firebase Performance Monitoring.
 
 ### 5.2 Kịch bản kiểm thử
 Bảng tổng hợp:
-- CHECK-1: 20 test case Auth & Profile — xem [CHECK-1-AUTH.md](CHECK-1-AUTH.md).
-- CHECK-2: 24 test case Content — xem [CHECK-2-CONTENT.md](CHECK-2-CONTENT.md).
-- CHECK-3: 17 test case Interaction + cross-cutting — xem [CHECK-3-INTERACTION.md](CHECK-3-INTERACTION.md).
+- CHECK-1: 20 trường hợp kiểm thử xác thực và hồ sơ — xem [CHECK-1-AUTH.md](CHECK-1-AUTH.md).
+- CHECK-2: 24 trường hợp kiểm thử nhóm nội dung — xem [CHECK-2-CONTENT.md](CHECK-2-CONTENT.md).
+- CHECK-3: 17 trường hợp kiểm thử nhóm tương tác và liên quan chéo — xem [CHECK-3-INTERACTION.md](CHECK-3-INTERACTION.md).
 
 ### 5.3 Kết quả kiểm thử (điền sau khi chạy thực tế)
 | Nhóm        | Tổng TC | PASS  | FAIL  | % PASS |
@@ -268,32 +269,32 @@ Bảng tổng hợp:
 
 ### 5.4 Đánh giá
 Các chỉ số mục tiêu:
-- Crash-free session ≥ 99%.
-- Cold start ≤ 3s.
-- APK size ≤ 25 MB.
-- Upload avatar 1 MB ≤ 3s trên 4G.
+- Tỷ lệ phiên không sự cố ≥ 99%.
+- Khởi động nguội ≤ 3 giây.
+- Kích thước APK ≤ 25 MB.
+- Tải ảnh đại diện 1 MB ≤ 3 giây trên 4G.
 
 ---
 
 ## CHƯƠNG 6. KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
 
 ### 6.1 Kết quả đạt được
-- Ứng dụng RedShark Android native hoàn chỉnh, đầy đủ 7 nhóm tính năng.
+- Ứng dụng RedShark Android native hoàn chỉnh, đáp ứng đầy đủ 7 nhóm tính năng.
 - Kiến trúc Clean Architecture + MVVM rõ ràng, dễ mở rộng.
 - Kho mã nguồn công khai, đúng chuẩn Conventional Commits.
 - Tài liệu kỹ thuật đầy đủ trong thư mục `/docs`.
 
 ### 6.2 Hạn chế
-- Chưa tích hợp FCM push notification (đang dùng polling).
-- Chưa hỗ trợ nhóm chat > 2 người.
-- Chưa có quy trình kiểm thử instrumented tự động (UI test hiện chạy trên trình giả lập).
+- Chưa tích hợp thông báo đẩy FCM (đang dùng cập nhật theo chu kỳ).
+- Chưa hỗ trợ hội thoại nhóm > 2 người.
+- Chưa có quy trình kiểm thử giao diện dạng instrumented tự động (UI test hiện chạy trên trình giả lập).
 - Chưa tích hợp Firebase Performance + Crashlytics để giám sát môi trường vận hành thực tế.
 
 ### 6.3 Hướng phát triển
 - Tích hợp FCM kết hợp cơ chế gần thời gian thực dựa trên snapshot Firestore.
-- Thêm nhóm chat, đính kèm media trong message.
+- Thêm hội thoại nhóm, đính kèm phương tiện trong tin nhắn.
 - Mở rộng sang iOS (Kotlin Multiplatform Mobile).
-- Module báo cáo/thống kê cho idea owner.
+- Nhóm chức năng báo cáo/thống kê cho chủ ý tưởng.
 - Hỗ trợ offline-first với Room + sync.
 
 ---

@@ -1,6 +1,6 @@
 # SECRET.md — Biến cấu hình đang sử dụng
 
-> File này chỉ giữ các biến cấu hình còn dùng trong dự án hiện tại (Google Sign-In + Cloudflare R2 + ký release).
+> File này chỉ giữ các biến cấu hình còn dùng trong dự án hiện tại (Google Sign-In + Cloudflare R2 + ký bản phát hành).
 
 ## 1. Bảng biến cấu hình
 

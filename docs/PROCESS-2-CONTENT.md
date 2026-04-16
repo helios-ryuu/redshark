@@ -1,8 +1,10 @@
-# PROCESS-2-CONTENT.md — Quy trình nghiệp vụ: Ideas, Issues, Comments
+# PROCESS-2-CONTENT.md — Quy trình nghiệp vụ: Ý tưởng, Công việc, Bình luận
+
+WBS tham chiếu: [WBS.md](WBS.md) — nhóm công việc `4.0`.
 
 ## 1. Tạo Idea
 
-| Bước | UI                                           | Service                                                                      | Bảng                                                                                        |
+| Bước | Giao diện                                     | Dịch vụ                                                                      | Bảng                                                                                        |
 |------|----------------------------------------------|------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
 | 1    | Tab `Ideas` → FAB                            | —                                                                            | —                                                                                           |
 | 2    | `CreateIdeaScreen`: title, description, tags | —                                                                            | —                                                                                           |
@@ -12,12 +14,12 @@
 
 ## 2. Tạo Issue trong Idea
 
-| Bước | UI                                | Service                                       | Bảng                                                                                                                |
+| Bước | Giao diện                          | Dịch vụ                                       | Bảng                                                                                                                |
 |------|-----------------------------------|-----------------------------------------------|---------------------------------------------------------------------------------------------------------------------|
 | 1    | `IdeaDetailScreen` → "Thêm Issue" | —                                             | —                                                                                                                   |
 | 2    | `CreateIssueScreen` open          | `CountMyActiveIssuesUseCase`                  | Count `issues` where authorId=auth.uid, status IN {OPEN, IN_PROGRESS}, deletedAt IS NULL                            |
 | 3    | Nếu ≥ 20 → toast, chặn            | —                                             | —                                                                                                                   |
-| 4    | User nhập form → Submit           | `CreateIssueUseCase` → `CreateIssue` mutation | Insert `issues(id, ideaId, authorId, title, description, priority, status=OPEN)`                                    |
+| 4    | Người dùng nhập biểu mẫu → Gửi    | `CreateIssueUseCase` → `CreateIssue` mutation | Insert `issues(id, ideaId, authorId, title, description, priority, status=OPEN)`                                    |
 | 5    | Tạo notification                  | `CreateNotification` mutation                 | Insert `notifications(recipientId=idea.authorId, actorId=auth.uid, type=ISSUE_CREATED, targetType=ISSUE, targetId)` |
 | 6    | Back về Idea Detail               | Invalidate `["issues", ideaId]`               | —                                                                                                                   |
 
