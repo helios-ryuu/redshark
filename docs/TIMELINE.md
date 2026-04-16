@@ -3,7 +3,7 @@
 **Thời gian:** 16/03/2026 → 17/05/2026 (9 tuần, 63 ngày).
 **Nhóm:** 3 thành viên — **Sỹ (PM)**, **Nam**, **Hải**.
 **Mốc bắt buộc:**
-- **15/04/2026:** commit khởi tạo dự án (Sỹ).
+- **15/04/2026:** commit khởi tạo dự án (Sỹ). ✓ *Đã hoàn thành — commit `chore(init)` ngày 15/04.*
 - **Trước 21/04/2026:** bắt buộc có ít nhất 1 commit tính năng xác thực.
 
 ## 1. Sơ đồ giai đoạn

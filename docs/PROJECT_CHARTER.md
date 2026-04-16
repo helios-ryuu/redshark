@@ -34,9 +34,9 @@
 
 | Vai trò | Tên | Trách nhiệm |
 |---------|-----|-------------|
-| Quản lý dự án | Sỹ | Lập kế hoạch, quản lý tiến độ, báo cáo, kiểm thử cuối kỳ |
-| Lập trình viên Android | Nam | Triển khai giao diện Compose, ViewModel, điều hướng |
-| Lập trình viên Android | Hải | Triển khai tầng dữ liệu (FDC SDK, R2, xác thực) |
+| Quản lý dự án | Sỹ | Lập kế hoạch, quản lý tiến độ, báo cáo, kiểm thử cuối kỳ; phụ trách nhóm chức năng **Xác thực & Hồ sơ** (WBS 3.0) |
+| Lập trình viên Android | Hải | Phụ trách nhóm chức năng **Nội dung** (WBS 4.0): Ý tưởng, Công việc, Bình luận, Collab Request |
+| Lập trình viên Android | Nam | Phụ trách nhóm chức năng **Tương tác** (WBS 5.0): Thông báo, Nhắn tin 1-1; phối hợp UI/ViewModel trong giai đoạn Nội dung |
 | Đại diện nghiệp vụ | Giảng viên môn NT118.Q22 | Phê duyệt yêu cầu, đánh giá kết quả |
 | Người dùng cuối | Sinh viên / nhóm dự án nhỏ | Sử dụng ứng dụng để theo dõi ý tưởng/công việc |
 

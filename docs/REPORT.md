@@ -232,7 +232,7 @@ Chi tiết tại [STRUCTURE.md](STRUCTURE.md). Mã nguồn được tổ chức 
 - Tải tệp lên R2 qua OkHttp với `AwsV4SigningInterceptor`.
 
 **Nhóm chức năng Thông báo/Nhắn tin:**
-- Cập nhật tuần tự theo chu kỳ bằng `rememberCoroutineScope` + `while (isActive) { delay(...); refresh() }`.
+- Cập nhật theo chu kỳ bằng `viewModelScope.launch { while (isActive) { delay(...); refresh() } }` — vòng lặp gắn với vòng đời ViewModel, tự hủy khi ViewModel bị clear.
 - Cập nhật lạc quan: thêm dữ liệu cục bộ trước, hoàn tác nếu thất bại.
 
 ### 4.4 Tích hợp dịch vụ bên ngoài

@@ -92,7 +92,7 @@ Mọi bảng đều dùng `id: UUID` làm PK (ngoại trừ `users` dùng `auth.
 | id          | UUID         | PK   | NOT NULL                                                    | Strong   |
 | recipientId | String       | FK   | → `users.id`, NOT NULL                                      | Strong   |
 | actorId     | String       | FK   | → `users.id`, NULL (system)                                 | Medium   |
-| type        | Enum         |      | {ISSUE_CREATED, COLLAB_REQUEST, COLLAB_ACCEPTED, COMMENT}   | Strong   |
+| type        | Enum         |      | {ISSUE_CREATED, COLLAB_REQUEST, COLLAB_ACCEPTED, COLLAB_REJECTED, COMMENT} | Strong   |
 | targetType  | Enum         |      | {IDEA, ISSUE, COMMENT}                                      | Strong   |
 | targetId    | UUID         |      | NOT NULL, polymorphic                                       | Weak     |
 | message     | String       |      | NOT NULL                                                    | Medium   |

@@ -9,7 +9,7 @@ WBS tham chiếu: [WBS.md](WBS.md) — nhóm công việc `4.0`.
 | 1    | Tab `Ideas` → FAB                            | —                                                                            | —                                                                                           |
 | 2    | `CreateIdeaScreen`: title, description, tags | —                                                                            | —                                                                                           |
 | 3    | Submit                                       | `CreateIdeaUseCase` → `IdeaRepository.create(input)` → `CreateIdea` mutation | Insert `ideas(id, authorId=auth.uid, title, description, tagIds, status=ACTIVE, createdAt)` |
-| 4    | Invalidate React Query `["ideas", "mine"]`   | —                                                                            | —                                                                                           |
+| 4    | ViewModel reload `ListMyIdeas`               | —                                                                            | —                                                                                           |
 | 5    | Navigate `idea/{id}`                         | `GetIdeaDetail`                                                              | Read `ideas` + join `users`, `tags`, `issues`                                               |
 
 ## 2. Tạo Issue trong Idea

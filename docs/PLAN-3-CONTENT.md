@@ -4,6 +4,8 @@
 **Mục tiêu:** Hoàn thiện toàn bộ nghiệp vụ cốt lõi (nội dung) của app.
 **WBS tham chiếu:** [WBS.md](WBS.md) — nhóm công việc `4.0`.
 
+> **Tiền điều kiện:** Giai đoạn 2 (Auth) đã hoàn thành — ít nhất 1 commit `feat(auth)` đã merge vào `develop` trước 21/04. Giai đoạn 3 bắt đầu từ `develop` sau khi mốc auth được chốt.
+
 ## 1. Tính năng
 ### Ideas
 - List "My Ideas" (tab Ideas) + FAB tạo mới
