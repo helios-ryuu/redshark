@@ -3,6 +3,8 @@ package com.helios.redshark.data.repository
 import com.helios.redshark.core.error.AppException
 import com.helios.redshark.core.util.Result
 import com.helios.redshark.data.local.datastore.UserPreferences
+import com.helios.redshark.data.mapper.toDomain
+import com.helios.redshark.data.remote.firestore.FirestoreSource
 import com.helios.redshark.domain.model.User
 import com.helios.redshark.domain.repository.ProfileRepository
 import timber.log.Timber
@@ -11,24 +13,36 @@ import javax.inject.Singleton
 
 @Singleton
 class ProfileRepositoryImpl @Inject constructor(
+    private val firestoreSource: FirestoreSource,
     private val userPreferences: UserPreferences,
 ) : ProfileRepository {
 
     override suspend fun completeFirstProfile(userId: String, displayName: String): Result<User> {
-        // TODO: call Firebase Data Connect UpsertUser mutation when FDC SDK is generated
         return try {
-            userPreferences.saveUser(userId, displayName)
-            Timber.d("Profile completed for uid=$userId displayName=$displayName")
-            Result.Success(
-                User(
-                    id = userId,
-                    email = "",
-                    displayName = displayName,
-                    avatarUrl = null,
-                    bio = null,
-                    skills = emptyList(),
-                )
-            )
+            val result = firestoreSource.upsertUser(userId, "", displayName)
+            when (result) {
+                is Result.Success -> {
+                    val user = result.data.toDomain()
+                    userPreferences.saveUser(user.id, user.displayName)
+                    Timber.d("Profile completed for uid=$userId displayName=$displayName")
+                    Result.Success(user)
+                }
+                is Result.Error -> {
+                    userPreferences.saveUser(userId, displayName)
+                    Timber.w("Firestore unavailable — persisted locally: uid=$userId")
+                    Result.Success(
+                        User(
+                            id = userId,
+                            email = "",
+                            displayName = displayName,
+                            avatarUrl = null,
+                            bio = null,
+                            skills = emptyList(),
+                        )
+                    )
+                }
+                is Result.Loading -> Result.Loading
+            }
         } catch (e: Exception) {
             Result.Error(AppException.UnknownException(e.message ?: "Failed to complete profile", e))
         }
@@ -40,19 +54,35 @@ class ProfileRepositoryImpl @Inject constructor(
         bio: String?,
         skills: List<String>,
     ): Result<User> {
-        // TODO: call Firebase Data Connect UpdateProfile mutation
         return try {
-            userPreferences.saveUser(userId, displayName)
-            Result.Success(
-                User(
-                    id = userId,
-                    email = "",
-                    displayName = displayName,
-                    avatarUrl = null,
-                    bio = bio,
-                    skills = skills,
-                )
+            val result = firestoreSource.updateProfile(
+                userId = userId,
+                displayName = displayName,
+                bio = bio,
+                skills = skills,
+                avatarUrl = null,
             )
+            when (result) {
+                is Result.Success -> {
+                    val user = result.data.toDomain()
+                    userPreferences.saveUser(user.id, user.displayName)
+                    Result.Success(user)
+                }
+                is Result.Error -> {
+                    userPreferences.saveUser(userId, displayName)
+                    Result.Success(
+                        User(
+                            id = userId,
+                            email = "",
+                            displayName = displayName,
+                            avatarUrl = null,
+                            bio = bio,
+                            skills = skills,
+                        )
+                    )
+                }
+                is Result.Loading -> Result.Loading
+            }
         } catch (e: Exception) {
             Result.Error(AppException.UnknownException(e.message ?: "Failed to update profile", e))
         }
@@ -63,12 +93,22 @@ class ProfileRepositoryImpl @Inject constructor(
         imageBytes: ByteArray,
         mimeType: String,
     ): Result<String> {
-        // TODO: implement R2 upload with OkHttp + AWS SigV4
-        return Result.Error(AppException.StorageException("R2 upload not yet implemented"))
+        return Result.Error(AppException.StorageException("Use UploadAvatarUseCase to upload avatar"))
+    }
+
+    override suspend fun updateAvatarUrl(userId: String, avatarUrl: String): Result<User> {
+        return when (val result = firestoreSource.updateAvatarUrl(userId, avatarUrl)) {
+            is Result.Success -> Result.Success(result.data.toDomain())
+            is Result.Error -> result
+            is Result.Loading -> Result.Loading
+        }
     }
 
     override suspend fun getProfile(userId: String): Result<User> {
-        // TODO: call Firebase Data Connect GetMe query
-        return Result.Error(AppException.UnknownException("FDC integration pending"))
+        return when (val result = firestoreSource.getUser(userId)) {
+            is Result.Success -> Result.Success(result.data.toDomain())
+            is Result.Error -> result
+            is Result.Loading -> Result.Loading
+        }
     }
 }
