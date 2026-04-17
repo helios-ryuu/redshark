@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material.icons.extended)
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
@@ -100,6 +101,12 @@ dependencies {
 
     // OkHttp
     implementation(libs.okhttp)
+
+    // Firestore
+    implementation(libs.firebase.firestore)
+
+    // Image loading
+    implementation(libs.coil.compose)
 
     // Testing
     testImplementation(libs.junit)
