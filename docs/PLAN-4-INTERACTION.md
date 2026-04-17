@@ -8,7 +8,7 @@
 - Phụ trách nhóm tương tác: **Nam** (lập trình chính, chịu trách nhiệm commit chính).
 - Thành viên phối hợp: **Hải**, **Sỹ**.
 
-> **Tiền điều kiện:** Giai đoạn 3 (Nội dung) đã hoàn thành — notification `ISSUE_CREATED` và `COLLAB_REQUEST` cần schema FDC tương ứng từ giai đoạn 3.
+> **Tiền điều kiện:** Giai đoạn 3 (Nội dung) đã hoàn thành — notification `ISSUE_CREATED` và `COLLAB_REQUEST` cần Firestore collection schema tương ứng từ giai đoạn 3.
 
 ## 1. Tính năng
 ### Thông báo

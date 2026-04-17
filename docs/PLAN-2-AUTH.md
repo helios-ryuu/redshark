@@ -3,7 +3,7 @@
 **Thời gian:** 16/04/2026 – 21/04/2026 (giai đoạn chuyển tiếp sau init)
 **Mốc quan trọng:** Bắt buộc có ít nhất 1 commit tính năng xác thực trước **21/04/2026** (chậm nhất 20/04/2026).
 **WBS tham chiếu:** [WBS.md](WBS.md) — nhóm công việc `3.0`.
-**Trạng thái:** 🔄 Đang triển khai — `feature/auth-google-signin` (16/04/2026)
+**Trạng thái:** ✅ Code hoàn tất — `feature/auth-google-signin` (cập nhật 16/04/2026, chờ manual test)
 
 **Phân công theo WBS:**
 - Phụ trách nhóm xác thực và hồ sơ: **Sỹ** (lập trình chính, chịu trách nhiệm commit chính).
@@ -50,8 +50,9 @@ androidx-credentials-play       = { group = "androidx.credentials", name = "cred
 googleid                        = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
 
 # Firebase (dùng BoM để đồng bộ version)
-firebase-bom  = { group = "com.google.firebase", name = "firebase-bom",  version.ref = "firebaseBom" }
-firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
+firebase-bom       = { group = "com.google.firebase", name = "firebase-bom",       version.ref = "firebaseBom" }
+firebase-auth      = { group = "com.google.firebase", name = "firebase-auth" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
 
 # Logging
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
@@ -67,7 +68,6 @@ ksp             = { id = "com.google.devtools.ksp",        version.ref = "ksp" }
 google-services = { id = "com.google.gms.google-services", version = "4.4.2" }
 ```
 
-> **Lưu ý:** Firebase Data Connect Android SDK (cho `dataconnect:sdk:generate`) được thêm ở giai đoạn tích hợp FDC, không cần ngay cho auth cơ bản.
 
 ## 1. Phạm vi chức năng
 - Đăng nhập Google (One-Tap / GIS)
@@ -101,8 +101,8 @@ google-services = { id = "com.google.gms.google-services", version = "4.4.2" }
 GoogleSignInHelper.requestCredential()
   → GoogleAuthProvider.getCredential(idToken)
   → signInWithCredential()
-  → if new user: UpsertUser mutation
-  → GetMe
+  → if new user: Firestore users/{uid} set/merge (upsertUser)
+  → Firestore users/{uid} get (getUser)
   → nếu thiếu displayName hợp lệ: profile/setup
   → nếu profile hợp lệ: home
 ```
@@ -111,7 +111,7 @@ GoogleSignInHelper.requestCredential()
 ```
 ProfileSetupScreen
   → validate displayName (3..50)
-  → UpdateProfile mutation
+  → Firestore users/{uid} update (updateProfile)
   → home
 ```
 
@@ -120,35 +120,45 @@ ProfileSetupScreen
 ProfileEditScreen → pick image
   → ImageCompressor.compress(1MB, 512x512)
   → R2Client.putObject(bucket, key="avatars/{uid}.jpg", body)
-  → UpdateProfile mutation (avatarUrl)
+  → Firestore users/{uid} update (avatarUrl)
 ```
 
 ## 5. Acceptance Criteria
 
 > Trạng thái kiểm tra thủ công tính đến 16/04/2026:
 
-- [ ] Đăng nhập Google trên emulator (thêm SHA-1 debug vào Firebase)
+- [ ] Đăng nhập Google trên emulator (thêm SHA-1 debug vào Firebase) — cần test thiết bị
 - [x] Login lần đầu thiếu `displayName` → bắt buộc vào `profile/setup` — logic trong `AuthViewModel`
-- [x] `displayName` chỉ chấp nhận 3..50 ký tự — validate trong `CompleteFirstProfileUseCase` + UI
+- [x] `displayName` chỉ chấp nhận 3..50 ký tự — validate trong `CompleteFirstProfileUseCase` + `UpdateProfileUseCase` + UI
 - [x] `onAuthStateChanged` persist qua restart app — `FirebaseAuthSource.observeAuthState()` + DataStore
-- [ ] Avatar hiển thị sau upload (R2 public URL hoặc presigned) — R2 upload chưa implement
+- [x] Avatar upload R2 — `R2Client` (OkHttp + AWS SigV4), `UploadAvatarUseCase`, `MediaRepositoryImpl` — cần test thiết bị
 - [x] Không lộ token đăng nhập trong logcat release — `Timber.DebugTree` chỉ plant trong DEBUG
 
 ### Tiến độ triển khai (16/04/2026)
-- [x] `libs.versions.toml` — bổ sung Hilt, KSP, Navigation, Credentials, Firebase, DataStore, Timber, OkHttp
+- [x] `libs.versions.toml` — bổ sung Hilt, KSP, Navigation, Credentials, Firebase, DataStore, Timber, OkHttp, MaterialIconsExtended
 - [x] `RedSharkApp.kt` — `@HiltAndroidApp` + Timber setup
 - [x] `core/util/Result.kt`, `core/error/AppException.kt`, `core/error/ErrorMapper.kt`
-- [x] `core/di/` — AppModule, FirebaseModule, R2Module, RepositoryModule
+- [x] `core/di/` — AppModule, FirebaseModule, R2Module, RepositoryModule (bind Auth, Profile, Media, Firestore)
 - [x] `domain/model/User.kt`
-- [x] `domain/repository/AuthRepository.kt`, `ProfileRepository.kt`
-- [x] `domain/usecase/auth/` — 4 use cases (SignIn, Observe, SignOut, CompleteFirstProfile)
+- [x] `domain/repository/AuthRepository.kt`, `ProfileRepository.kt`, `MediaRepository.kt`
+- [x] `domain/usecase/auth/` — 6 use cases (SignIn, Observe, SignOut, CompleteFirstProfile, UpdateProfile, UploadAvatar)
 - [x] `data/remote/firebase/FirebaseAuthSource.kt`, `GoogleSignInHelper.kt` (One Tap + fallback)
-- [x] `data/repository/AuthRepositoryImpl.kt`, `ProfileRepositoryImpl.kt`
+- [x] `data/remote/firestore/FirestoreSource.kt` (interface), `FirestoreSourceImpl.kt` (upsertUser, getUser, updateProfile), `dto/UserDto.kt`
+- [x] `data/remote/r2/R2Client.kt` — PUT object với AWS SigV4 signing
+- [x] `data/repository/AuthRepositoryImpl.kt` — sign-in + upsertUser Firestore call
+- [x] `data/repository/ProfileRepositoryImpl.kt` — wired với FirestoreSource
+- [x] `data/repository/MediaRepositoryImpl.kt` — uploadAvatar via R2Client
+- [x] `data/mapper/UserMapper.kt` — FirebaseUser + UserDto → domain User
 - [x] `data/local/datastore/UserPreferences.kt`
-- [x] `ui/navigation/Routes.kt`, `NavGraph.kt`
+- [x] `ui/navigation/Routes.kt`, `NavGraph.kt` — tất cả 6 routes (auth, setup, home, profile/{id}, profile/edit, settings)
 - [x] `ui/feature/auth/GoogleSignInScreen.kt`, `ProfileSetupScreen.kt`, `AuthViewModel.kt`
-- [x] Unit tests: `SignInGoogleUseCaseTest`, `ObserveAuthStateUseCaseTest`, `CompleteFirstProfileUseCaseTest`, `SignOutUseCaseTest`
-- [ ] Profile edit + avatar upload (giai đoạn tiếp theo)
+- [x] `ui/feature/home/HomeScreen.kt` — TopAppBar với icon profile + settings
+- [x] `ui/feature/profile/ProfileViewModel.kt`, `ProfileViewScreen.kt`, `ProfileEditScreen.kt`
+- [x] `ui/feature/settings/SettingsScreen.kt` — sign out (dialog confirm) + delete account placeholder
+- [x] Unit tests: `SignInGoogleUseCaseTest`, `ObserveAuthStateUseCaseTest`, `CompleteFirstProfileUseCaseTest`, `SignOutUseCaseTest`, `UpdateProfileUseCaseTest`, `UploadAvatarUseCaseTest`
+- [x] `FirestoreSourceImpl` — Firestore SDK: `upsertUser` (set/merge), `getUser` (get), `updateProfile` (update)
+- [x] `FirebaseModule` — provide `FirebaseFirestore.getInstance()` via Hilt
+- [x] `libs.versions.toml` — thêm `firebase-firestore`
 
 ## 6. Rủi ro / Mitigation
 - **Google Sign-In SHA-1:** test debug + release keystore

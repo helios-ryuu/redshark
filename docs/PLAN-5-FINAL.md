@@ -52,7 +52,7 @@
 ## 5. Nhắc lại quy chuẩn mã nguồn (áp dụng xuyên suốt)
 - **Đơn giản, tường minh, dễ hiểu** — không over-engineer
 - Kotlin naming convention (xem [PLAN-1-FOUNDATION.md](PLAN-1-FOUNDATION.md))
-- GraphQL field camelCase, REST endpoint kebab-case
+- Firestore field camelCase, REST endpoint kebab-case
 - Không có hàm > 40 dòng không có lý do
 - Mọi public API có KDoc (chỉ "Why", không lặp "What")
 

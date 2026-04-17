@@ -34,19 +34,15 @@ redshark/
         │       │
         │       ├── core/                          # Cross-cutting
         │       │   ├── di/
-        │       │   │   ├── AppModule.kt
-        │       │   │   ├── FirebaseModule.kt
-        │       │   │   ├── R2Module.kt
-        │       │   │   └── NetworkModule.kt
+        │       │   │   ├── AppModule.kt           # ✅ DataStore
+        │       │   │   ├── FirebaseModule.kt      # ✅ FirebaseAuth + FirebaseFirestore
+        │       │   │   ├── R2Module.kt            # ✅ OkHttpClient
+        │       │   │   └── RepositoryModule.kt    # ✅ bind Auth/Profile/Media/Firestore
         │       │   ├── util/
-        │       │   │   ├── Result.kt              # Sealed class Success/Error/Loading
-        │       │   │   ├── DateUtils.kt
-        │       │   │   └── ImageCompressor.kt
-        │       │   ├── error/
-        │       │   │   ├── AppException.kt
-        │       │   │   └── ErrorMapper.kt
-        │       │   └── constants/
-        │       │       └── Constants.kt
+        │       │   │   └── Result.kt              # ✅ Sealed class Success/Error/Loading
+        │       │   └── error/
+        │       │       ├── AppException.kt        # ✅
+        │       │       └── ErrorMapper.kt         # ✅
         │       │
         │       ├── data/                          # Data layer
         │       │   ├── local/
@@ -58,26 +54,28 @@ redshark/
         │       │   ├── remote/
         │       │   │   ├── firebase/
         │       │   │   │   ├── FirebaseAuthSource.kt
-        │       │   │   │   └── DataConnectSource.kt
-        │       │   │   ├── dataconnect/
-        │       │   │   │   ├── generated/         # SDK gen từ firebase dataconnect:sdk:generate
-        │       │   │   │   └── Connector.kt
+        │       │   │   │   └── GoogleSignInHelper.kt  # Credential Manager (One Tap + fallback)
+        │       │   │   ├── firestore/
+        │       │   │   │   ├── FirestoreSource.kt         # ✅ Interface (Firestore operations)
+        │       │   │   │   ├── FirestoreSourceImpl.kt     # ✅ Firestore SDK calls (upsertUser, getUser, updateProfile)
+        │       │   │   │   └── dto/
+        │       │   │   │       └── UserDto.kt             # ✅
+        │       │   │   │
         │       │   │   └── r2/
-        │       │   │       ├── R2Client.kt        # OkHttp + AWS SigV4
-        │       │   │       └── R2UploadService.kt
+        │       │   │       └── R2Client.kt            # OkHttp + AWS SigV4
         │       │   ├── repository/                # Implement interface từ domain
-        │       │   │   ├── AuthRepositoryImpl.kt
-        │       │   │   ├── IdeaRepositoryImpl.kt
-        │       │   │   ├── IssueRepositoryImpl.kt
-        │       │   │   ├── CommentRepositoryImpl.kt
-        │       │   │   ├── NotificationRepositoryImpl.kt
-        │       │   │   ├── MessageRepositoryImpl.kt
-        │       │   │   ├── ProfileRepositoryImpl.kt
-        │       │   │   └── MediaRepositoryImpl.kt
+        │       │   │   ├── AuthRepositoryImpl.kt      # ✅ sign-in + upsertUser Firestore
+        │       │   │   ├── ProfileRepositoryImpl.kt   # ✅ FirestoreSource wired
+        │       │   │   ├── MediaRepositoryImpl.kt     # ✅ R2Client upload
+        │       │   │   ├── IdeaRepositoryImpl.kt      # (giai đoạn 3)
+        │       │   │   ├── IssueRepositoryImpl.kt     # (giai đoạn 3)
+        │       │   │   ├── CommentRepositoryImpl.kt   # (giai đoạn 3)
+        │       │   │   ├── NotificationRepositoryImpl.kt # (giai đoạn 4)
+        │       │   │   └── MessageRepositoryImpl.kt   # (giai đoạn 4)
         │       │   └── mapper/                    # DTO ↔ Domain model
-        │       │       ├── UserMapper.kt
-        │       │       ├── IdeaMapper.kt
-        │       │       └── IssueMapper.kt
+        │       │       ├── UserMapper.kt              # ✅ FirebaseUser + UserDto → User
+        │       │       ├── IdeaMapper.kt              # (giai đoạn 3)
+        │       │       └── IssueMapper.kt             # (giai đoạn 3)
         │       │
         │       ├── domain/                        # Domain layer (pure Kotlin, no Android)
         │       │   ├── model/
@@ -91,24 +89,27 @@ redshark/
         │       │   │   ├── Tag.kt
         │       │   │   └── Skill.kt
         │       │   ├── repository/                # Interfaces only
-        │       │   │   ├── AuthRepository.kt
-        │       │   │   ├── IdeaRepository.kt
+        │       │   │   ├── AuthRepository.kt          # ✅
+        │       │   │   ├── ProfileRepository.kt       # ✅
+        │       │   │   ├── MediaRepository.kt         # ✅
+        │       │   │   ├── IdeaRepository.kt          # (giai đoạn 3)
         │       │   │   └── ...
         │       │   └── usecase/
         │       │       ├── auth/
-        │       │       │   ├── SignInGoogleUseCase.kt
-        │       │       │   ├── CompleteFirstProfileUseCase.kt
-        │       │       │   ├── SignOutUseCase.kt
-        │       │       │   └── ObserveAuthStateUseCase.kt
+        │       │       │   ├── SignInGoogleUseCase.kt         # ✅
+        │       │       │   ├── CompleteFirstProfileUseCase.kt # ✅
+        │       │       │   ├── SignOutUseCase.kt              # ✅
+        │       │       │   ├── ObserveAuthStateUseCase.kt     # ✅
+        │       │       │   ├── UpdateProfileUseCase.kt        # ✅
+        │       │       │   └── UploadAvatarUseCase.kt         # ✅
         │       │       ├── idea/
-        │       │       │   ├── GetIdeasUseCase.kt
-        │       │       │   ├── CreateIdeaUseCase.kt
+        │       │       │   ├── GetIdeasUseCase.kt     # (giai đoạn 3)
+        │       │       │   ├── CreateIdeaUseCase.kt   # (giai đoạn 3)
         │       │       │   └── ...
         │       │       ├── issue/
         │       │       ├── comment/
         │       │       ├── notification/
-        │       │       ├── message/
-        │       │       └── profile/
+        │       │       └── message/
         │       │
         │       └── ui/                            # Presentation layer
         │           ├── theme/
@@ -132,36 +133,32 @@ redshark/
         │           │   └── LoadingIndicator.kt
         │           └── feature/
         │               ├── auth/
-        │               │   ├── google/
-        │               │   │   ├── GoogleSignInScreen.kt
-        │               │   │   └── GoogleSignInViewModel.kt
-        │               │   ├── profile_setup/      # Luồng hoàn thiện hồ sơ lần đầu
-        │               │   │   ├── ProfileSetupScreen.kt
-        │               │   │   └── ProfileSetupViewModel.kt
-        │               │   └── AuthState.kt
+        │               │   ├── GoogleSignInScreen.kt  # ✅
+        │               │   ├── ProfileSetupScreen.kt  # ✅
+        │               │   └── AuthViewModel.kt       # ✅ (sign-in, setup, sign-out)
         │               ├── home/
-        │               │   ├── HomeScreen.kt
-        │               │   └── HomeViewModel.kt
-        │               ├── idea/
-        │               │   ├── list/
-        │               │   ├── detail/
-        │               │   ├── create/
-        │               │   └── edit/
-        │               ├── issue/
-        │               ├── comment/
-        │               ├── message/
-        │               │   ├── list/
-        │               │   └── conversation/
-        │               ├── notification/
+        │               │   └── HomeScreen.kt          # ✅ TopAppBar + profile/settings nav
         │               ├── profile/
-        │               │   ├── view/
-        │               │   └── edit/
-        │               └── settings/
+        │               │   ├── ProfileViewModel.kt    # ✅
+        │               │   ├── ProfileViewScreen.kt   # ✅
+        │               │   └── ProfileEditScreen.kt   # ✅ (name, bio, skills, avatar picker)
+        │               ├── settings/
+        │               │   └── SettingsScreen.kt      # ✅ (sign out + delete placeholder)
+        │               ├── idea/                      # (giai đoạn 3)
+        │               ├── issue/                     # (giai đoạn 3)
+        │               ├── comment/                   # (giai đoạn 3)
+        │               ├── message/                   # (giai đoạn 4)
+        │               └── notification/              # (giai đoạn 4)
         │
         ├── test/                                  # Unit tests (JVM)
         │   └── java/com/helios/redshark/
-        │       ├── domain/usecase/
-        │       └── data/repository/
+        │       └── domain/usecase/auth/
+        │           ├── SignInGoogleUseCaseTest.kt         # ✅
+        │           ├── ObserveAuthStateUseCaseTest.kt     # ✅
+        │           ├── CompleteFirstProfileUseCaseTest.kt # ✅
+        │           ├── SignOutUseCaseTest.kt              # ✅
+        │           ├── UpdateProfileUseCaseTest.kt        # ✅
+        │           └── UploadAvatarUseCaseTest.kt         # ✅
         │
         └── androidTest/                           # Instrumented UI tests
             └── java/com/helios/redshark/

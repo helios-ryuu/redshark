@@ -87,8 +87,8 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 - Ghi chú: Chưa bắt buộc CI ở giai đoạn này.
 
 ### 2.2 Tích hợp hạ tầng backend và storage
-#### 2.2.1 Tích hợp Firebase Auth và Data Connect
-- Sản phẩm bàn giao: kết nối FDC, SDK sinh tự động, kiểm tra nhanh truy vấn.
+#### 2.2.1 Tích hợp Firebase Auth và Firestore
+- Sản phẩm bàn giao: kết nối Firestore, kiểm tra nhanh truy vấn.
 - Phụ trách chính: Sỹ.
 - Thành viên phối hợp: Nam.
 - Phụ thuộc: 2.1.1.

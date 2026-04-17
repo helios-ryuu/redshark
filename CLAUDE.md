@@ -26,12 +26,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Clean Architecture with vertical feature slicing. Three strict layers — each layer only depends inward:
 
 - **`domain/`** — Pure Kotlin only. No `android.*` or `firebase.*` imports. Contains interfaces (`AuthRepository`, etc.), domain models, and single-responsibility use cases (`<Verb><Noun>UseCase`). This is the source of truth for business rules.
-- **`data/`** — Implements domain interfaces. Contains `repository/*Impl.kt`, DTO mappers (`mapper/`), Firebase Data Connect source, Cloudflare R2 client (OkHttp + AWS SigV4), and DataStore for local caching.
+- **`data/`** — Implements domain interfaces. Contains `repository/*Impl.kt`, DTO mappers (`mapper/`), Cloud Firestore source, Cloudflare R2 client (OkHttp + AWS SigV4), and DataStore for local caching.
 - **`ui/`** — Jetpack Compose + MVVM. ViewModels expose `StateFlow<UiState>` and Composables consume it via `collectAsStateWithLifecycle()`. Single-activity architecture with Compose Navigation; all routes are string constants in `ui/navigation/Routes.kt`.
 
 **Cross-cutting concerns** live in `core/`: `Result.kt` sealed class (Success/Error/Loading), `AppException`, `ErrorMapper`, and Hilt DI modules.
 
-**DI:** Hilt throughout. `RedSharkApp.kt` is `@HiltAndroidApp`. Modules in `core/di/`: `AppModule`, `FirebaseModule`, `R2Module`, `NetworkModule`.
+**DI:** Hilt throughout. `RedSharkApp.kt` is `@HiltAndroidApp`. Modules in `core/di/`: `AppModule`, `FirebaseModule` (FirebaseAuth + FirebaseFirestore), `R2Module`, `NetworkModule`.
 
 ## Tech Stack
 
@@ -39,7 +39,7 @@ Clean Architecture with vertical feature slicing. Three strict layers — each l
 |---|---|
 | UI | Jetpack Compose + Material 3 |
 | Auth | Firebase Authentication (Google Sign-In) |
-| Database | Firebase Data Connect (GraphQL → PostgreSQL) |
+| Database | Cloud Firestore (NoSQL document DB) |
 | Storage | Cloudflare R2 (S3-compatible) |
 | Local cache | DataStore (tokens, preferences); Room optional for offline |
 | Async | Kotlin Coroutines + Flow |
