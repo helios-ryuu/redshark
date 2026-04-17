@@ -26,7 +26,7 @@
 - 100% Kotlin Android Native + Jetpack Compose
 - Kiến trúc Clean Architecture + MVVM + UDF
 - Firebase Authentication cho xác thực
-- Firebase Data Connect (Cloud SQL PostgreSQL) cho dữ liệu nghiệp vụ
+- Cloud Firestore (NoSQL document DB) cho dữ liệu nghiệp vụ
 - Cloudflare R2 (S3-compatible) cho media/avatar
 
 Mục tiêu chất lượng chính:
@@ -69,18 +69,13 @@ Mục tiêu chất lượng chính:
 │ MVVM + Clean Architecture + Hilt              │
 │ UDF state flow + Coroutines + Flow            │
 └───────────────┬───────────────────────┬───────┘
-                │ Firebase Auth         │ Data Connect SDK
+                │ Firebase Auth         │ Firestore SDK
                 ▼                       ▼
 ┌──────────────────────────┐   ┌─────────────────────────────┐
-│ Firebase Authentication  │   │ Firebase Data Connect       │
-│ - Google Sign-In         │   │ - GraphQL connectors        │
-│ - Firebase session       │   │ - Auth directives           │
+│ Firebase Authentication  │   │ Cloud Firestore             │
+│ - Google Sign-In         │   │ - NoSQL document DB         │
+│ - Firebase session       │   │ - Security Rules            │
 └──────────────────────────┘   └──────────────┬──────────────┘
-                                              ▼
-                                   ┌─────────────────────────┐
-                                   │ Cloud SQL PostgreSQL    │
-                                   │ (schema theo docs)      │
-                                   └─────────────────────────┘
                                               │
                                               ▼
                                    ┌─────────────────────────┐
@@ -94,7 +89,7 @@ Nguyên tắc kiến trúc:
 - Tầng `domain` thuần Kotlin, không phụ thuộc Android SDK
 - Giao diện kho dữ liệu đặt ở `domain`, phần cài đặt đặt ở `data`
 - `ViewModel` cung cấp `StateFlow<UiState>`, giao diện đọc trạng thái theo luồng dữ liệu một chiều (UDF)
-- Quy tắc bảo mật và quyền sở hữu dữ liệu được kiểm soát phía máy chủ qua Data Connect
+- Quy tắc bảo mật và quyền sở hữu dữ liệu được kiểm soát phía máy chủ qua Firestore Security Rules
 
 ---
 
@@ -129,7 +124,7 @@ Ngoài phạm vi:
 | Tiêm phụ thuộc   | Hilt                                         |
 | Bất đồng bộ      | Kotlin Coroutines + Flow                     |
 | Xác thực         | Firebase Authentication                      |
-| Dữ liệu          | Firebase Data Connect + Cloud SQL PostgreSQL |
+| Dữ liệu          | Cloud Firestore (NoSQL document DB)          |
 | Lưu trữ          | Cloudflare R2 (tương thích S3)               |
 | Biên dịch        | Gradle Kotlin DSL                            |
 | Chất lượng mã    | Ktlint + Detekt + kiểm thử đơn vị            |
@@ -146,18 +141,11 @@ Ngoài phạm vi:
 
 ### 2) Cấu hình dịch vụ
 - Thiết lập Google Sign-In cho ứng dụng Android (SHA-1 debug/phát hành + OAuth Client ID)
-- Thiết lập bộ kết nối Firebase Data Connect
+- Thiết lập Firestore database trên Firebase Console và cấu hình Security Rules
 - Thiết lập bucket và endpoint Cloudflare R2 cho ảnh đại diện/tệp phương tiện
 - Danh sách biến cấu hình hiện dùng: xem `docs/SECRET.md`
 
-### 3) Quy trình Data Connect
-```powershell
-firebase emulators:start --only dataconnect
-firebase dataconnect:sdk:generate
-firebase deploy --only dataconnect
-```
-
-### 4) Biên dịch và kiểm tra chất lượng
+### 3) Biên dịch và kiểm tra chất lượng
 ```powershell
 ./gradlew lint
 ./gradlew testDebugUnitTest
@@ -180,7 +168,7 @@ firebase deploy --only dataconnect
 ```text
 feat(auth): add Google Sign-In flow
 fix(issue): prevent invalid CLOSED -> OPEN transition
-refactor(data): extract FDC error mapper
+refactor(data): extract Firestore error mapper
 docs: update timeline and test checklist
 ```
 

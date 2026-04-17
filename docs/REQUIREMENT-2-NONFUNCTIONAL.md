@@ -7,7 +7,7 @@ WBS tham chiếu: [WBS.md](WBS.md) — ánh xạ chính theo `6.0` và `7.0`.
 | ID          | Yêu cầu                                                | Mục tiêu                                          |
 |-------------|--------------------------------------------------------|---------------------------------------------------|
 | NFR-PERF-01 | Khởi động nguội đến màn Home (người dùng đã đăng nhập) | ≤ 3 giây trên thiết bị tầm trung (Snapdragon 680) |
-| NFR-PERF-02 | Thời gian phản hồi truy vấn FDC                        | p95 ≤ 1,5 giây trên 4G                            |
+| NFR-PERF-02 | Thời gian phản hồi truy vấn Firestore                  | p95 ≤ 1,5 giây trên 4G                            |
 | NFR-PERF-03 | Tải ảnh đại diện 1MB lên R2                            | ≤ 3 giây trên 4G                                  |
 | NFR-PERF-04 | Cuộn danh sách 100 phần tử                             | 60fps, không giật khung hình rõ rệt               |
 | NFR-PERF-05 | Kích thước APK                                         | ≤ 25MB (không tính tài nguyên gói kèm dư thừa)    |
@@ -18,8 +18,8 @@ WBS tham chiếu: [WBS.md](WBS.md) — ánh xạ chính theo `6.0` và `7.0`.
 | ID         | Yêu cầu                                                                                                 |
 |------------|---------------------------------------------------------------------------------------------------------|
 | NFR-SEC-01 | Mọi biến cấu hình nhạy cảm (R2 token, mật khẩu keystore) lưu trong `local.properties`, **không** commit |
-| NFR-SEC-02 | Mọi mutation/query ngoại trừ `tags`, `skills` đều yêu cầu `@auth(level: USER)`                          |
-| NFR-SEC-03 | Kiểm tra quyền sở hữu phía máy chủ bằng `where: { authorId: { eq_expr: "auth.uid" } }`                  |
+| NFR-SEC-02 | Mọi collection ngoại trừ `tags`, `skills` đều yêu cầu `request.auth != null` trong Firestore rules      |
+| NFR-SEC-03 | Kiểm tra quyền sở hữu phía máy chủ bằng Firestore security rules: `request.auth.uid == resource.data.authorId` |
 | NFR-SEC-04 | Mật khẩu không ghi log, không lưu dạng rõ chữ                                                           |
 | NFR-SEC-05 | R2 token có phạm vi giới hạn (chỉ 1 bucket, WRITE/READ)                                                 |
 | NFR-SEC-06 | ProGuard/R8 bật trên bản dựng phát hành                                                                 |
@@ -42,7 +42,7 @@ WBS tham chiếu: [WBS.md](WBS.md) — ánh xạ chính theo `6.0` và `7.0`.
 | ID         | Yêu cầu                                                                                            |
 |------------|----------------------------------------------------------------------------------------------------|
 | NFR-SCA-01 | Cloudflare R2 hỗ trợ mở rộng lưu trữ đối tượng không giới hạn, không cần thay đổi mã phía ứng dụng |
-| NFR-SCA-02 | Cloud SQL (FDC) có thể mở rộng theo chiều dọc; lược đồ dùng UUID, tránh điểm nóng dữ liệu          |
+| NFR-SCA-02 | Firestore tự mở rộng theo chiều ngang; thiết kế collection tránh điểm nóng (hot document)           |
 | NFR-SCA-03 | Phân trang trên mọi điểm cuối trả danh sách (`limit/offset` hoặc `cursor`)                         |
 | NFR-SCA-04 | Chỉ mục tối thiểu: xem [Mục 12 — SCHEMA.md](SCHEMA.md)                                             |
 | NFR-SCA-05 | Bộ đệm Cloudflare CDN cho ảnh đại diện công khai giúp giảm tải R2                                  |

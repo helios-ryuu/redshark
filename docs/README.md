@@ -1,6 +1,6 @@
 # RedShark — Tài liệu dự án Android Native Kotlin
 
-Toàn bộ tài liệu kỹ thuật cho dự án **RedShark Android Native (Kotlin)**, sử dụng **Firebase Data Connect** và **Cloudflare R2**.
+Toàn bộ tài liệu kỹ thuật cho dự án **RedShark Android Native (Kotlin)**, sử dụng **Cloud Firestore** và **Cloudflare R2**.
 
 ## Mục lục
 
@@ -8,7 +8,7 @@ Toàn bộ tài liệu kỹ thuật cho dự án **RedShark Android Native (Kotl
 |------------------------------------------------------------------|-----------------------------------------------------------------------|
 | [PROJECT_CHARTER.md](PROJECT_CHARTER.md)                         | Tuyên ngôn dự án — mục tiêu, phạm vi, các bên liên quan, rủi ro       |
 | [STRUCTURE.md](STRUCTURE.md)                                     | Cấu trúc thư mục dự án + naming convention                            |
-| [SCHEMA.md](SCHEMA.md)                                           | Lược đồ PostgreSQL + GraphQL queries/mutations                        |
+| [SCHEMA.md](SCHEMA.md)                                           | Lược đồ Cloud Firestore (collections + operations + security rules)   |
 | [SECRET.md](SECRET.md)                                           | Danh sách biến cấu hình đang sử dụng                                  |
 | [TIMELINE.md](TIMELINE.md)                                       | Tiến độ 9 tuần cho 3 thành viên                                       |
 | [WBS.md](WBS.md)                                                 | Cấu trúc phân rã công việc, người phụ trách, phụ thuộc, mốc thời gian |
