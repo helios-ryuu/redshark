@@ -26,7 +26,7 @@ Tuần 9 ─ 12/05 → 17/05 │ Giai đoạn 5: Kiểm thử, dọn dẹp, phá
 
 | Thành viên  | Công việc                                                                                                                         |
 |-------------|-----------------------------------------------------------------------------------------------------------------------------------|
-| **Sỹ (PM)** | Chủ trì nền tảng: khởi tạo khung Android, kiểm tra biên dịch cục bộ, tích hợp Firebase/FDC/R2, chuẩn hóa GIT/WBS/STRUCTURE/SECRET |
+| **Sỹ (PM)** | Chủ trì nền tảng: khởi tạo khung Android, kiểm tra biên dịch cục bộ, tích hợp Firebase/Firestore/R2, chuẩn hóa GIT/WBS/STRUCTURE/SECRET |
 | **Nam**     | Phối hợp khung giao diện (theme + navigation), rà soát cấu trúc nhóm chức năng và quy ước đặt tên                                 |
 | **Hải**     | Phối hợp kiểm thử tích hợp tầng dữ liệu/lưu trữ, hỗ trợ chuẩn hóa cấu hình và tài liệu kỹ thuật                                   |
 

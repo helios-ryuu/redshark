@@ -13,7 +13,7 @@
 - [x] Cấu trúc thư mục tuân thủ [STRUCTURE.md](STRUCTURE.md) — scaffold đã được commit
 - [x] Tài liệu quy ước mã nguồn được commit — toàn bộ `docs/` đã có trên `main`
 - [x] Hoàn tất kiểm tra biên dịch cục bộ — Compose cơ bản build thành công
-- [ ] Firebase Auth + Data Connect SDK kết nối thành công (ping `GetMe`) — **chuyển sang giai đoạn 2**
+- [ ] Firebase Auth + Firestore SDK kết nối thành công (đọc thử `users/{uid}`) — **chuyển sang giai đoạn 2**
 - [ ] Cloudflare R2 upload thử nghiệm thành công 1 file — **chuyển sang giai đoạn 2**
 
 ## 2. Công việc chi tiết
@@ -44,7 +44,7 @@ activityCompose = "1.13.0"
 - **ViewModel:** giữ `StateFlow<UiState>`, expose intent functions.
 - **UseCase:** `operator fun invoke()` duy nhất, SRP.
 - **Repository interface (domain):** định nghĩa contract.
-- **RepositoryImpl (data):** gọi FDC / R2 / local, map DTO.
+- **RepositoryImpl (data):** gọi Firestore / R2 / local, map DTO.
 
 #### Unidirectional Data Flow (UDF)
 ```
@@ -64,8 +64,7 @@ Chuỗi lệnh đang dùng để xác nhận dự án sẵn sàng phát triển 
 
 ### 2.5 Kết nối hạ tầng
 - `google-services.json` đặt trong `app/` (gitignored)
-- Chạy `firebase dataconnect:sdk:generate --output app/src/main/java/com/helios/redshark/data/remote/dataconnect/generated`
-- Kiểm tra nhanh: `DataConnectSource.getMe()` trả 401 (chưa đăng nhập) được xem là đúng kỳ vọng
+- Kiểm tra nhanh: `FirestoreSource.getUser(uid)` trả `404` (document chưa tồn tại) được xem là đúng kỳ vọng
 
 ### 2.6 Quy chuẩn mã nguồn (bắt buộc toàn dự án)
 
@@ -93,14 +92,14 @@ Chuỗi lệnh đang dùng để xác nhận dự án sẵn sàng phát triển 
 - Import sắp xếp alphabet
 
 **API Convention:**
-- **GraphQL (FDC):** `PascalCase` cho Query/Mutation name (đã áp dụng), field `camelCase`.
+- **Firestore:** field `camelCase`, collection/document path `camelCase`.
 - **REST (R2):** tuân thủ chuẩn S3 API, URL dùng `kebab-case`.
 
 **Commit message (Conventional Commits):**
 ```
 feat(auth): add Google Sign-In flow
 fix(idea): prevent crash when tagIds is null
-refactor(data): extract FDC error mapper
+refactor(data): extract Firestore error mapper
 docs: update SCHEMA with notifications table
 ```
 
