@@ -4,6 +4,7 @@ import com.helios.redshark.core.error.AppException
 import com.helios.redshark.core.util.Result
 import com.helios.redshark.data.local.datastore.UserPreferences
 import com.helios.redshark.data.mapper.toDomain
+import com.helios.redshark.data.remote.firestore.FirestoreSource
 import com.helios.redshark.data.remote.firebase.FirebaseAuthSource
 import com.helios.redshark.domain.model.User
 import com.helios.redshark.domain.repository.AuthRepository
@@ -16,6 +17,7 @@ import javax.inject.Singleton
 @Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuthSource: FirebaseAuthSource,
+    private val firestoreSource: FirestoreSource,
     private val userPreferences: UserPreferences,
 ) : AuthRepository {
 
@@ -27,7 +29,17 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun signInWithGoogle(idToken: String): Result<User> {
         return when (val result = firebaseAuthSource.signInWithGoogle(idToken)) {
             is Result.Success -> {
-                val user = result.data.toDomain()
+                val firebaseUser = result.data
+                val baseUser = firebaseUser.toDomain()
+                val upsertResult = firestoreSource.upsertUser(
+                    userId = baseUser.id,
+                    email = baseUser.email,
+                    displayName = baseUser.displayName,
+                )
+                val user = when (upsertResult) {
+                    is Result.Success -> upsertResult.data.toDomain()
+                    else -> baseUser
+                }
                 userPreferences.saveUser(user.id, user.displayName)
                 Timber.d("Auth repo: sign-in success uid=${user.id}")
                 Result.Success(user)
