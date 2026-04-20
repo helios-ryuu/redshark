@@ -4,6 +4,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.helios.redshark.core.error.AppException
+import com.helios.redshark.core.error.ErrorMapper
 import com.helios.redshark.core.util.Result
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -35,7 +36,7 @@ class FirebaseAuthSource @Inject constructor(
             Result.Success(user)
         } catch (e: Exception) {
             Timber.e(e, "Firebase sign-in failed")
-            Result.Error(AppException.AuthException(e.message ?: "Sign-in failed", e))
+            Result.Error(ErrorMapper.map(e))
         }
     }
 
@@ -44,7 +45,7 @@ class FirebaseAuthSource @Inject constructor(
             firebaseAuth.signOut()
             Result.Success(Unit)
         } catch (e: Exception) {
-            Result.Error(AppException.AuthException(e.message ?: "Sign-out failed", e))
+            Result.Error(ErrorMapper.map(e))
         }
     }
 
