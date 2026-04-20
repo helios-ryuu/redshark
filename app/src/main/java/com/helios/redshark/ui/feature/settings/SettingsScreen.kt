@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -28,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import java.util.UUID
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.helios.redshark.ui.feature.auth.AuthViewModel
@@ -37,11 +39,49 @@ import com.helios.redshark.ui.feature.auth.AuthViewModel
 fun SettingsScreen(
     onNavigateBack: () -> Unit,
     onSignedOut: () -> Unit,
+    onNavigateToIdea: (UUID) -> Unit = {},
     authViewModel: AuthViewModel = hiltViewModel(),
 ) {
     val uiState by authViewModel.uiState.collectAsStateWithLifecycle()
     var showSignOutDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showOpenIdeaDialog by remember { mutableStateOf(false) }
+    var ideaIdInput by remember { mutableStateOf("") }
+    var ideaIdError by remember { mutableStateOf(false) }
+
+    if (showOpenIdeaDialog) {
+        AlertDialog(
+            onDismissRequest = { showOpenIdeaDialog = false; ideaIdInput = ""; ideaIdError = false },
+            title = { Text("Mở Idea đã xóa") },
+            text = {
+                OutlinedTextField(
+                    value = ideaIdInput,
+                    onValueChange = { ideaIdInput = it; ideaIdError = false },
+                    label = { Text("Idea UUID") },
+                    isError = ideaIdError,
+                    supportingText = { if (ideaIdError) Text("UUID không hợp lệ", color = MaterialTheme.colorScheme.error) },
+                    singleLine = true,
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    try {
+                        val raw = ideaIdInput.trim()
+                            .removePrefix("redshark://idea/")
+                        val uuid = UUID.fromString(raw)
+                        showOpenIdeaDialog = false
+                        ideaIdInput = ""
+                        onNavigateToIdea(uuid)
+                    } catch (_: IllegalArgumentException) {
+                        ideaIdError = true
+                    }
+                }) { Text("Mở") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showOpenIdeaDialog = false; ideaIdInput = ""; ideaIdError = false }) { Text("Hủy") }
+            },
+        )
+    }
 
     if (showSignOutDialog) {
         AlertDialog(
@@ -124,6 +164,14 @@ fun SettingsScreen(
                 HorizontalDivider()
                 Spacer(modifier = Modifier.height(24.dp))
             }
+
+            OutlinedButton(
+                onClick = { showOpenIdeaDialog = true },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("Mở Idea đã xóa")
+            }
+            Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedButton(
                 onClick = { showSignOutDialog = true },
