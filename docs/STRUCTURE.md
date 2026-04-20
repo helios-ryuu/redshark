@@ -13,13 +13,16 @@ redshark/
 ├── gradlew
 ├── gradlew.bat
 ├── local.properties                   # (gitignored) secrets, SDK path
+├── firestore.indexes.json             # ✅ Composite indexes cho queries
+├── firestore.rules                    # ✅ Security rules (CLOSED→OPEN block)
+├── .firebaserc                        # ✅ Firebase project config
 ├── docs/                              # Tài liệu dự án (charter, requirement, plan, process, check, report, git)
 └── app/
     ├── build.gradle.kts               # App module config (Compose, Hilt, Firebase, ...)
     ├── proguard-rules.pro
     └── src/
         ├── main/
-        │   ├── AndroidManifest.xml
+        │   ├── AndroidManifest.xml    # ✅ + deep link intent-filter redshark://idea
         │   ├── res/
         │   │   ├── drawable/          # PNG logo assets (không dùng WebP)
         │   │   ├── values/
@@ -37,7 +40,8 @@ redshark/
         │       │   │   ├── AppModule.kt           # ✅ DataStore
         │       │   │   ├── FirebaseModule.kt      # ✅ FirebaseAuth + FirebaseFirestore
         │       │   │   ├── R2Module.kt            # ✅ OkHttpClient
-        │       │   │   └── RepositoryModule.kt    # ✅ bind Auth/Profile/Media/Firestore
+        │       │   │   └── RepositoryModule.kt    # ✅ Auth/Profile/Media + Idea/Issue/Comment/Notification
+        │       │   ├── NetworkChecker.kt          # ✅ ConnectivityManager online check
         │       │   ├── util/
         │       │   │   └── Result.kt              # ✅ Sealed class Success/Error/Loading
         │       │   └── error/
@@ -56,26 +60,30 @@ redshark/
         │       │   │   │   ├── FirebaseAuthSource.kt
         │       │   │   │   └── GoogleSignInHelper.kt  # Credential Manager (One Tap + fallback)
         │       │   │   ├── firestore/
-        │       │   │   │   ├── FirestoreSource.kt         # ✅ Interface (Firestore operations)
-        │       │   │   │   ├── FirestoreSourceImpl.kt     # ✅ Firestore SDK calls (upsertUser, getUser, updateProfile)
+        │       │   │   │   ├── FirestoreSource.kt         # ✅ Interface (+ idea/issue/comment/user ops)
+        │       │   │   │   ├── FirestoreSourceImpl.kt     # ✅ Firestore SDK calls
         │       │   │   │   └── dto/
-        │       │   │   │       └── UserDto.kt             # ✅
+        │       │   │   │       ├── UserDto.kt             # ✅
+        │       │   │   │       ├── IdeaDto.kt             # ✅
+        │       │   │   │       ├── IssueDto.kt            # ✅
+        │       │   │   │       └── CommentDto.kt          # ✅
         │       │   │   │
         │       │   │   └── r2/
         │       │   │       └── R2Client.kt            # OkHttp + AWS SigV4
         │       │   ├── repository/                # Implement interface từ domain
-        │       │   │   ├── AuthRepositoryImpl.kt      # ✅ sign-in + upsertUser Firestore
-        │       │   │   ├── ProfileRepositoryImpl.kt   # ✅ FirestoreSource wired
-        │       │   │   ├── MediaRepositoryImpl.kt     # ✅ R2Client upload
-        │       │   │   ├── IdeaRepositoryImpl.kt      # (giai đoạn 3)
-        │       │   │   ├── IssueRepositoryImpl.kt     # (giai đoạn 3)
-        │       │   │   ├── CommentRepositoryImpl.kt   # (giai đoạn 3)
-        │       │   │   ├── NotificationRepositoryImpl.kt # (giai đoạn 4)
-        │       │   │   └── MessageRepositoryImpl.kt   # (giai đoạn 4)
+        │       │   │   ├── AuthRepositoryImpl.kt          # ✅ sign-in + upsertUser Firestore
+        │       │   │   ├── ProfileRepositoryImpl.kt       # ✅ + getUsers()
+        │       │   │   ├── MediaRepositoryImpl.kt         # ✅ R2Client upload
+        │       │   │   ├── IdeaRepositoryImpl.kt          # ✅ + NetworkChecker guard
+        │       │   │   ├── IssueRepositoryImpl.kt         # ✅
+        │       │   │   ├── CommentRepositoryImpl.kt       # ✅
+        │       │   │   ├── NotificationRepositoryImpl.kt  # ✅
+        │       │   │   └── MessageRepositoryImpl.kt       # (giai đoạn 5)
         │       │   └── mapper/                    # DTO ↔ Domain model
         │       │       ├── UserMapper.kt              # ✅ FirebaseUser + UserDto → User
-        │       │       ├── IdeaMapper.kt              # (giai đoạn 3)
-        │       │       └── IssueMapper.kt             # (giai đoạn 3)
+        │       │       ├── IdeaMapper.kt              # ✅
+        │       │       ├── IssueMapper.kt             # ✅
+        │       │       └── CommentMapper.kt           # ✅
         │       │
         │       ├── domain/                        # Domain layer (pure Kotlin, no Android)
         │       │   ├── model/
@@ -90,10 +98,12 @@ redshark/
         │       │   │   └── Skill.kt
         │       │   ├── repository/                # Interfaces only
         │       │   │   ├── AuthRepository.kt          # ✅
-        │       │   │   ├── ProfileRepository.kt       # ✅
+        │       │   │   ├── ProfileRepository.kt       # ✅ + getUsers()
         │       │   │   ├── MediaRepository.kt         # ✅
-        │       │   │   ├── IdeaRepository.kt          # (giai đoạn 3)
-        │       │   │   └── ...
+        │       │   │   ├── IdeaRepository.kt          # ✅
+        │       │   │   ├── IssueRepository.kt         # ✅
+        │       │   │   ├── CommentRepository.kt       # ✅
+        │       │   │   └── NotificationRepository.kt  # ✅
         │       │   └── usecase/
         │       │       ├── auth/
         │       │       │   ├── SignInGoogleUseCase.kt         # ✅
@@ -102,14 +112,12 @@ redshark/
         │       │       │   ├── ObserveAuthStateUseCase.kt     # ✅
         │       │       │   ├── UpdateProfileUseCase.kt        # ✅
         │       │       │   └── UploadAvatarUseCase.kt         # ✅
-        │       │       ├── idea/
-        │       │       │   ├── GetIdeasUseCase.kt     # (giai đoạn 3)
-        │       │       │   ├── CreateIdeaUseCase.kt   # (giai đoạn 3)
-        │       │       │   └── ...
-        │       │       ├── issue/
-        │       │       ├── comment/
-        │       │       ├── notification/
-        │       │       └── message/
+        │       │       ├── idea/                          # ✅ GetMyIdeas, GetIdeaDetail, Create, Update, Delete, ChangeStatus
+        │       │       ├── issue/                         # ✅ GetIssues, Create (w/ limit check), Update, Delete, ChangeStatus, GetHomeFeed
+        │       │       ├── comment/                       # ✅ GetComments, CreateComment (+ notification)
+        │       │       ├── user/                          # ✅ GetUsersUseCase
+        │       │       ├── notification/                  # (giai đoạn 5)
+        │       │       └── message/                       # (giai đoạn 5)
         │       │
         │       └── ui/                            # Presentation layer
         │           ├── theme/
@@ -118,8 +126,8 @@ redshark/
         │           │   ├── Type.kt
         │           │   └── Shape.kt
         │           ├── navigation/
-        │           │   ├── NavGraph.kt
-        │           │   ├── Routes.kt
+        │           │   ├── NavGraph.kt            # ✅ + deep link redshark://idea/{id}
+        │           │   ├── Routes.kt              # ✅
         │           │   └── BottomNavBar.kt
         │           ├── common/                    # Reusable composables
         │           │   ├── AppButton.kt
@@ -131,24 +139,29 @@ redshark/
         │           │   ├── EmptyState.kt
         │           │   ├── ErrorState.kt
         │           │   └── LoadingIndicator.kt
+        │           ├── home/                          # ✅ Shared content components (IssueCard)
+        │           ├── createidea/                    # ✅ CreateIdeaScreen, CreateIdeaViewModel
+        │           ├── editidea/                      # ✅ EditIdeaScreen, EditIdeaViewModel
+        │           ├── myideas/                       # ✅ MyIdeasScreen, MyIdeasViewModel (tag filter, offline check)
+        │           ├── ideadetail/                    # ✅ IdeaDetailScreen, IdeaDetailViewModel, CommentItem, CommentInput
+        │           ├── createissue/                   # ✅ CreateIssueScreen, CreateIssueViewModel
+        │           ├── editissue/                     # ✅ EditIssueScreen, EditIssueViewModel (assignee dropdown)
+        │           ├── issuedetail/                   # ✅ IssueDetailScreen, IssueDetailViewModel (AssigneeRow)
         │           └── feature/
         │               ├── auth/
         │               │   ├── GoogleSignInScreen.kt  # ✅
         │               │   ├── ProfileSetupScreen.kt  # ✅
         │               │   └── AuthViewModel.kt       # ✅ (sign-in, setup, sign-out)
         │               ├── home/
-        │               │   └── HomeScreen.kt          # ✅ TopAppBar + profile/settings nav
+        │               │   └── HomeScreen.kt          # ✅ TopAppBar + BottomNav + feed
         │               ├── profile/
         │               │   ├── ProfileViewModel.kt    # ✅
         │               │   ├── ProfileViewScreen.kt   # ✅
         │               │   └── ProfileEditScreen.kt   # ✅ (name, bio, skills, avatar picker)
         │               ├── settings/
-        │               │   └── SettingsScreen.kt      # ✅ (sign out + delete placeholder)
-        │               ├── idea/                      # (giai đoạn 3)
-        │               ├── issue/                     # (giai đoạn 3)
-        │               ├── comment/                   # (giai đoạn 3)
-        │               ├── message/                   # (giai đoạn 4)
-        │               └── notification/              # (giai đoạn 4)
+        │               │   └── SettingsScreen.kt      # ✅ (sign out + "Mở Idea đã xóa" dialog)
+        │               ├── message/                   # (giai đoạn 5)
+        │               └── notification/              # (giai đoạn 5)
         │
         ├── test/                                  # Unit tests (JVM)
         │   └── java/com/helios/redshark/
@@ -182,8 +195,9 @@ redshark/
 ### UI Layer
 - **Responsibility:** Jetpack Compose UI + `ViewModel` (MVVM).
 - State flow: `ViewModel` expose `StateFlow<UiState>`; Composable `collectAsStateWithLifecycle()`.
-- Navigation: single-activity, Compose Navigation, route strings trong `Routes.kt`.
+- Navigation: single-activity, Compose Navigation, route strings trong `Routes.kt`. Deep link `redshark://idea/{ideaId}` được khai báo tại `NavGraph.kt` và `AndroidManifest.xml`.
 - Polling dùng `viewModelScope.launch { while (isActive) { delay(...); refresh() } }`, không dùng `rememberCoroutineScope` cho tác vụ nền.
+- **Quy ước thư mục:** Các màn hình Content (Ideas/Issues) dùng vertical slicing by screen dưới `ui/<screenname>/` (vd: `ui/createidea/`, `ui/ideadetail/`). Pattern `ui/feature/<domain>/` giữ nguyên cho Auth, Home, Profile, Settings.
 
 ### Logging
 - Dùng **Timber** thay `Log.*` trực tiếp. Debug: `Timber.d(...)`, Warning+: `Timber.w(...)`.

@@ -24,8 +24,8 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 
 ## 3. Mốc hiện tại (hiện trạng)
 
-- **Ngày ghi nhận:** 15/04/2026.
-- **Trạng thái hiện tại:** Đã có commit khởi tạo dự án (init project + docs).
+- **Ngày ghi nhận:** 20/04/2026.
+- **Trạng thái hiện tại:** WBS 3.0 (Auth) ✅ và WBS 4.0 (Content) ✅ hoàn thành. Chuẩn bị merge `feature/content-ideas-issues-comments` → `develop`.
 - **Người thực hiện commit init:** **Sỹ**.
 - **Đề xuất commit chuẩn:** `chore(init): bootstrap Android project and project documents`.
 
@@ -181,6 +181,7 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 - Phụ trách chính: Hải.
 - Phụ thuộc: 3.0.
 - Thời gian: 22/04 - 29/04.
+- Ghi chú: ✅ Hoàn thành 20/04/2026. Sản phẩm: MyIdeasScreen, IdeaDetailScreen, tag filter, deep link `redshark://idea/{id}`.
 
 #### 4.1.2 CRUD Idea và trạng thái Idea
 - Sản phẩm bàn giao: tạo/cập nhật/xóa mềm, chuyển trạng thái ACTIVE -> CLOSED/CANCELLED.
@@ -188,6 +189,7 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 - Thành viên phối hợp: Nam.
 - Phụ thuộc: 4.1.1.
 - Thời gian: 23/04 - 30/04.
+- Ghi chú: ✅ Hoàn thành 20/04/2026. Sản phẩm: CreateIdeaScreen, EditIdeaScreen, soft delete (`deletedAt`), ACTIVE→CLOSED/CANCELLED.
 
 ### 4.2 Issue
 #### 4.2.1 Tạo/sửa/xóa Issue theo quyền sở hữu
@@ -196,6 +198,7 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 - Thành viên phối hợp: Nam.
 - Phụ thuộc: 4.1.*.
 - Thời gian: 28/04 - 04/05.
+- Ghi chú: ✅ Hoàn thành 20/04/2026. Sản phẩm: CreateIssueScreen, EditIssueScreen, IssueDetailScreen, assignee picker (dropdown + avatar), soft delete.
 
 #### 4.2.2 Áp dụng ràng buộc tối đa 20 Issue active/user
 - Sản phẩm bàn giao: kiểm tra nghiệp vụ tại use case + server-side validation.
@@ -203,6 +206,7 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 - Thành viên phối hợp: Nam.
 - Phụ thuộc: 4.2.1.
 - Thời gian: 29/04 - 04/05.
+- Ghi chú: ✅ Hoàn thành 20/04/2026. Sản phẩm: CountMyActiveIssuesUseCase, Firestore rules chặn CLOSED→OPEN.
 
 ### 4.3 Comment và Collab Request
 #### 4.3.1 Bình luận trên Idea
@@ -211,6 +215,7 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 - Thành viên phối hợp: Nam.
 - Phụ thuộc: 4.1.1.
 - Thời gian: 30/04 - 04/05.
+- Ghi chú: ✅ Hoàn thành 20/04/2026. Sản phẩm: CommentSection trong IdeaDetailScreen, CreateCommentUseCase (+ COMMENT_ADDED notification), optimistic update.
 
 #### 4.3.2 Gửi yêu cầu cộng tác từ Idea
 - Sản phẩm bàn giao: tạo thông báo `COLLAB_REQUEST`.
@@ -218,6 +223,7 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 - Thành viên phối hợp: Nam.
 - Phụ thuộc: 4.1.1.
 - Thời gian: 30/04 - 04/05.
+- Ghi chú: ❌ Dời sang 5.0 — Collab Request tạo COLLAB_REQUEST notification; phụ thuộc notification infrastructure (WBS 5.1.x).
 
 ## 5.0 Nhóm chức năng Tương tác (Thông báo, Nhắn tin)
 

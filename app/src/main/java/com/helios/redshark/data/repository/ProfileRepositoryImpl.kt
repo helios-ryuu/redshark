@@ -111,4 +111,12 @@ class ProfileRepositoryImpl @Inject constructor(
             is Result.Loading -> Result.Loading
         }
     }
+
+    override suspend fun getUsers(): Result<List<User>> {
+        return when (val result = firestoreSource.getUsers()) {
+            is Result.Success -> Result.Success(result.data.map { it.toDomain() })
+            is Result.Error -> result
+            is Result.Loading -> Result.Loading
+        }
+    }
 }
