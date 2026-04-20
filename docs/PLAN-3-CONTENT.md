@@ -49,11 +49,12 @@
 - `RequestCollabUseCase`
 
 ## 4. Acceptance Criteria
-- [ ] Validate title 3–120, description ≤ 5000
-- [ ] Khi tạo issue vượt quá 20 → toast "Đạt giới hạn 20 issue"
-- [ ] Soft delete không mất dữ liệu trên DB, chỉ ẩn UI
-- [ ] Khi tạo issue, tự gửi notification `ISSUE_CREATED` cho chủ idea
-- [ ] Trạng thái chuyển sai (CLOSED → OPEN) bị chặn client + server
+- [x] Validate title 3–120, description ≤ 5000
+- [x] Khi tạo issue vượt quá 20 → toast "Đạt giới hạn 20 issue"
+- [x] Soft delete không mất dữ liệu trên DB, chỉ ẩn UI
+- [x] Khi tạo issue, tự gửi notification `ISSUE_CREATED` cho chủ idea
+- [x] Trạng thái chuyển sai (CLOSED → OPEN) bị chặn client + server
+- [ ] Gửi Collab Request → dời Phase 5.0 (WBS 5.1.2, tạo COLLAB_REQUEST notification — phụ thuộc notification infrastructure)
 
 ## 5. Phân công theo WBS
 - Phụ trách nhóm nội dung: **Hải** (lập trình chính, chịu trách nhiệm commit chính).
