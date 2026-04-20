@@ -1,87 +1,92 @@
 # TIMELINE.md — Tiến độ dự án
 
-**Thời gian:** 05/04/2026 → 17/05/2026 (6 tuần, 43 ngày).
+**Thời gian:** 16/03/2026 → 17/05/2026 (9 tuần, 63 ngày).
 **Nhóm:** 3 thành viên — **Sỹ (PM)**, **Nam**, **Hải**.
-**Milestone quan trọng:** Trước **20/04/2026** có commit hoàn thiện module **Authentication**.
+**Mốc bắt buộc:**
+- **15/04/2026:** commit khởi tạo dự án (Sỹ).
+- **Trước 21/04/2026:** bắt buộc có ít nhất 1 commit tính năng xác thực.
 
 ## 1. Sơ đồ giai đoạn
 
 ```
-Tuần 1 ─ 05/04 → 11/04 │ Phase 1: Foundation
-Tuần 2 ─ 12/04 → 18/04 │ Phase 2a: Auth core          ◄── Milestone 20/04
-Tuần 3 ─ 19/04 → 25/04 │ Phase 2b Profile + Phase 3a Ideas
-Tuần 4 ─ 26/04 → 02/05 │ Phase 3b: Issues + Comments
-Tuần 5 ─ 03/05 → 09/05 │ Phase 4: Notifications + Messages
-Tuần 6 ─ 10/05 → 17/05 │ Phase 5: QA, cleanup, release
+Tuần 1 ─ 16/03 → 22/03 │ Giai đoạn 0a: Khảo sát & Yêu cầu
+Tuần 2 ─ 23/03 → 29/03 │ Giai đoạn 0b: Kiến trúc & Lược đồ dữ liệu
+Tuần 3 ─ 30/03 → 05/04 │ Giai đoạn 0c: Kế hoạch & Quy trình
+Tuần 4 ─ 06/04 → 12/04 │ Giai đoạn 1: Chuẩn bị nền tảng
+Tuần 5 ─ 13/04 → 20/04 │ Giai đoạn 2a: Lõi xác thực     ◄── Mốc xác thực trước 21/04
+Tuần 6 ─ 21/04 → 27/04 │ Giai đoạn 2b Hồ sơ + 3a Ý tưởng
+Tuần 7 ─ 28/04 → 04/05 │ Giai đoạn 3b: Công việc + Bình luận
+Tuần 8 ─ 05/05 → 11/05 │ Giai đoạn 4: Thông báo + Nhắn tin
+Tuần 9 ─ 12/05 → 17/05 │ Giai đoạn 5: Kiểm thử, dọn dẹp, phát hành
 ```
 
 ## 2. Bảng phân công theo tuần
 
-### Tuần 1 — 05/04 → 11/04 — **Phase 1: Foundation**
+### Tuần 1-4 — 16/03 → 12/04 — **Giai đoạn 0-1: Khảo sát đến chuẩn bị nền tảng**
 
-| Thành viên  | Công việc                                                                                                                                      |
-|-------------|------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Sỹ (PM)** | Lập PROJECT_CHARTER, TIMELINE, PLAN-1; tạo repo GitHub + rule bảo vệ branch; thiết lập Firebase project + R2 bucket; phân quyền team           |
-| **Nam**     | Init Android Studio project (Kotlin + Compose + Hilt); cấu hình `libs.versions.toml`; xây theme (Color, Type, Shape); scaffold navigation      |
-| **Hải**     | Thiết lập baseline build local; tích hợp Firebase SDK + Data Connect SDK generate; smoke test R2 putObject; viết `Result.kt`, `ErrorMapper.kt` |
+| Thành viên  | Công việc                                                                                                                         |
+|-------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| **Sỹ (PM)** | Chủ trì nền tảng: khởi tạo khung Android, kiểm tra biên dịch cục bộ, tích hợp Firebase/FDC/R2, chuẩn hóa GIT/WBS/STRUCTURE/SECRET |
+| **Nam**     | Phối hợp khung giao diện (theme + navigation), rà soát cấu trúc nhóm chức năng và quy ước đặt tên                                 |
+| **Hải**     | Phối hợp kiểm thử tích hợp tầng dữ liệu/lưu trữ, hỗ trợ chuẩn hóa cấu hình và tài liệu kỹ thuật                                   |
 
-### Tuần 2 — 12/04 → 18/04 — **Phase 2a: Authentication** *(milestone 20/04)*
+### Tuần 5 — 13/04 → 20/04 — **Giai đoạn 2a: Xác thực** *(mốc bắt buộc trước 21/04)*
 
-| Thành viên | Công việc                                                                                                                                                            |
-|------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Sỹ**     | Review PR Auth; viết CHECK-1-AUTH; test thủ công TC-A01..TC-A10; tổng hợp báo cáo tuần                                                                               |
-| **Nam**    | UI: `GoogleSignInScreen`, `ProfileSetupScreen`, `AuthViewModel`; navigation auth graph; error dialog                                                                 |
-| **Hải**    | `FirebaseAuthSource`, `AuthRepositoryImpl`; UseCases `SignInGoogleUseCase`, `CompleteFirstProfileUseCase`, `SignOutUseCase`; `GoogleSignInHelper` Credential Manager |
+| Thành viên | Công việc                                                                                                                     |
+|------------|-------------------------------------------------------------------------------------------------------------------------------|
+| **Sỹ**     | Phụ trách nhóm xác thực: triển khai luồng Google Sign-In + hoàn thiện hồ sơ lần đầu; chốt commit mốc `feat(auth)` trước 21/04 |
+| **Nam**    | Phối hợp giao diện xác thực/hồ sơ ban đầu và sơ đồ điều hướng                                                                 |
+| **Hải**    | Phối hợp tầng dữ liệu xác thực (`FirebaseAuthSource`, `AuthRepositoryImpl`) và kiểm tra ràng buộc nghiệp vụ                   |
 
-**🎯 Deadline 20/04/2026:** Commit tag `v0.1.0-auth` — Auth Google-only + hoàn thiện hồ sơ lần đầu + persist session.
+**🎯 Mốc bắt buộc (20/04/2026):** có ít nhất 1 commit `feat(auth): ...` (trước 21/04/2026).
 
-### Tuần 3 — 19/04 → 25/04 — **Phase 2b Profile + Phase 3a Ideas**
+### Tuần 6 — 21/04 → 27/04 — **Giai đoạn 2b Hồ sơ + 3a Ý tưởng**
 
-| Thành viên | Công việc                                                                                                                              |
-|------------|----------------------------------------------------------------------------------------------------------------------------------------|
-| **Sỹ**     | Review + test TC-A11..TC-A20 (Profile/Avatar); cập nhật PROCESS, CHECK; demo tuần                                                      |
-| **Nam**    | UI: `ProfileViewScreen`, `ProfileEditScreen`, `SkillSelect`, `Avatar` composable; `MyIdeasScreen`, `CreateIdeaScreen`, FAB             |
-| **Hải**    | `R2Client` SigV4, `MediaRepositoryImpl`, `UploadAvatarUseCase`, image compressor; `IdeaRepositoryImpl`, CreateIdea/UpdateIdea UseCases |
+| Thành viên | Công việc                                                                                        |
+|------------|--------------------------------------------------------------------------------------------------|
+| **Sỹ**     | Hoàn tất phần Hồ sơ/Ảnh đại diện thuộc nhóm xác thực, rà soát mốc bàn giao sang nhóm nội dung    |
+| **Nam**    | Phối hợp giao diện cho nhóm nội dung: Ý tưởng (`MyIdeas`, `CreateIdea`, `IdeaDetail`)            |
+| **Hải**    | Phụ trách nhóm nội dung: triển khai tầng dữ liệu/ràng buộc nghiệp vụ và hoàn thiện luồng Ý tưởng |
 
-### Tuần 4 — 26/04 → 02/05 — **Phase 3b: Issues + Comments**
+### Tuần 7 — 28/04 → 04/05 — **Giai đoạn 3b: Công việc + Bình luận**
+
+| Thành viên | Công việc                                                                                                                            |
+|------------|--------------------------------------------------------------------------------------------------------------------------------------|
+| **Sỹ**     | Kiểm thử CHECK-2-CONTENT, cập nhật PROCESS-2, theo dõi tiến độ                                                                       |
+| **Nam**    | Phối hợp giao diện cho nhóm nội dung: `IdeaDetailScreen`, `IssueDetailScreen`, `CreateIssueScreen`, `CommentSection`                 |
+| **Hải**    | Phụ trách nhóm nội dung: triển khai tầng dữ liệu/ràng buộc (`IssueRepositoryImpl`, `CommentRepositoryImpl`, kiểm tra máy trạng thái) |
+
+### Tuần 8 — 05/05 → 11/05 — **Giai đoạn 4: Thông báo + Nhắn tin**
 
 | Thành viên | Công việc                                                                                                                |
 |------------|--------------------------------------------------------------------------------------------------------------------------|
-| **Sỹ**     | Test toàn bộ CHECK-2-CONTENT; viết PROCESS-2; điều phối; chuẩn bị mid-project demo                                       |
-| **Nam**    | UI: `IdeaDetailScreen`, `IssueDetailScreen`, `CreateIssueScreen`, `CommentSection`, status dropdown, state machine       |
-| **Hải**    | `IssueRepositoryImpl` với ràng buộc 20 active; `CommentRepositoryImpl`; validation state machine server-side/client-side |
+| **Sỹ**     | Kiểm thử CHECK-3-INTERACTION; cập nhật báo cáo tiến độ                                                                   |
+| **Nam**    | Phụ trách nhóm tương tác: `NotificationRepositoryImpl`, `MessageRepositoryImpl`, `FindOrCreateDirectConversationUseCase` |
+| **Hải**    | Phối hợp giao diện nhóm tương tác (`NotificationList`, `ConversationList`, `ConversationScreen`)                         |
 
-### Tuần 5 — 03/05 → 09/05 — **Phase 4: Notifications + Messages**
+### Tuần 9 — 12/05 → 17/05 — **Giai đoạn 5: Kiểm thử, dọn dẹp, phát hành**
 
-| Thành viên | Công việc |
-|-----------|-----------|
-| **Sỹ** | Test CHECK-3-INTERACTION; kiểm tra business rule Collab Request/Accept; cập nhật báo cáo |
-| **Nam** | UI: `NotificationListScreen` + badge; `ConversationListScreen`, `ConversationScreen`, `ConversationNewScreen`; polling hook |
-| **Hải** | `NotificationRepositoryImpl`, `MessageRepositoryImpl`; `FindOrCreateDirectConversationUseCase`; accept/reject collab logic |
+| Ngày     | Thành viên | Công việc                                                                                         |
+|----------|------------|---------------------------------------------------------------------------------------------------|
+| 12–14/05 | Cả nhóm    | Kiểm thử hồi quy CHECK-1/2/3 trên 3 thiết bị; sửa lỗi mức P0/P1                                   |
+| 15/05    | Sỹ + Nam   | Dọn dẹp kỹ thuật (phụ trách chính: Sỹ) + hoàn thiện giao diện dark mode/empty/error/accessibility |
+| 16/05    | Sỹ + Hải   | Tạo APK ký số; đo hiệu năng/độ ổn định; cập nhật REPORT                                           |
+| 17/05    | Cả nhóm    | Kiểm tra nhanh bản phát hành, gắn nhãn `v1.0.0`, nộp bài và dự phòng hotfix                       |
 
-### Tuần 6 — 10/05 → 17/05 — **Phase 5: QA, Cleanup, Release**
+## 3. Sản phẩm bàn giao theo từng giai đoạn
 
-| Ngày | Thành viên | Công việc |
-|------|-----------|-----------|
-| 10–12/05 | Cả nhóm | Regression test full CHECK-1/2/3 trên 3 thiết bị; fix bug P0/P1 |
-| 13/05 | Hải | Dọn log, xóa file rác, chạy `gitleaks`, rà R8/ProGuard |
-| 14/05 | Nam | Polish UI: dark mode, empty/error state, accessibility |
-| 15/05 | Sỹ | Generate signed APK; viết REPORT.md phần kết quả; slide demo |
-| 16/05 | Cả nhóm | Smoke test APK release; tag `v1.0.0`; upload GitHub Release |
-| 17/05 | Sỹ | Nộp bài; dự phòng hotfix |
+WBS tham chiếu: [WBS.md](WBS.md) (đối chiếu tuần triển khai với các nhóm công việc 1.0-7.0).
 
-## 3. Deliverables từng tuần
+| Giai đoạn | Sản phẩm bàn giao                                                         |
+|-----------|---------------------------------------------------------------------------|
+| Tuần 1-4  | Bộ tài liệu nền + cấu hình môi trường + chuẩn kiến trúc                   |
+| Tuần 5    | Commit khởi tạo (15/04) + ít nhất 1 commit tính năng xác thực trước 21/04 |
+| Tuần 6    | Hồ sơ + Ý tưởng CRUD                                                      |
+| Tuần 7    | Công việc + Bình luận CRUD, máy trạng thái                                |
+| Tuần 8    | Thông báo + Nhắn tin                                                      |
+| Tuần 9    | APK phát hành đã ký số + báo cáo + slide                                  |
 
-| Tuần | Deliverable |
-|------|-------------|
-| 1 | Repo có scaffold, baseline build local, Firebase/R2 kết nối |
-| 2 | APK debug có Auth Google-only + hoàn thiện hồ sơ lần đầu, tag `v0.1.0-auth` |
-| 3 | Profile + Ideas CRUD |
-| 4 | Issues + Comments CRUD, state machine |
-| 5 | Notifications + Messages |
-| 6 | APK release signed + báo cáo + slide |
+## 4. Vùng đệm rủi ro
 
-## 4. Risk buffer
-
-- Mỗi Phase có **1 ngày buffer** cuối tuần cho fix bug.
-- Nếu Milestone 20/04 trượt: giữ Google Sign-In + persist session, dời avatar polish sang Phase 3.
+- Mỗi giai đoạn có tối thiểu **1 ngày dự phòng** để sửa lỗi.
+- Nếu mốc xác thực trước 21/04 có rủi ro: ưu tiên Google Sign-In + duy trì phiên đăng nhập + hoàn thiện hồ sơ lần đầu (`displayName` 3..50), dời các phần hoàn thiện không bắt buộc sang Tuần 6.

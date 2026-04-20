@@ -1,9 +1,14 @@
-# PLAN-2-AUTH.md — Phase 2: Authentication & Profile
+# PLAN-2-AUTH.md — Giai đoạn 2: Xác thực và Hồ sơ
 
-**Thời gian:** 12/04/2026 – 20/04/2026 (Tuần 2 + đầu Tuần 3)
-**Mốc Milestone:** Commit hoàn thiện module Authentication trước **20/04/2026**.
+**Thời gian:** 16/04/2026 – 21/04/2026 (giai đoạn chuyển tiếp sau init)
+**Mốc quan trọng:** Bắt buộc có ít nhất 1 commit tính năng xác thực trước **21/04/2026** (chậm nhất 20/04/2026).
+**WBS tham chiếu:** [WBS.md](WBS.md) — nhóm công việc `3.0`.
 
-## 1. Phạm vi tính năng
+**Phân công theo WBS:**
+- Phụ trách nhóm xác thực và hồ sơ: **Sỹ** (lập trình chính, chịu trách nhiệm commit chính).
+- Thành viên phối hợp: **Nam**, **Hải**.
+
+## 1. Phạm vi chức năng
 - Đăng nhập Google (One-Tap / GIS)
 - Hoàn thiện hồ sơ lần đầu (bắt buộc `displayName` 3..50)
 - Đăng xuất

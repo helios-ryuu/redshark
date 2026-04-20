@@ -1,4 +1,6 @@
-# CHECK-2-CONTENT.md — Manual Test: Ideas, Issues, Comments
+# CHECK-2-CONTENT.md — Kiểm thử thủ công: Ý tưởng, Công việc, Bình luận
+
+WBS tham chiếu: [WBS.md](WBS.md) — kiểm thử cho nhóm công việc `4.0`.
 
 | ID     | Chức năng                        | Các bước                                                | Kết quả mong đợi                                             | Trạng thái |
 |--------|----------------------------------|---------------------------------------------------------|--------------------------------------------------------------|------------|

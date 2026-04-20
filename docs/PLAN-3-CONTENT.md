@@ -1,7 +1,8 @@
-# PLAN-3-CONTENT.md — Phase 3: Ideas, Issues, Comments
+# PLAN-3-CONTENT.md — Giai đoạn 3: Ý tưởng, Công việc, Bình luận
 
-**Thời gian:** 21/04/2026 – 30/04/2026 (Tuần 3 + Tuần 4)
+**Thời gian:** 22/04/2026 – 04/05/2026 (giai đoạn Content)
 **Mục tiêu:** Hoàn thiện toàn bộ nghiệp vụ cốt lõi (nội dung) của app.
+**WBS tham chiếu:** [WBS.md](WBS.md) — nhóm công việc `4.0`.
 
 ## 1. Tính năng
 ### Ideas
@@ -52,7 +53,7 @@
 - [ ] Khi tạo issue, tự gửi notification `ISSUE_CREATED` cho chủ idea
 - [ ] Trạng thái chuyển sai (CLOSED → OPEN) bị chặn client + server
 
-## 5. Phân công gợi ý
-- Nam: UI + ViewModel (Home, Ideas, Issues, Comments)
-- Hải: Repository + FDC mutations + validation logic
-- Sỹ: review PR, test case, cập nhật docs
+## 5. Phân công theo WBS
+- Phụ trách nhóm nội dung: **Hải** (lập trình chính, chịu trách nhiệm commit chính).
+- Nam: phối hợp UI + ViewModel cho Ideas/Issues/Comments.
+- Sỹ: phối hợp review, kiểm thử, cập nhật tài liệu liên quan.

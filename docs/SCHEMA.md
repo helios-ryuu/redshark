@@ -32,7 +32,7 @@ Mọi bảng đều dùng `id: UUID` làm PK (ngoại trừ `users` dùng `auth.
 | collaboratorIds | String[]     | FK   | → `users.id`                                | Medium   |
 | createdAt       | Timestamp    |      | default `request.time`                      | Strong   |
 | updatedAt       | Timestamp    |      | auto-update                                 | Strong   |
-| deletedAt       | Timestamp    |      | NULL → chưa xóa; soft delete                | Strong   |
+| deletedAt       | Timestamp    |      | NULL → chưa xóa; xóa mềm                    | Strong   |
 
 ---
 

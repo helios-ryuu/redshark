@@ -1,25 +1,30 @@
-# PLAN-4-INTERACTION.md — Phase 4: Notifications & Messages
+# PLAN-4-INTERACTION.md — Giai đoạn 4: Thông báo và Nhắn tin
 
-**Thời gian:** 01/05/2026 – 10/05/2026 (Tuần 5)
-**Mục tiêu:** Hoàn thiện nhóm tính năng tương tác giữa user.
+**Thời gian:** 05/05/2026 – 11/05/2026 (giai đoạn tương tác)
+**Mục tiêu:** Hoàn thiện nhóm tính năng tương tác giữa người dùng.
+**WBS tham chiếu:** [WBS.md](WBS.md) — nhóm công việc `5.0`.
+
+**Phân công theo WBS:**
+- Phụ trách nhóm tương tác: **Nam** (lập trình chính, chịu trách nhiệm commit chính).
+- Thành viên phối hợp: **Hải**, **Sỹ**.
 
 ## 1. Tính năng
-### Notifications
-- Tab Notifications + badge số chưa đọc trên BottomNav
-- Poll mỗi 30s hoặc refresh-on-focus (chưa tích hợp FCM)
+### Thông báo
+- Tab Notifications + huy hiệu số chưa đọc trên BottomNav
+- Cập nhật theo chu kỳ mỗi 30 giây hoặc làm mới khi ứng dụng quay lại vùng nhìn (chưa tích hợp FCM)
 - Các loại:
-  - `ISSUE_CREATED` — idea owner nhận khi có issue mới
-  - `COLLAB_REQUEST` — idea owner nhận yêu cầu tham gia
-  - `COLLAB_ACCEPTED` / `COLLAB_REJECTED` — requester nhận phản hồi
-  - `COMMENT` — idea owner nhận khi có comment
-- Nút Accept / Reject collab request → cập nhật `ideas.collaboratorIds`
+  - `ISSUE_CREATED` — chủ ý tưởng nhận khi có công việc mới
+  - `COLLAB_REQUEST` — chủ ý tưởng nhận yêu cầu tham gia
+  - `COLLAB_ACCEPTED` / `COLLAB_REJECTED` — người gửi yêu cầu nhận phản hồi
+  - `COMMENT` — chủ ý tưởng nhận khi có bình luận
+- Nút Chấp nhận / Từ chối yêu cầu cộng tác -> cập nhật `ideas.collaboratorIds`
 
-### Messages (DIRECT 1-1)
+### Nhắn tin (DIRECT 1-1)
 - Tab Messages: danh sách hội thoại sắp theo `lastMessageAt`
-- Màn hình Conversation: list message, input gửi tin
-- Tạo conversation từ Profile (nút "Nhắn tin")
+- Màn hình Conversation: danh sách tin nhắn và ô nhập liệu
+- Tạo hội thoại từ hồ sơ người dùng (nút "Nhắn tin")
   - `FindDirectConversation(peerId)` → nếu null, `CreateDirectConversation(peerId)`
-- Auto poll mỗi 5s khi màn hình mở (chưa dùng realtime)
+- Tự cập nhật theo chu kỳ mỗi 5 giây khi màn hình đang mở (chưa dùng thời gian thực)
 
 ## 2. Màn hình
 | Route                      | Screen                                   |
@@ -29,15 +34,15 @@
 | `conversation/{id}`        | `ConversationScreen`                     |
 | `conversation/new?peerId=` | `ConversationNewScreen` (redirect logic) |
 
-## 3. UseCases
+## 3. Ca sử dụng
 - `GetNotificationsUseCase`, `MarkNotificationReadUseCase`
 - `AcceptCollabUseCase`, `RejectCollabUseCase`
 - `GetConversationsUseCase`
 - `GetMessagesUseCase`, `SendMessageUseCase`
 - `FindOrCreateDirectConversationUseCase`
 
-## 4. Acceptance Criteria
-- [ ] Badge notification cập nhật khi mark read
-- [ ] Gửi message → hiện ngay trong list (optimistic update)
-- [ ] Không tạo trùng conversation DIRECT giữa 2 user
-- [ ] Accept collab → user được thêm vào `collaboratorIds`, requester nhận `COLLAB_ACCEPTED`
+## 4. Tiêu chí chấp nhận
+- [ ] Huy hiệu thông báo cập nhật khi đánh dấu đã đọc
+- [ ] Gửi tin nhắn -> hiển thị ngay trong danh sách (cập nhật lạc quan)
+- [ ] Không tạo trùng hội thoại DIRECT giữa 2 người dùng
+- [ ] Chấp nhận cộng tác -> người dùng được thêm vào `collaboratorIds`, người gửi yêu cầu nhận `COLLAB_ACCEPTED`

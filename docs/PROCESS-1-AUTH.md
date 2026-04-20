@@ -1,20 +1,22 @@
-# PROCESS-1-AUTH.md — Quy trình nghiệp vụ: Auth & Profile
+# PROCESS-1-AUTH.md — Quy trình nghiệp vụ: Xác thực và Hồ sơ
+
+WBS tham chiếu: [WBS.md](WBS.md) — nhóm công việc `3.0`.
 
 ## 1. Đăng nhập Google
 
-| Bước | UI tương tác                         | Service gọi                                                            | Bảng/Thuộc tính ảnh hưởng                                |
+| Bước | Tương tác giao diện                   | Dịch vụ được gọi                                                       | Bảng/thuộc tính ảnh hưởng                                |
 |------|--------------------------------------|------------------------------------------------------------------------|----------------------------------------------------------|
 | 1    | `AuthScreen` → "Tiếp tục với Google" | `GoogleSignInHelper.requestCredential()`                               | —                                                        |
-| 2    | User chọn tài khoản                  | Google trả `idToken`                                                   | —                                                        |
+| 2    | Người dùng chọn tài khoản            | Google trả `idToken`                                                   | —                                                        |
 | 3    | Đổi credential                       | `GoogleAuthProvider.getCredential(idToken)` → `signInWithCredential()` | Firebase Auth                                            |
 | 4    | Sau khi Firebase trả UID             | `DataConnectSource.upsertUser(uid, email, displayName?)`               | Insert/Update `users(id, email, displayName, createdAt)` |
 | 5    | `onAuthStateChanged` fire            | `GetMe` query                                                          | Select `users` where id = auth.uid                       |
-| 6    | Nếu thiếu `displayName` hợp lệ       | Navigate `profile/setup`                                               | —                                                        |
-| 7    | Nếu profile đã hợp lệ                | Navigate `home`                                                        | —                                                        |
+| 6    | Nếu thiếu `displayName` hợp lệ       | Điều hướng tới `profile/setup`                                         | —                                                        |
+| 7    | Nếu hồ sơ đã hợp lệ                  | Điều hướng tới `home`                                                  | —                                                        |
 
 ## 2. Hoàn thiện hồ sơ lần đầu
 
-| Bước | UI                                           | Service                                                      | Bảng                                    |
+| Bước | Giao diện                                     | Dịch vụ                                                     | Bảng                                    |
 |------|----------------------------------------------|--------------------------------------------------------------|-----------------------------------------|
 | 1    | `ProfileSetupScreen` hiện sau login đầu tiên | —                                                            | —                                       |
 | 2    | User nhập `displayName` (3..50 ký tự)        | Client validate độ dài + trim                                | —                                       |
@@ -24,7 +26,7 @@
 
 ## 3. Upload Avatar (R2)
 
-| Bước | UI                               | Service                                                         | Bảng/Storage                          |
+| Bước | Giao diện                         | Dịch vụ                                                         | Bảng/lưu trữ                          |
 |------|----------------------------------|-----------------------------------------------------------------|---------------------------------------|
 | 1    | `ProfileEditScreen` → pick image | `ImagePicker` (system)                                          | —                                     |
 | 2    | Nén ảnh                          | `ImageCompressor.compress(maxMB=1, 512x512)`                    | —                                     |
