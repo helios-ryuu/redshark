@@ -3,12 +3,14 @@
 **Thời gian:** 16/04/2026 – 21/04/2026 (giai đoạn chuyển tiếp sau init)
 **Mốc quan trọng:** Bắt buộc có ít nhất 1 commit tính năng xác thực trước **21/04/2026** (chậm nhất 20/04/2026).
 **WBS tham chiếu:** [WBS.md](WBS.md) — nhóm công việc `3.0`.
+**Trạng thái:** 🔄 Đang triển khai — `feature/auth-google-signin` (16/04/2026)
 
 **Phân công theo WBS:**
 - Phụ trách nhóm xác thực và hồ sơ: **Sỹ** (lập trình chính, chịu trách nhiệm commit chính).
 - Thành viên phối hợp: **Nam**, **Hải**.
 
 > **Tiền điều kiện:** Tạo nhánh `develop` từ `main` trước khi mở `feature/auth-*`. Xem hướng dẫn tại [GIT.md — Thiết lập nhánh develop ban đầu](GIT.md).
+> ✅ Nhánh `develop` đã tạo và `feature/auth-google-signin` đã mở từ `develop` ngày 16/04/2026.
 
 ## 0. Phụ thuộc cần bổ sung vào `libs.versions.toml`
 
@@ -122,12 +124,31 @@ ProfileEditScreen → pick image
 ```
 
 ## 5. Acceptance Criteria
+
+> Trạng thái kiểm tra thủ công tính đến 16/04/2026:
+
 - [ ] Đăng nhập Google trên emulator (thêm SHA-1 debug vào Firebase)
-- [ ] Login lần đầu thiếu `displayName` → bắt buộc vào `profile/setup`
-- [ ] `displayName` chỉ chấp nhận 3..50 ký tự
-- [ ] `onAuthStateChanged` persist qua restart app
-- [ ] Avatar hiển thị sau upload (R2 public URL hoặc presigned)
-- [ ] Không lộ token đăng nhập trong logcat release
+- [x] Login lần đầu thiếu `displayName` → bắt buộc vào `profile/setup` — logic trong `AuthViewModel`
+- [x] `displayName` chỉ chấp nhận 3..50 ký tự — validate trong `CompleteFirstProfileUseCase` + UI
+- [x] `onAuthStateChanged` persist qua restart app — `FirebaseAuthSource.observeAuthState()` + DataStore
+- [ ] Avatar hiển thị sau upload (R2 public URL hoặc presigned) — R2 upload chưa implement
+- [x] Không lộ token đăng nhập trong logcat release — `Timber.DebugTree` chỉ plant trong DEBUG
+
+### Tiến độ triển khai (16/04/2026)
+- [x] `libs.versions.toml` — bổ sung Hilt, KSP, Navigation, Credentials, Firebase, DataStore, Timber, OkHttp
+- [x] `RedSharkApp.kt` — `@HiltAndroidApp` + Timber setup
+- [x] `core/util/Result.kt`, `core/error/AppException.kt`, `core/error/ErrorMapper.kt`
+- [x] `core/di/` — AppModule, FirebaseModule, R2Module, RepositoryModule
+- [x] `domain/model/User.kt`
+- [x] `domain/repository/AuthRepository.kt`, `ProfileRepository.kt`
+- [x] `domain/usecase/auth/` — 4 use cases (SignIn, Observe, SignOut, CompleteFirstProfile)
+- [x] `data/remote/firebase/FirebaseAuthSource.kt`, `GoogleSignInHelper.kt` (One Tap + fallback)
+- [x] `data/repository/AuthRepositoryImpl.kt`, `ProfileRepositoryImpl.kt`
+- [x] `data/local/datastore/UserPreferences.kt`
+- [x] `ui/navigation/Routes.kt`, `NavGraph.kt`
+- [x] `ui/feature/auth/GoogleSignInScreen.kt`, `ProfileSetupScreen.kt`, `AuthViewModel.kt`
+- [x] Unit tests: `SignInGoogleUseCaseTest`, `ObserveAuthStateUseCaseTest`, `CompleteFirstProfileUseCaseTest`, `SignOutUseCaseTest`
+- [ ] Profile edit + avatar upload (giai đoạn tiếp theo)
 
 ## 6. Rủi ro / Mitigation
 - **Google Sign-In SHA-1:** test debug + release keystore

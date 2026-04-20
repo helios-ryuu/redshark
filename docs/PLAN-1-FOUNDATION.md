@@ -107,6 +107,6 @@ docs: update SCHEMA with notifications table
 ## 3. Tiêu chí hoàn thành
 - [x] `./gradlew assembleDebug` xanh
 - [x] `docs/README.md` có mục lục tài liệu dự án
-- [ ] Lint 0 warning nghiêm trọng — kiểm tra khi chạy `./gradlew lint`
+- [x] Lint 0 warning nghiêm trọng — xác nhận 16/04/2026
 - [x] Commit khởi tạo `chore(init)` đã có trên `main` (15/04/2026)
-- [ ] Nhánh `develop` được tạo từ `main` và push lên remote — **việc đầu tiên của giai đoạn 2**
+- [x] Nhánh `develop` được tạo từ `main` và push lên remote — hoàn tất 16/04/2026
