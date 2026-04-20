@@ -8,6 +8,65 @@
 - Phụ trách nhóm xác thực và hồ sơ: **Sỹ** (lập trình chính, chịu trách nhiệm commit chính).
 - Thành viên phối hợp: **Nam**, **Hải**.
 
+> **Tiền điều kiện:** Tạo nhánh `develop` từ `main` trước khi mở `feature/auth-*`. Xem hướng dẫn tại [GIT.md — Thiết lập nhánh develop ban đầu](GIT.md).
+
+## 0. Phụ thuộc cần bổ sung vào `libs.versions.toml`
+
+Giai đoạn 1 chỉ cấu hình Compose cơ bản. Trước khi bắt đầu code auth, cần bổ sung:
+
+```toml
+[versions]
+# Đã có:
+# agp, kotlin, composeBom, coreKtx, lifecycleRuntimeKtx, activityCompose
+
+# Bổ sung mới:
+hilt            = "2.56.1"
+ksp             = "2.3.20-2.0.1"            # phải khớp kotlin version
+navigationCompose = "2.9.0"
+lifecycleViewModel = "2.10.0"
+credentialsAuth = "1.5.0"
+googleid        = "1.1.1"
+firebaseBom     = "33.13.0"
+timber          = "5.0.1"
+okhttp          = "4.12.0"
+
+[libraries]
+# Hilt
+hilt-android           = { group = "com.google.dagger", name = "hilt-android",           version.ref = "hilt" }
+hilt-compiler          = { group = "com.google.dagger", name = "hilt-android-compiler",  version.ref = "hilt" }
+hilt-navigation-compose = { group = "androidx.hilt",   name = "hilt-navigation-compose", version = "1.2.0" }
+
+# Navigation
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+
+# ViewModel
+androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewModel" }
+
+# Credential Manager (Google Sign-In)
+androidx-credentials            = { group = "androidx.credentials", name = "credentials",                    version.ref = "credentialsAuth" }
+androidx-credentials-play       = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentialsAuth" }
+googleid                        = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
+
+# Firebase (dùng BoM để đồng bộ version)
+firebase-bom  = { group = "com.google.firebase", name = "firebase-bom",  version.ref = "firebaseBom" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
+
+# Logging
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
+
+# OkHttp (R2 upload — SigV4)
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+
+[plugins]
+# Bổ sung mới:
+kotlin-android  = { id = "org.jetbrains.kotlin.android",   version.ref = "kotlin" }
+hilt-android    = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+ksp             = { id = "com.google.devtools.ksp",        version.ref = "ksp" }
+google-services = { id = "com.google.gms.google-services", version = "4.4.2" }
+```
+
+> **Lưu ý:** Firebase Data Connect Android SDK (cho `dataconnect:sdk:generate`) được thêm ở giai đoạn tích hợp FDC, không cần ngay cho auth cơ bản.
+
 ## 1. Phạm vi chức năng
 - Đăng nhập Google (One-Tap / GIS)
 - Hoàn thiện hồ sơ lần đầu (bắt buộc `displayName` 3..50)

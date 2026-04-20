@@ -9,12 +9,12 @@
 - Thành viên phối hợp: **Nam**, **Hải**.
 
 ## 1. Sản phẩm bàn giao
-- [ ] Dự án Android Studio khởi tạo, biên dịch thành công (`./gradlew assembleDebug`)
-- [ ] Cấu trúc thư mục tuân thủ [STRUCTURE.md](STRUCTURE.md)
-- [ ] Firebase Auth + Data Connect SDK kết nối thành công (ping `GetMe`)
-- [ ] Cloudflare R2 upload thử nghiệm thành công 1 file
-- [ ] Tài liệu quy ước mã nguồn được commit
-- [ ] Hoàn tất kiểm tra biên dịch cục bộ, kế hoạch CI tách sang giai đoạn sau
+- [x] Dự án Android Studio khởi tạo, biên dịch thành công (`./gradlew assembleDebug`) — commit `chore(init)` ngày 15/04
+- [x] Cấu trúc thư mục tuân thủ [STRUCTURE.md](STRUCTURE.md) — scaffold đã được commit
+- [x] Tài liệu quy ước mã nguồn được commit — toàn bộ `docs/` đã có trên `main`
+- [x] Hoàn tất kiểm tra biên dịch cục bộ — Compose cơ bản build thành công
+- [ ] Firebase Auth + Data Connect SDK kết nối thành công (ping `GetMe`) — **chuyển sang giai đoạn 2**
+- [ ] Cloudflare R2 upload thử nghiệm thành công 1 file — **chuyển sang giai đoạn 2**
 
 ## 2. Công việc chi tiết
 
@@ -24,16 +24,18 @@
 - Gradle Kotlin DSL, version catalog `libs.versions.toml`
 - Bật Compose, Coroutines
 
-### 2.2 Phụ thuộc chính
+### 2.2 Phụ thuộc giai đoạn 1 (đã có trong `libs.versions.toml`)
 ```toml
 [versions]
 agp = "9.1.1"
 kotlin = "2.3.20"
-compose-bom = "2026.03.01"
-core-ktx = "1.18.0"
-lifecycle-runtime-ktx = "2.10.0"
-activity-compose = "1.13.0"
+composeBom = "2026.03.01"
+coreKtx = "1.18.0"
+lifecycleRuntimeKtx = "2.10.0"
+activityCompose = "1.13.0"
 ```
+
+> Các phụ thuộc cho Hilt, Firebase, Credential Manager, Navigation-Compose và R2 (OkHttp) sẽ được bổ sung vào `libs.versions.toml` tại đầu giai đoạn 2. Xem chi tiết tại [PLAN-2-AUTH.md](PLAN-2-AUTH.md).
 
 ### 2.3 Mẫu kiến trúc chuẩn dự án
 
@@ -84,7 +86,7 @@ Chuỗi lệnh đang dùng để xác nhận dự án sẵn sàng phát triển 
 | Resource (XML)    | lowercase_snake        | `ic_arrow_back.xml`, `color_primary`  |
 
 **Formatting:**
-- Dùng `ktlint` + `detekt` (fail build khi violation)
+- Mục tiêu: `ktlint` + `detekt` (fail build khi violation) — **chưa cấu hình, sẽ bổ sung ở giai đoạn 5**
 - Line length ≤ 120
 - 4 space indent, không tab
 - Trailing comma bật
@@ -103,7 +105,8 @@ docs: update SCHEMA with notifications table
 ```
 
 ## 3. Tiêu chí hoàn thành
-- [ ] `./gradlew assembleDebug` xanh
-- [ ] README.md có hướng dẫn thiết lập < 10 bước
-- [ ] Lint 0 warning nghiêm trọng
-- [ ] Đã hợp nhất PR `chore: scaffold project`
+- [x] `./gradlew assembleDebug` xanh
+- [x] `docs/README.md` có mục lục tài liệu dự án
+- [ ] Lint 0 warning nghiêm trọng — kiểm tra khi chạy `./gradlew lint`
+- [x] Commit khởi tạo `chore(init)` đã có trên `main` (15/04/2026)
+- [ ] Nhánh `develop` được tạo từ `main` và push lên remote — **việc đầu tiên của giai đoạn 2**

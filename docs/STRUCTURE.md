@@ -174,16 +174,33 @@ redshark/
 - **Responsibility:** Gọi API, cache, parse DTO → Domain model.
 - **Không phụ thuộc** lên domain/ui.
 - Gồm: `remote/firebase/*`, `remote/r2/*`, `local/*`, `repository/*Impl.kt`, `mapper/*`.
+- Mọi hàm public trong `*RepositoryImpl` trả về `Flow<Result<T>>` hoặc `Result<T>` (từ `core/util/Result.kt`).
 
 ### Domain Layer
 - **Responsibility:** Business logic thuần, use cases single-responsibility.
 - **Pure Kotlin**, không import `android.*` hay `firebase.*`.
 - Chỉ khai báo **interface** `Repository`; impl thuộc về Data layer.
+- Use case expose `Flow<Result<T>>` hoặc `suspend fun invoke(): Result<T>`.
 
 ### UI Layer
 - **Responsibility:** Jetpack Compose UI + `ViewModel` (MVVM).
 - State flow: `ViewModel` expose `StateFlow<UiState>`; Composable `collectAsStateWithLifecycle()`.
 - Navigation: single-activity, Compose Navigation, route strings trong `Routes.kt`.
+- Polling dùng `viewModelScope.launch { while (isActive) { delay(...); refresh() } }`, không dùng `rememberCoroutineScope` cho tác vụ nền.
+
+### Logging
+- Dùng **Timber** thay `Log.*` trực tiếp. Debug: `Timber.d(...)`, Warning+: `Timber.w(...)`.
+- Release build chỉ plant `ReleaseTree` (log WARN+, không log token/email).
+
+### `core/util/Result.kt`
+```kotlin
+sealed class Result<out T> {
+    data class Success<T>(val data: T) : Result<T>()
+    data class Error(val exception: AppException) : Result<Nothing>()
+    object Loading : Result<Nothing>()
+}
+```
+Đây là kiểu trả về chuẩn cho toàn bộ repository và use case trong dự án.
 
 ## Quy ước đặt tên
 
