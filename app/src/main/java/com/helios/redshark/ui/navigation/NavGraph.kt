@@ -1,19 +1,34 @@
 package com.helios.redshark.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.helios.redshark.ui.feature.auth.AuthViewModel
 import com.helios.redshark.ui.feature.auth.GoogleSignInScreen
 import com.helios.redshark.ui.feature.auth.ProfileSetupScreen
 import com.helios.redshark.ui.feature.home.HomeScreen
+import com.helios.redshark.ui.feature.profile.ProfileEditScreen
+import com.helios.redshark.ui.feature.profile.ProfileViewScreen
+import com.helios.redshark.ui.feature.settings.SettingsScreen
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
     startDestination: String = Routes.AUTH_GOOGLE,
 ) {
+    // Shared AuthViewModel to read current user id in profile screens
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val authState by authViewModel.uiState.collectAsStateWithLifecycle()
+    val currentUserId = authState.user?.id
+
     NavHost(navController = navController, startDestination = startDestination) {
+
         composable(Routes.AUTH_GOOGLE) {
             GoogleSignInScreen(
                 onNavigateToHome = {
@@ -26,6 +41,7 @@ fun NavGraph(
                 },
             )
         }
+
         composable(Routes.PROFILE_SETUP) {
             ProfileSetupScreen(
                 onNavigateToHome = {
@@ -35,9 +51,51 @@ fun NavGraph(
                 },
             )
         }
+
         composable(Routes.HOME) {
             HomeScreen(
+                currentUserId = currentUserId,
+                onNavigateToProfile = { userId ->
+                    navController.navigate(Routes.profileView(userId))
+                },
+                onNavigateToSettings = {
+                    navController.navigate(Routes.SETTINGS)
+                },
                 onSignOut = {
+                    navController.navigate(Routes.AUTH_GOOGLE) {
+                        popUpTo(Routes.HOME) { inclusive = true }
+                    }
+                },
+            )
+        }
+
+        composable(
+            route = Routes.PROFILE_VIEW,
+            arguments = listOf(navArgument("userId") { type = NavType.StringType }),
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: return@composable
+            ProfileViewScreen(
+                userId = userId,
+                currentUserId = currentUserId,
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToEdit = {
+                    navController.navigate(Routes.PROFILE_EDIT)
+                },
+            )
+        }
+
+        composable(Routes.PROFILE_EDIT) {
+            val userId = currentUserId ?: return@composable
+            ProfileEditScreen(
+                userId = userId,
+                onNavigateBack = { navController.popBackStack() },
+            )
+        }
+
+        composable(Routes.SETTINGS) {
+            SettingsScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onSignedOut = {
                     navController.navigate(Routes.AUTH_GOOGLE) {
                         popUpTo(Routes.HOME) { inclusive = true }
                     }
