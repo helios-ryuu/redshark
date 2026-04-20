@@ -79,6 +79,19 @@ class FirestoreSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun getUsers(): Result<List<UserDto>> {
+        return try {
+            val snapshot = users.get().await()
+            val list = snapshot.documents.mapNotNull { doc ->
+                doc.toObject(UserDto::class.java)?.copy(id = doc.id)
+            }
+            Result.Success(list)
+        } catch (e: Exception) {
+            Timber.w(e, "Firestore: getUsers failed")
+            Result.Error(AppException.UnknownException(e.message ?: "Failed to get users", e))
+        }
+    }
+
     override suspend fun updateAvatarUrl(userId: String, avatarUrl: String): Result<UserDto> {
         return try {
             users.document(userId).update(mapOf(

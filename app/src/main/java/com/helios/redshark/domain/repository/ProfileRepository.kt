@@ -9,4 +9,5 @@ interface ProfileRepository {
     suspend fun uploadAvatar(userId: String, imageBytes: ByteArray, mimeType: String): Result<String>
     suspend fun updateAvatarUrl(userId: String, avatarUrl: String): Result<User>
     suspend fun getProfile(userId: String): Result<User>
+    suspend fun getUsers(): Result<List<User>>
 }
