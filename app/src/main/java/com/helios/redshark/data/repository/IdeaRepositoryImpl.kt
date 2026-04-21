@@ -149,4 +149,23 @@ class IdeaRepositoryImpl @Inject constructor(
             throw AppException.NetworkException(e)
         }
     }
+
+    override suspend fun addCollaborator(id: UUID, collaboratorId: String): Idea {
+        if (!networkChecker.isOnline()) throw AppException.NetworkException()
+        return try {
+            ideas.document(id.toString()).update(
+                mapOf(
+                    "collaboratorIds" to FieldValue.arrayUnion(collaboratorId),
+                    "updatedAt" to FieldValue.serverTimestamp(),
+                )
+            ).await()
+            val doc = ideas.document(id.toString()).get().await()
+            doc.toObject(IdeaDto::class.java)?.copy(id = doc.id)?.toDomain()
+                ?: throw AppException.UnknownException()
+        } catch (e: AppException) {
+            throw e
+        } catch (e: Exception) {
+            throw AppException.NetworkException(e)
+        }
+    }
 }

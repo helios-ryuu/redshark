@@ -14,6 +14,7 @@ import com.helios.redshark.domain.usecase.idea.GetIdeaDetailUseCase
 import com.helios.redshark.domain.usecase.idea.SoftDeleteIdeaUseCase
 import com.helios.redshark.domain.usecase.idea.UpdateIdeaStatusUseCase
 import com.helios.redshark.domain.usecase.issue.GetIssuesByIdeaUseCase
+import com.helios.redshark.domain.usecase.notification.RequestCollabUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,6 +36,8 @@ data class IdeaDetailUiState(
     val commentSubmitState: CommentSubmitState = CommentSubmitState.Idle,
     val statusUpdateError: String? = null,
     val errorMessage: String? = null,
+    val isRequestingCollab: Boolean = false,
+    val collabRequestSent: Boolean = false,
     /** TC-C22: true while a retry attempt is in flight. */
     val isRetrying: Boolean = false,
     val navigateBack: Boolean = false,
@@ -55,6 +58,7 @@ class IdeaDetailViewModel @Inject constructor(
     private val createCommentUseCase: CreateCommentUseCase,
     private val softDeleteIdeaUseCase: SoftDeleteIdeaUseCase,
     private val updateIdeaStatusUseCase: UpdateIdeaStatusUseCase,
+    private val requestCollabUseCase: RequestCollabUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(IdeaDetailUiState())
@@ -70,7 +74,8 @@ class IdeaDetailViewModel @Inject constructor(
                     it.copy(
                         idea = idea,
                         isLoadingIdea = false,
-                        isCurrentUserAuthor = idea.authorId == currentUserId
+                        isCurrentUserAuthor = idea.authorId == currentUserId,
+                        collabRequestSent = false,
                     )
                 }
             } catch (e: AppException) {
@@ -184,6 +189,30 @@ class IdeaDetailViewModel @Inject constructor(
                 _uiState.update { it.copy(navigateBack = true) }
             } catch (e: AppException) {
                 _uiState.update { it.copy(errorMessage = e.message) }
+            }
+        }
+    }
+
+    fun requestCollab(ideaId: UUID, currentUserId: String) {
+        if (_uiState.value.isRequestingCollab || _uiState.value.collabRequestSent) return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isRequestingCollab = true, errorMessage = null) }
+            try {
+                requestCollabUseCase(ideaId, currentUserId)
+                _uiState.update {
+                    it.copy(
+                        isRequestingCollab = false,
+                        collabRequestSent = true,
+                    )
+                }
+            } catch (e: AppException) {
+                _uiState.update {
+                    it.copy(
+                        isRequestingCollab = false,
+                        errorMessage = e.message,
+                    )
+                }
             }
         }
     }

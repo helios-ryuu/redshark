@@ -10,6 +10,10 @@ service cloud.firestore {
       return request.auth.uid == uid;
     }
 
+    function isParticipant(participantIds) {
+      return request.auth.uid in participantIds;
+    }
+
     match /users/{userId} {
       allow read: if isSignedIn();
       allow write: if isOwner(userId);
@@ -39,6 +43,31 @@ service cloud.firestore {
       allow create: if isSignedIn();
       allow update: if isOwner(resource.data.recipientId);
       allow delete: if false;
+    }
+
+    match /conversations/{conversationId} {
+      // Allow checking deterministic DIRECT ids before creation.
+      allow get: if isSignedIn()
+                 && (!exists(/databases/$(database)/documents/conversations/$(conversationId))
+                     || isParticipant(resource.data.participantIds));
+      allow list: if isSignedIn() && isParticipant(resource.data.participantIds);
+      allow create: if isSignedIn()
+                    && request.resource.data.type == 'DIRECT'
+                    && request.resource.data.participantIds.size() == 2
+                    && isParticipant(request.resource.data.participantIds);
+      allow update: if isSignedIn() && isParticipant(resource.data.participantIds);
+      allow delete: if false;
+    }
+
+    match /messages/{messageId} {
+      allow read: if isSignedIn()
+                  && exists(/databases/$(database)/documents/conversations/$(resource.data.conversationId))
+                  && request.auth.uid in get(/databases/$(database)/documents/conversations/$(resource.data.conversationId)).data.participantIds;
+      allow create: if isSignedIn()
+                    && request.resource.data.senderId == request.auth.uid
+                    && exists(/databases/$(database)/documents/conversations/$(request.resource.data.conversationId))
+                    && request.auth.uid in get(/databases/$(database)/documents/conversations/$(request.resource.data.conversationId)).data.participantIds;
+      allow update, delete: if false;
     }
   }
 }

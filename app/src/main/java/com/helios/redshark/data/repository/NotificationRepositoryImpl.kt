@@ -48,6 +48,24 @@ class NotificationRepositoryImpl @Inject constructor(
         awaitClose { registration.remove() }
     }
 
+    override fun getUnreadCount(): Flow<Int> = callbackFlow {
+        val uid = auth.currentUser?.uid ?: run {
+            close(AppException.UnauthorizedException())
+            return@callbackFlow
+        }
+        val registration = notifications
+            .whereEqualTo("recipientId", uid)
+            .whereEqualTo("isRead", false)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(AppException.NetworkException(error))
+                    return@addSnapshotListener
+                }
+                trySend(snapshot?.size() ?: 0)
+            }
+        awaitClose { registration.remove() }
+    }
+
     override suspend fun create(input: CreateNotificationInput): Notification {
         return try {
             val newId = UUID.randomUUID().toString()

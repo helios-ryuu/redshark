@@ -2,7 +2,7 @@ package com.helios.redshark.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -18,6 +18,10 @@ import com.helios.redshark.ui.feature.auth.AuthViewModel
 import com.helios.redshark.ui.feature.auth.GoogleSignInScreen
 import com.helios.redshark.ui.feature.auth.ProfileSetupScreen
 import com.helios.redshark.ui.feature.home.HomeScreen
+import com.helios.redshark.ui.feature.interaction.message.ConversationListScreen
+import com.helios.redshark.ui.feature.interaction.message.ConversationNewScreen
+import com.helios.redshark.ui.feature.interaction.message.ConversationScreen
+import com.helios.redshark.ui.feature.interaction.notification.NotificationListScreen
 import com.helios.redshark.ui.feature.profile.ProfileEditScreen
 import com.helios.redshark.ui.feature.profile.ProfileViewScreen
 import com.helios.redshark.ui.feature.settings.SettingsScreen
@@ -64,11 +68,6 @@ fun NavGraph(
                 currentUserId = currentUserId,
                 onNavigateToProfile = { userId -> navController.navigate(Routes.profileView(userId)) },
                 onNavigateToSettings = { navController.navigate(Routes.SETTINGS) },
-                onSignOut = {
-                    navController.navigate(Routes.AUTH_GOOGLE) {
-                        popUpTo(Routes.HOME) { inclusive = true }
-                    }
-                },
                 onNavigateToIdeaDetail = { ideaId ->
                     navController.navigate(Routes.ideaDetail(ideaId.toString()))
                 },
@@ -76,6 +75,67 @@ fun NavGraph(
                 onIssueClick = { issueId ->
                     navController.navigate(Routes.issueDetail(issueId.toString()))
                 },
+                onOpenConversation = { conversationId, title ->
+                    navController.navigate(Routes.conversation(conversationId, title))
+                },
+                onCreateConversation = { peerId ->
+                    navController.navigate(Routes.conversationNew(peerId))
+                },
+            )
+        }
+
+        composable(Routes.NOTIFICATIONS) {
+            NotificationListScreen(
+                onOpenConversation = { conversationId ->
+                    navController.navigate(Routes.conversation(conversationId))
+                },
+            )
+        }
+
+        composable(Routes.MESSAGES) {
+            ConversationListScreen(
+                onOpenConversation = { conversationId, title ->
+                    navController.navigate(Routes.conversation(conversationId, title))
+                },
+                onCreateConversation = { peerId ->
+                    navController.navigate(Routes.conversationNew(peerId))
+                },
+                currentUserId = currentUserId,
+            )
+        }
+
+        composable(
+            route = Routes.CONVERSATION_NEW,
+            arguments = listOf(navArgument("peerId") { type = NavType.StringType }),
+        ) { backStackEntry ->
+            val peerId = backStackEntry.arguments?.getString("peerId") ?: return@composable
+            ConversationNewScreen(
+                peerId = peerId,
+                onResolved = { conversationId ->
+                    navController.navigate(Routes.conversation(conversationId)) {
+                        popUpTo(Routes.CONVERSATION_NEW) { inclusive = true }
+                    }
+                },
+            )
+        }
+
+        composable(
+            route = Routes.CONVERSATION,
+            arguments = listOf(
+                navArgument("id") { type = NavType.StringType },
+                navArgument("title") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = ""
+                },
+            ),
+        ) { backStackEntry ->
+            val conversationId = backStackEntry.arguments?.getString("id") ?: return@composable
+            val conversationTitle = backStackEntry.arguments?.getString("title")
+            ConversationScreen(
+                conversationId = conversationId,
+                conversationTitle = conversationTitle,
+                onNavigateBack = { navController.popBackStack() },
             )
         }
 
@@ -174,6 +234,9 @@ fun NavGraph(
                 currentUserId = currentUserId,
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToEdit = { navController.navigate(Routes.PROFILE_EDIT) },
+                onNavigateToMessage = {
+                    navController.navigate(Routes.conversationNew(userId))
+                },
             )
         }
 

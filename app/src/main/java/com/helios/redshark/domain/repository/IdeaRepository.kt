@@ -23,4 +23,7 @@ interface IdeaRepository {
 
     /** Sets deletedAt on the server; the record is NOT physically removed. */
     suspend fun softDelete(id: UUID)
+
+    /** Adds a collaborator id using set semantics (no duplicate entries). */
+    suspend fun addCollaborator(id: UUID, collaboratorId: String): Idea
 }

@@ -108,6 +108,8 @@ Mọi collection đều dùng document ID Firestore (tự sinh UUID hoặc bằn
 | id             | String (auto)    | NOT NULL                                | Strong   |
 | type           | String (Enum)    | {DIRECT}, default DIRECT               | Strong   |
 | participantIds | Array\<String\>  | → `users`, size = 2                    | Strong   |
+| directKey      | String           | NOT NULL, format `<uidA>_<uidB>` (sorted) | Strong |
+| lastMessage    | String?          | NULL đến khi có tin nhắn đầu           | Medium   |
 | lastMessageAt  | Timestamp?       | NULL đến khi có tin nhắn đầu           | Medium   |
 | createdAt      | Timestamp        | Server timestamp khi tạo               | Strong   |
 
@@ -120,6 +122,7 @@ Mọi collection đều dùng document ID Firestore (tự sinh UUID hoặc bằn
 | senderId       | String         | → `users/{id}`, NOT NULL              | Strong   |
 | content        | String         | NOT NULL, 1..2000                     | Medium   |
 | createdAt      | Timestamp      | Server timestamp khi tạo              | Strong   |
+| status         | String (Enum)  | {SENDING, SENT, FAILED}, default SENT | Medium   |
 
 ---
 
