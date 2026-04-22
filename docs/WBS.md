@@ -24,8 +24,8 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 
 ## 3. Mốc hiện tại (hiện trạng)
 
-- **Ngày ghi nhận:** 20/04/2026.
-- **Trạng thái hiện tại:** WBS 3.0 (Auth) ✅ và WBS 4.0 (Content) ✅ hoàn thành. Chuẩn bị merge `feature/content-ideas-issues-comments` → `develop`.
+- **Ngày ghi nhận:** 22/04/2026.
+- **Trạng thái hiện tại:** WBS 3.0 (Auth) ✅, WBS 4.0 (Content) ✅; WBS 5.0 (Interaction) đang review, đã hoàn thiện phần lớn luồng Notifications/Messages.
 - **Người thực hiện commit init:** **Sỹ**.
 - **Đề xuất commit chuẩn:** `chore(init): bootstrap Android project and project documents`.
 
@@ -223,7 +223,7 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 - Thành viên phối hợp: Nam.
 - Phụ thuộc: 4.1.1.
 - Thời gian: 30/04 - 04/05.
-- Ghi chú: ❌ Dời sang 5.0 — Collab Request tạo COLLAB_REQUEST notification; phụ thuộc notification infrastructure (WBS 5.1.x).
+- Ghi chú: ⚠️ Đã có `RequestCollabUseCase` trong nhánh Interaction; còn thiếu entrypoint UI gọi từ `IdeaDetailScreen` để đóng hạng mục hoàn toàn.
 
 ## 5.0 Nhóm chức năng Tương tác (Thông báo, Nhắn tin)
 
@@ -236,6 +236,7 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 - Thành viên phối hợp: Hải.
 - Phụ thuộc: 4.0.
 - Thời gian: 05/05 - 09/05.
+- Ghi chú: ✅ Hoàn thành sớm (22/04/2026) trên nhánh feature; dùng Firestore snapshot listener cho list + unread count.
 
 #### 5.1.2 Đọc thông báo và xử lý Collab accept/reject
 - Sản phẩm bàn giao: đánh dấu đã đọc, chấp nhận/từ chối cộng tác, tạo thông báo phản hồi.
@@ -243,6 +244,7 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 - Thành viên phối hợp: Hải.
 - Phụ thuộc: 5.1.1.
 - Thời gian: 05/05 - 10/05.
+- Ghi chú: ✅ Hoàn thành sớm (22/04/2026) trên nhánh feature; Accept tạo/mở DIRECT conversation và gửi `COLLAB_ACCEPTED`.
 
 ### 5.2 Messages (DIRECT 1-1)
 #### 5.2.1 Danh sách hội thoại và luồng tạo/đi tới hội thoại
@@ -251,6 +253,7 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 - Thành viên phối hợp: Hải.
 - Phụ thuộc: 5.1.*.
 - Thời gian: 06/05 - 10/05.
+- Ghi chú: ✅ Hoàn thành sớm (22/04/2026) trên nhánh feature; có FAB tạo hội thoại và luồng `conversation/new?peerId=`.
 
 #### 5.2.2 Gửi/nhận tin nhắn với cập nhật lạc quan và cập nhật theo chu kỳ
 - Sản phẩm bàn giao: `ConversationScreen`, gửi tin, cập nhật mỗi 5 giây, chống trùng hội thoại.
@@ -258,6 +261,7 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 - Thành viên phối hợp: Hải.
 - Phụ thuộc: 5.2.1.
 - Thời gian: 07/05 - 11/05.
+- Ghi chú: ✅ Hoàn thành sớm phần chính (22/04/2026) trên nhánh feature; đang dùng realtime listener thay cho polling theo chu kỳ.
 
 ## 6.0 Chất lượng, kiểm thử và tuân thủ NFR
 

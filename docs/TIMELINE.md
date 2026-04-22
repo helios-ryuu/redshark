@@ -6,6 +6,12 @@
 - **15/04/2026:** commit khởi tạo dự án (Sỹ). ✓ *Đã hoàn thành — commit `chore(init)` ngày 15/04.*
 - **Trước 21/04/2026:** bắt buộc có ít nhất 1 commit tính năng xác thực.
 
+## Cập nhật thực tế (22/04/2026)
+
+- Mốc xác thực trước 21/04 đã đạt (đã có commit `feat(auth)`).
+- Nhóm công việc `5.0` (Thông báo + Nhắn tin) đang được triển khai sớm trên nhánh feature để review trước kế hoạch Tuần 8.
+- Trạng thái hiện tại của `5.0`: phần lớn luồng đã xong; còn 1 điểm cần chốt để khớp hoàn toàn quy trình `PROCESS-3-INTERACTION.md` (entrypoint request collab tại `IdeaDetailScreen`).
+
 ## 1. Sơ đồ giai đoạn
 
 ```
