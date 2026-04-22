@@ -13,10 +13,10 @@ class RejectCollabUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(notification: Notification) {
         if (notification.type != NotificationType.COLLAB_REQUEST) {
-            throw AppException.ValidationException("notificationType", "Yeu cau cong tac khong hop le.")
+            throw AppException.ValidationException("notificationType", "Invalid collaboration request.")
         }
         val requesterId = notification.actorId
-            ?: throw AppException.ValidationException("actorId", "Khong tim thay nguoi gui yeu cau.")
+            ?: throw AppException.ValidationException("actorId", "Requester was not found.")
 
         notificationRepository.markAsRead(notification.id)
         notificationRepository.create(
@@ -26,7 +26,7 @@ class RejectCollabUseCase @Inject constructor(
                 type = NotificationType.COLLAB_REJECTED,
                 targetType = NotificationTargetType.IDEA,
                 targetId = notification.targetId,
-                message = "Yeu cau cong tac cua ban da bi tu choi.",
+                message = "Your collaboration request has been rejected.",
             )
         )
     }

@@ -12,10 +12,10 @@ class SendMessageUseCase @Inject constructor(
     suspend operator fun invoke(conversationId: UUID, content: String): Message {
         val normalized = content.trim()
         if (normalized.isBlank()) {
-            throw AppException.ValidationException("content", "Tin nhan khong duoc de trong.")
+            throw AppException.ValidationException("content", "Message content must not be empty.")
         }
         if (normalized.length > 2000) {
-            throw AppException.ValidationException("content", "Tin nhan toi da 2000 ky tu.")
+            throw AppException.ValidationException("content", "Message content must be at most 2000 characters.")
         }
         return messageRepository.sendMessage(conversationId, normalized)
     }

@@ -18,10 +18,10 @@ class AcceptCollabUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(notification: Notification): Conversation {
         if (notification.type != NotificationType.COLLAB_REQUEST) {
-            throw AppException.ValidationException("notificationType", "Yeu cau cong tac khong hop le.")
+            throw AppException.ValidationException("notificationType", "Invalid collaboration request.")
         }
         val requesterId = notification.actorId
-            ?: throw AppException.ValidationException("actorId", "Khong tim thay nguoi gui yeu cau.")
+            ?: throw AppException.ValidationException("actorId", "Requester was not found.")
 
         ideaRepository.addCollaborator(notification.targetId, requesterId)
         val conversation = messageRepository.findOrCreateDirectConversation(requesterId)
@@ -33,7 +33,7 @@ class AcceptCollabUseCase @Inject constructor(
                 type = NotificationType.COLLAB_ACCEPTED,
                 targetType = NotificationTargetType.IDEA,
                 targetId = notification.targetId,
-                message = "Yeu cau cong tac cua ban da duoc chap nhan.",
+                message = "Your collaboration request has been accepted.",
             )
         )
         return conversation

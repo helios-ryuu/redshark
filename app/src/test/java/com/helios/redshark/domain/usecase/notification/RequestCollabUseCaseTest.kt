@@ -55,7 +55,7 @@ class RequestCollabUseCaseTest {
             type = NotificationType.COLLAB_REQUEST,
             targetType = NotificationTargetType.IDEA,
             targetId = ideaId,
-            message = "Co nguoi dung muon tham gia idea cua ban.",
+            message = "A user requested to collaborate on your idea.",
             isRead = false,
             createdAt = Instant.now(),
         )

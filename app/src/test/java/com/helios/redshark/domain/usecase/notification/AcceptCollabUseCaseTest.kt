@@ -38,7 +38,7 @@ class AcceptCollabUseCaseTest {
         type = NotificationType.COLLAB_REQUEST,
         targetType = NotificationTargetType.IDEA,
         targetId = ideaId,
-        message = "xin tham gia",
+        message = "Request to collaborate",
         isRead = false,
         createdAt = Instant.now(),
     )

@@ -175,13 +175,13 @@ class MessageRepositoryImpl @Inject constructor(
         return when (error.code) {
             FirebaseFirestoreException.Code.PERMISSION_DENIED ->
                 AppException.RemoteException(
-                    "Firestore tu choi quyen truy cap Messages. Can deploy lai firestore.rules.",
+                    "Firestore denied access to Messages. Please deploy firestore.rules.",
                     error,
                 )
 
             FirebaseFirestoreException.Code.FAILED_PRECONDITION ->
                 AppException.RemoteException(
-                    "Firestore chua co index can thiet cho Messages. Can deploy firestore.indexes.json.",
+                    "Firestore is missing required indexes for Messages. Please deploy firestore.indexes.json.",
                     error,
                 )
 

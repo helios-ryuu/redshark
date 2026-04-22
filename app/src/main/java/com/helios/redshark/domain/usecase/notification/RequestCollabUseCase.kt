@@ -17,10 +17,10 @@ class RequestCollabUseCase @Inject constructor(
         val idea = ideaRepository.getIdeaDetail(ideaId)
 
         if (idea.authorId == requesterId) {
-            throw AppException.ValidationException("requesterId", "Khong the gui yeu cau cho chinh idea cua ban.")
+            throw AppException.ValidationException("requesterId", "You cannot request collaboration on your own idea.")
         }
         if (idea.collaboratorIds.contains(requesterId)) {
-            throw AppException.ValidationException("requesterId", "Ban da la cong tac vien cua idea nay.")
+            throw AppException.ValidationException("requesterId", "You are already a collaborator on this idea.")
         }
 
         notificationRepository.create(
@@ -30,7 +30,7 @@ class RequestCollabUseCase @Inject constructor(
                 type = NotificationType.COLLAB_REQUEST,
                 targetType = NotificationTargetType.IDEA,
                 targetId = ideaId,
-                message = "Co nguoi dung muon tham gia idea cua ban.",
+                message = "A user requested to collaborate on your idea.",
             )
         )
     }
