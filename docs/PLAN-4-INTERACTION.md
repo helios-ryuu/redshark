@@ -20,9 +20,11 @@
   - `COLLAB_ACCEPTED` / `COLLAB_REJECTED` — người gửi yêu cầu nhận phản hồi
   - `COMMENT` — chủ ý tưởng nhận khi có bình luận
 - Nút Chấp nhận / Từ chối yêu cầu cộng tác -> cập nhật `ideas.collaboratorIds`
+- Chấp nhận `COLLAB_REQUEST` sẽ `FindOrCreateDirectConversation(actorId)` và điều hướng vào chat DIRECT
 
 ### Nhắn tin (DIRECT 1-1)
 - Tab Messages: danh sách hội thoại sắp theo `lastMessageAt`
+- Tab Messages có nút tạo hội thoại mới (FAB)
 - Màn hình Conversation: danh sách tin nhắn và ô nhập liệu
 - Tạo hội thoại từ hồ sơ người dùng (nút "Nhắn tin")
   - `FindDirectConversation(peerId)` → nếu null, `CreateDirectConversation(peerId)`
@@ -38,7 +40,7 @@
 
 ## 3. Ca sử dụng
 - `GetNotificationsUseCase`, `MarkNotificationReadUseCase`
-- `AcceptCollabUseCase`, `RejectCollabUseCase`
+- `RequestCollabUseCase`, `AcceptCollabUseCase`, `RejectCollabUseCase`
 - `GetConversationsUseCase`
 - `GetMessagesUseCase`, `SendMessageUseCase`
 - `FindOrCreateDirectConversationUseCase`
@@ -48,3 +50,4 @@
 - [ ] Gửi tin nhắn -> hiển thị ngay trong danh sách (cập nhật lạc quan)
 - [ ] Không tạo trùng hội thoại DIRECT giữa 2 người dùng
 - [ ] Chấp nhận cộng tác -> người dùng được thêm vào `collaboratorIds`, người gửi yêu cầu nhận `COLLAB_ACCEPTED`
+- [ ] Chấp nhận cộng tác -> tạo/mở hội thoại DIRECT giữa owner và requester

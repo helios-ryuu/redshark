@@ -2,6 +2,14 @@
 
 WBS tham chiếu: [WBS.md](WBS.md) — nhóm công việc `5.0`.
 
+## 0. Gửi yêu cầu cộng tác (từ Idea Detail)
+
+| Bước | Giao diện                        | Dịch vụ                                                                 | Bảng                   |
+|------|----------------------------------|-------------------------------------------------------------------------|------------------------|
+| 1    | `IdeaDetailScreen` → "Xin tham gia" | `RequestCollabUseCase(ideaId, requesterId)`                             | Read `ideas`           |
+| 2    | Validate                           | Chặn tự yêu cầu trên idea của chính mình hoặc khi đã là collaborator    | —                      |
+| 3    | Tạo notification                   | `CreateNotification(type=COLLAB_REQUEST, recipientId=idea.authorId)`    | Insert `notifications` |
+
 ## 1. Xem và đọc thông báo
 
 | Bước | Giao diện                                  | Dịch vụ                       | Bảng                                                                      |
@@ -17,8 +25,9 @@ WBS tham chiếu: [WBS.md](WBS.md) — nhóm công việc `5.0`.
 |------|------------------------------------------|------------------------------------------------------------------------------|--------------------------------|
 | 1    | Notification COLLAB_REQUEST → nút Accept | —                                                                            | —                              |
 | 2    | Xác nhận                                  | `AcceptCollabUseCase`: `UpdateIdea(id, collaboratorIds += actorId)` mutation | Cập nhật `ideas.collaboratorIds` |
-| 3    | Tạo thông báo phản hồi                    | `CreateNotification(recipientId=actorId, type=COLLAB_ACCEPTED)`              | Thêm bản ghi `notifications`   |
-| 4    | Đánh dấu đã đọc thông báo gốc             | `MarkNotificationRead`                                                       | Cập nhật `notifications`       |
+| 3    | Tạo/mở hội thoại DIRECT                   | `FindOrCreateDirectConversation(actorId)`                                    | Read/insert `conversations`    |
+| 4    | Tạo thông báo phản hồi                    | `CreateNotification(recipientId=actorId, type=COLLAB_ACCEPTED)`              | Thêm bản ghi `notifications`   |
+| 5    | Đánh dấu đã đọc thông báo gốc             | `MarkNotificationRead`                                                       | Cập nhật `notifications`       |
 
 ## 3. Từ chối yêu cầu cộng tác
 
@@ -52,9 +61,10 @@ WBS tham chiếu: [WBS.md](WBS.md) — nhóm công việc `5.0`.
 
 | Bước | Giao diện                                                  | Dịch vụ                          | Bảng                                                                                  |
 |------|-----------------------------------------------------------|----------------------------------|---------------------------------------------------------------------------------------|
-| 1    | Tab `Messages`                                            | `ListMyConversations` query      | Select `conversations` where participantIds @> [auth.uid] ORDER BY lastMessageAt DESC |
+| 1    | Tab `Messages`                                            | `ListMyConversations` query      | Select `conversations` where participantIds @> [auth.uid]                            |
 | 2    | Mỗi item hiện peer avatar, lastMessage preview, timestamp | Join `users` + latest `messages` | Read `users`, `messages`                                                              |
-| 3    | Nhấn vào từng mục -> điều hướng `conversation/{id}`       | —                                | —                                                                                     |
+| 3    | Nút "Tạo cuộc trò chuyện" (FAB)                          | Chọn peer -> `conversation/new?peerId=`                                   | Read `users`, read/insert `conversations` |
+| 4    | Nhấn vào từng mục -> điều hướng `conversation/{id}`       | —                                | —                                                                                     |
 
 ## 7. Cập nhật theo chu kỳ (tạm thay thời gian thực)
 
