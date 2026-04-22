@@ -19,9 +19,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.helios.redshark.R
 import com.helios.redshark.domain.model.Notification
 import com.helios.redshark.domain.model.NotificationType
 
@@ -62,7 +64,10 @@ fun NotificationListScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
-                Text("Chua co thong bao", style = MaterialTheme.typography.titleMedium)
+                Text(
+                    stringResource(R.string.interaction_notifications_empty),
+                    style = MaterialTheme.typography.titleMedium,
+                )
             }
         }
 
@@ -100,13 +105,13 @@ private fun NotificationItem(
             Text(notification.message, style = MaterialTheme.typography.bodyLarge)
             if (!notification.isRead) {
                 OutlinedButton(onClick = onMarkRead) {
-                    Text("Danh dau da doc")
+                    Text(stringResource(R.string.interaction_notifications_mark_read))
                 }
             }
             if (notification.type == NotificationType.COLLAB_REQUEST) {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Button(onClick = onAccept) { Text("Chap nhan") }
-                    OutlinedButton(onClick = onReject) { Text("Tu choi") }
+                    Button(onClick = onAccept) { Text(stringResource(R.string.interaction_notifications_accept)) }
+                    OutlinedButton(onClick = onReject) { Text(stringResource(R.string.interaction_notifications_reject)) }
                 }
             }
         }

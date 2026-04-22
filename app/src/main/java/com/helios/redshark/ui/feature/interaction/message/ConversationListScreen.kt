@@ -23,11 +23,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.helios.redshark.R
 import com.helios.redshark.domain.model.Conversation
 import com.helios.redshark.domain.model.User
 
@@ -67,7 +69,10 @@ fun ConversationListScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
-                    Text(uiState.errorMessage ?: "Co loi", style = MaterialTheme.typography.bodyLarge)
+                    Text(
+                        uiState.errorMessage ?: stringResource(R.string.common_error_generic),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
                 }
             }
 
@@ -77,7 +82,10 @@ fun ConversationListScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
-                    Text("Chua co cuoc tro chuyen", style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        stringResource(R.string.interaction_messages_empty_conversations),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
                 }
             }
 
@@ -102,8 +110,13 @@ fun ConversationListScreen(
 
         ExtendedFloatingActionButton(
             onClick = { showCreateDialog = true },
-            icon = { Icon(Icons.Default.Add, contentDescription = "Tao moi") },
-            text = { Text("Tao cuoc tro chuyen") },
+            icon = {
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = stringResource(R.string.interaction_messages_create_content_description),
+                )
+            },
+            text = { Text(stringResource(R.string.interaction_messages_create)) },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp),
@@ -132,11 +145,11 @@ private fun ConversationCandidateDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Tao cuoc tro chuyen") },
+        title = { Text(stringResource(R.string.interaction_messages_create)) },
         text = {
             when {
                 errorMessage != null -> Text(errorMessage)
-                users.isEmpty() -> Text("Khong con nguoi dung nao de tao hoi thoai.")
+                users.isEmpty() -> Text(stringResource(R.string.interaction_messages_no_available_users))
                 else -> {
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         items(users, key = { it.id }) { user ->
@@ -160,7 +173,7 @@ private fun ConversationCandidateDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Dong")
+                Text(stringResource(R.string.interaction_messages_close))
             }
         },
     )
@@ -177,7 +190,9 @@ private fun ConversationRow(
         user.id != currentUserId && conversation.participantIds.contains(user.id)
     }
     val title = peerUser?.displayName ?: conversation.participantIds.joinToString(separator = ", ")
-    val subtitle = conversation.lastMessage ?: peerUser?.email ?: "Chua co tin nhan"
+    val subtitle = conversation.lastMessage
+        ?: peerUser?.email
+        ?: stringResource(R.string.interaction_messages_empty_messages)
 
     Column(
         modifier = Modifier

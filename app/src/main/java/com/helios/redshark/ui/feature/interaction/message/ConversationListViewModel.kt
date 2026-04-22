@@ -39,7 +39,7 @@ class ConversationListViewModel @Inject constructor(
             getConversationsUseCase()
                 .catch { e ->
                     _uiState.update {
-                        it.copy(isLoading = false, errorMessage = e.message ?: "Khong tai duoc danh sach tin nhan")
+                        it.copy(isLoading = false, errorMessage = e.message ?: "Unable to load conversations")
                     }
                 }
                 .collect { list ->

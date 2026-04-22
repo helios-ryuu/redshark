@@ -46,7 +46,7 @@ class ConversationViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = e.message ?: "Khong tai duoc tin nhan",
+                            errorMessage = e.message ?: "Unable to load messages",
                         )
                     }
                 }
@@ -70,7 +70,7 @@ class ConversationViewModel @Inject constructor(
     fun send(conversationId: UUID) {
         val currentUserId = uiState.value.currentUserId
         if (currentUserId.isNullOrBlank()) {
-            _uiState.update { it.copy(errorMessage = "Ban can dang nhap de gui tin nhan") }
+            _uiState.update { it.copy(errorMessage = "You need to sign in to send messages") }
             return
         }
 
@@ -112,7 +112,7 @@ class ConversationViewModel @Inject constructor(
                             messages = it.messages.map { msg ->
                                 if (msg.id == pendingId) msg.copy(status = MessageDeliveryStatus.FAILED) else msg
                             },
-                            errorMessage = e.message ?: "Gui tin nhan that bai",
+                            errorMessage = e.message ?: "Failed to send message",
                         )
                     }
                 }

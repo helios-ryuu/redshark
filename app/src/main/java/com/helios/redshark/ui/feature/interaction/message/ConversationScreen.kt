@@ -26,9 +26,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.helios.redshark.R
 import com.helios.redshark.domain.model.Message
 import com.helios.redshark.domain.model.MessageDeliveryStatus
 import java.util.UUID
@@ -45,7 +47,8 @@ fun ConversationScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val parsedId = runCatching { UUID.fromString(conversationId) }.getOrNull()
 
-    val title = conversationTitle?.takeIf { it.isNotBlank() } ?: "Tin nhan"
+    val title = conversationTitle?.takeIf { it.isNotBlank() }
+        ?: stringResource(R.string.interaction_messages_title_fallback)
 
     if (parsedId == null) {
         Scaffold(
@@ -66,7 +69,7 @@ fun ConversationScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center,
             ) {
-                Text("Cuoc tro chuyen khong hop le")
+                Text(stringResource(R.string.interaction_messages_invalid_conversation))
             }
         }
         return
@@ -102,7 +105,7 @@ fun ConversationScreen(
 
                 uiState.messages.isEmpty() -> {
                     Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        Text("Chua co tin nhan")
+                        Text(stringResource(R.string.interaction_messages_empty_messages))
                     }
                 }
 
@@ -122,7 +125,7 @@ fun ConversationScreen(
 
             if (!uiState.errorMessage.isNullOrBlank()) {
                 Text(
-                    text = uiState.errorMessage ?: "Co loi",
+                    text = uiState.errorMessage ?: stringResource(R.string.common_error_generic),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -140,14 +143,14 @@ fun ConversationScreen(
                     value = uiState.draft,
                     onValueChange = viewModel::onDraftChange,
                     modifier = Modifier.weight(1f),
-                    placeholder = { Text("Nhap tin nhan") },
+                    placeholder = { Text(stringResource(R.string.interaction_messages_input_placeholder)) },
                     maxLines = 4,
                 )
                 Button(
                     onClick = { viewModel.send(parsedId) },
                     enabled = uiState.draft.trim().isNotBlank() && uiState.draft.length <= 2000,
                 ) {
-                    Text("Gui")
+                    Text(stringResource(R.string.interaction_messages_send))
                 }
             }
         }
@@ -157,8 +160,8 @@ fun ConversationScreen(
 @Composable
 private fun MessageRow(message: Message, mine: Boolean) {
     val statusLabel = when (message.status) {
-        MessageDeliveryStatus.SENDING -> "Dang gui"
-        MessageDeliveryStatus.FAILED -> "Loi gui"
+        MessageDeliveryStatus.SENDING -> stringResource(R.string.interaction_messages_status_sending)
+        MessageDeliveryStatus.FAILED -> stringResource(R.string.interaction_messages_status_failed)
         MessageDeliveryStatus.SENT -> null
     }
 

@@ -74,7 +74,7 @@ class NotificationListViewModel @Inject constructor(
             getNotificationsUseCase()
                 .catch { e ->
                     _uiState.update {
-                        it.copy(isLoading = false, errorMessage = e.message ?: "Khong tai duoc thong bao")
+                        it.copy(isLoading = false, errorMessage = e.message ?: "Unable to load notifications")
                     }
                 }
                 .collect { list ->
