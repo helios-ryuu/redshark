@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">RedShark</string>
+    <string name="common_error_generic">Something went wrong</string>
+
+    <string name="interaction_notifications_empty">No notifications yet</string>
+    <string name="interaction_notifications_mark_read">Mark as read</string>
+    <string name="interaction_notifications_accept">Accept</string>
+    <string name="interaction_notifications_reject">Reject</string>
+
+    <string name="interaction_messages_title_fallback">Message</string>
+    <string name="interaction_messages_invalid_conversation">Invalid conversation</string>
+    <string name="interaction_messages_empty_conversations">No conversations yet</string>
+    <string name="interaction_messages_empty_messages">No messages yet</string>
+    <string name="interaction_messages_create">New conversation</string>
+    <string name="interaction_messages_create_content_description">Create conversation</string>
+    <string name="interaction_messages_no_available_users">No available users to start a conversation.</string>
+    <string name="interaction_messages_close">Close</string>
+    <string name="interaction_messages_input_placeholder">Type a message</string>
+    <string name="interaction_messages_send">Send</string>
+    <string name="interaction_messages_status_sending">Sending</string>
+    <string name="interaction_messages_status_failed">Failed to send</string>
 </resources>

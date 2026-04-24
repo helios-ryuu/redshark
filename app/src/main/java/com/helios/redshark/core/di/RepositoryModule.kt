@@ -7,6 +7,7 @@ import com.helios.redshark.data.repository.CommentRepositoryImpl
 import com.helios.redshark.data.repository.IdeaRepositoryImpl
 import com.helios.redshark.data.repository.IssueRepositoryImpl
 import com.helios.redshark.data.repository.MediaRepositoryImpl
+import com.helios.redshark.data.repository.MessageRepositoryImpl
 import com.helios.redshark.data.repository.NotificationRepositoryImpl
 import com.helios.redshark.data.repository.ProfileRepositoryImpl
 import com.helios.redshark.domain.repository.AuthRepository
@@ -14,6 +15,7 @@ import com.helios.redshark.domain.repository.CommentRepository
 import com.helios.redshark.domain.repository.IdeaRepository
 import com.helios.redshark.domain.repository.IssueRepository
 import com.helios.redshark.domain.repository.MediaRepository
+import com.helios.redshark.domain.repository.MessageRepository
 import com.helios.redshark.domain.repository.NotificationRepository
 import com.helios.redshark.domain.repository.ProfileRepository
 import dagger.Binds
@@ -57,4 +59,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindNotificationRepository(impl: NotificationRepositoryImpl): NotificationRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindMessageRepository(impl: MessageRepositoryImpl): MessageRepository
 }

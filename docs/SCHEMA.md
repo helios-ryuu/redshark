@@ -108,6 +108,8 @@ Mọi collection đều dùng document ID Firestore (tự sinh UUID hoặc bằn
 | id             | String (auto)    | NOT NULL                                | Strong   |
 | type           | String (Enum)    | {DIRECT}, default DIRECT               | Strong   |
 | participantIds | Array\<String\>  | → `users`, size = 2                    | Strong   |
+| directKey      | String           | NOT NULL, format `<uidA>_<uidB>` (sorted) | Strong |
+| lastMessage    | String?          | NULL đến khi có tin nhắn đầu           | Medium   |
 | lastMessageAt  | Timestamp?       | NULL đến khi có tin nhắn đầu           | Medium   |
 | createdAt      | Timestamp        | Server timestamp khi tạo               | Strong   |
 
@@ -120,6 +122,7 @@ Mọi collection đều dùng document ID Firestore (tự sinh UUID hoặc bằn
 | senderId       | String         | → `users/{id}`, NOT NULL              | Strong   |
 | content        | String         | NOT NULL, 1..2000                     | Medium   |
 | createdAt      | Timestamp      | Server timestamp khi tạo              | Strong   |
+| status         | String (Enum)  | {SENDING, SENT, FAILED}, default SENT | Medium   |
 
 ---
 
@@ -164,36 +167,66 @@ firestore.collection("ideas").document(ideaId)
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return request.auth.uid == uid;
+    }
+
+    function isParticipant(participantIds) {
+      return request.auth.uid in participantIds;
+    }
+
     match /users/{uid} {
-      allow read: if request.auth != null;
-      allow write: if request.auth.uid == uid;
+      allow read: if isSignedIn();
+      allow write: if isOwner(uid);
     }
     match /ideas/{ideaId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update, delete: if request.auth.uid == resource.data.authorId;
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isOwner(resource.data.authorId);
     }
     match /issues/{issueId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update, delete: if request.auth.uid == resource.data.authorId;
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isOwner(resource.data.authorId)
+                            || isOwner(resource.data.assigneeId);
     }
     match /comments/{commentId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow delete: if request.auth.uid == resource.data.authorId;
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isOwner(resource.data.authorId);
     }
-    match /notifications/{notifId} {
-      allow read, write: if request.auth.uid == resource.data.recipientId;
+    match /notifications/{notificationId} {
+      allow read: if isOwner(resource.data.recipientId);
+      allow create: if isSignedIn();
+      allow update: if isOwner(resource.data.recipientId);
+      allow delete: if false;
     }
-    match /conversations/{convId} {
-      allow read, write: if request.auth.uid in resource.data.participantIds;
+    match /conversations/{conversationId} {
+      allow get: if isSignedIn()
+                 && (!exists(/databases/$(database)/documents/conversations/$(conversationId))
+                     || isParticipant(resource.data.participantIds));
+      allow list: if isSignedIn() && isParticipant(resource.data.participantIds);
+      allow create: if isSignedIn()
+                    && request.resource.data.type == 'DIRECT'
+                    && request.resource.data.participantIds.size() == 2
+                    && isParticipant(request.resource.data.participantIds);
+      allow update: if isSignedIn() && isParticipant(resource.data.participantIds);
+      allow delete: if false;
     }
-    match /messages/{msgId} {
-      allow read, write: if request.auth.uid == resource.data.senderId;
+    match /messages/{messageId} {
+      allow read: if isSignedIn()
+                  && exists(/databases/$(database)/documents/conversations/$(resource.data.conversationId))
+                  && request.auth.uid in get(/databases/$(database)/documents/conversations/$(resource.data.conversationId)).data.participantIds;
+      allow create: if isSignedIn()
+                    && request.resource.data.senderId == request.auth.uid
+                    && exists(/databases/$(database)/documents/conversations/$(request.resource.data.conversationId))
+                    && request.auth.uid in get(/databases/$(database)/documents/conversations/$(request.resource.data.conversationId)).data.participantIds;
+      allow update, delete: if false;
     }
-    match /tags/{tagId} { allow read: if true; }
-    match /skills/{skillId} { allow read: if true; }
   }
 }
 ```
@@ -202,11 +235,14 @@ service cloud.firestore {
 
 ## 12. Composite Indexes (Firestore)
 
-| Collection      | Fields                                   | Mục đích                           |
-|-----------------|------------------------------------------|------------------------------------|
-| `ideas`         | `authorId` ASC, `deletedAt` ASC          | List my ideas (chưa xóa)           |
-| `issues`        | `ideaId` ASC, `deletedAt` ASC            | List issues của 1 idea             |
-| `issues`        | `authorId` ASC, `status` ASC             | Count active issues của user       |
-| `notifications` | `recipientId` ASC, `isRead` ASC, `createdAt` DESC | Inbox                   |
-| `messages`      | `conversationId` ASC, `createdAt` DESC   | Chat history                       |
-| `conversations` | `participantIds` (array-contains), `lastMessageAt` DESC | Danh sách hội thoại |
+| Collection      | Fields                                            | Mục đích                              |
+|-----------------|---------------------------------------------------|---------------------------------------|
+| `ideas`         | `authorId` ASC, `createdAt` DESC                  | List my ideas                         |
+| `issues`        | `ideaId` ASC, `createdAt` DESC                    | List issues of one idea               |
+| `issues`        | `status` ASC, `createdAt` DESC                    | Filter issues by status               |
+| `issues`        | `authorId` ASC, `status` ASC                      | Count active issues per user          |
+| `comments`      | `ideaId` ASC, `createdAt` ASC                     | List comments in idea detail          |
+| `notifications` | `recipientId` ASC, `createdAt` DESC               | Notification inbox                    |
+| `notifications` | `recipientId` ASC, `isRead` ASC                   | Unread badge / read filter            |
+| `conversations` | `participantIds` (array-contains), `lastMessageAt` DESC | Conversation list ordering     |
+| `messages`      | `conversationId` ASC, `createdAt` ASC             | Message history ordering              |

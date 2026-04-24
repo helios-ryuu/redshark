@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -44,6 +45,7 @@ fun ProfileViewScreen(
     currentUserId: String?,
     onNavigateBack: () -> Unit,
     onNavigateToEdit: () -> Unit,
+    onNavigateToMessage: () -> Unit,
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -127,6 +129,13 @@ fun ProfileViewScreen(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+
+                    if (!uiState.isOwner) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(onClick = onNavigateToMessage) {
+                            Text("Nhan tin")
+                        }
+                    }
 
                     if (!user.bio.isNullOrBlank()) {
                         Spacer(modifier = Modifier.height(16.dp))

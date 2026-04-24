@@ -2,6 +2,27 @@
 
 WBS tham chiếu: [WBS.md](WBS.md) — nhóm công việc `5.0`.
 
+## Trạng thái đối chiếu với mã nguồn (22/04/2026)
+
+| Mục | Trạng thái | Ghi chú |
+|-----|------------|---------|
+| 0. Gửi yêu cầu cộng tác | ⚠️ Chưa khớp hoàn toàn | Có `RequestCollabUseCase`, nhưng chưa thấy điểm bấm gọi `requestCollab(...)` từ `IdeaDetailScreen`. |
+| 1. Xem và đọc thông báo | ✅ Khớp | Có list + badge unread + mark read. |
+| 2. Chấp nhận yêu cầu cộng tác | ✅ Khớp | Accept cập nhật collaborator, tạo/mở DIRECT conversation và gửi `COLLAB_ACCEPTED`. |
+| 3. Từ chối yêu cầu cộng tác | ✅ Khớp | Reject gửi `COLLAB_REJECTED` và mark read thông báo gốc. |
+| 4. Bắt đầu hội thoại từ hồ sơ | ✅ Khớp | Luồng `conversation/new?peerId=` và điều hướng vào `conversation/{id}` đã có. |
+| 5. Gửi tin nhắn | ⚠️ Khớp một phần | Có optimistic `SENDING`/`FAILED`, nhưng chưa có nút retry riêng cho tin `FAILED`. |
+| 6. Danh sách hội thoại | ✅ Khớp | Có tab Messages, sort theo `lastMessageAt`, và FAB tạo hội thoại mới. |
+| 7. Cập nhật dữ liệu | ⚠️ Khác thiết kế cũ | Đang dùng realtime `addSnapshotListener` thay cho polling 5s/30s. |
+
+## 0. Gửi yêu cầu cộng tác (từ Idea Detail)
+
+| Bước | Giao diện                        | Dịch vụ                                                                 | Bảng                   |
+|------|----------------------------------|-------------------------------------------------------------------------|------------------------|
+| 1    | `IdeaDetailScreen` → "Xin tham gia" | `RequestCollabUseCase(ideaId, requesterId)`                             | Read `ideas`           |
+| 2    | Validate                           | Chặn tự yêu cầu trên idea của chính mình hoặc khi đã là collaborator    | —                      |
+| 3    | Tạo notification                   | `CreateNotification(type=COLLAB_REQUEST, recipientId=idea.authorId)`    | Insert `notifications` |
+
 ## 1. Xem và đọc thông báo
 
 | Bước | Giao diện                                  | Dịch vụ                       | Bảng                                                                      |
@@ -17,8 +38,9 @@ WBS tham chiếu: [WBS.md](WBS.md) — nhóm công việc `5.0`.
 |------|------------------------------------------|------------------------------------------------------------------------------|--------------------------------|
 | 1    | Notification COLLAB_REQUEST → nút Accept | —                                                                            | —                              |
 | 2    | Xác nhận                                  | `AcceptCollabUseCase`: `UpdateIdea(id, collaboratorIds += actorId)` mutation | Cập nhật `ideas.collaboratorIds` |
-| 3    | Tạo thông báo phản hồi                    | `CreateNotification(recipientId=actorId, type=COLLAB_ACCEPTED)`              | Thêm bản ghi `notifications`   |
-| 4    | Đánh dấu đã đọc thông báo gốc             | `MarkNotificationRead`                                                       | Cập nhật `notifications`       |
+| 3    | Tạo/mở hội thoại DIRECT                   | `FindOrCreateDirectConversation(actorId)`                                    | Read/insert `conversations`    |
+| 4    | Tạo thông báo phản hồi                    | `CreateNotification(recipientId=actorId, type=COLLAB_ACCEPTED)`              | Thêm bản ghi `notifications`   |
+| 5    | Đánh dấu đã đọc thông báo gốc             | `MarkNotificationRead`                                                       | Cập nhật `notifications`       |
 
 ## 3. Từ chối yêu cầu cộng tác
 
@@ -52,14 +74,17 @@ WBS tham chiếu: [WBS.md](WBS.md) — nhóm công việc `5.0`.
 
 | Bước | Giao diện                                                  | Dịch vụ                          | Bảng                                                                                  |
 |------|-----------------------------------------------------------|----------------------------------|---------------------------------------------------------------------------------------|
-| 1    | Tab `Messages`                                            | `ListMyConversations` query      | Select `conversations` where participantIds @> [auth.uid] ORDER BY lastMessageAt DESC |
+| 1    | Tab `Messages`                                            | `ListMyConversations` query      | Select `conversations` where participantIds @> [auth.uid]                            |
 | 2    | Mỗi item hiện peer avatar, lastMessage preview, timestamp | Join `users` + latest `messages` | Read `users`, `messages`                                                              |
-| 3    | Nhấn vào từng mục -> điều hướng `conversation/{id}`       | —                                | —                                                                                     |
+| 3    | Nút "Tạo cuộc trò chuyện" (FAB)                          | Chọn peer -> `conversation/new?peerId=`                                   | Read `users`, read/insert `conversations` |
+| 4    | Nhấn vào từng mục -> điều hướng `conversation/{id}`       | —                                | —                                                                                     |
 
-## 7. Cập nhật theo chu kỳ (tạm thay thời gian thực)
+## 7. Cập nhật theo thời gian thực (Snapshot Listener)
 
-| Bước | Giao diện                    | Dịch vụ                                    | Bảng                 |
-|------|-----------------------------|--------------------------------------------|----------------------|
-| 1    | `ConversationScreen` mở     | Bắt đầu cập nhật theo chu kỳ `GetMessages(convId)` mỗi 5 giây | Đọc `messages`      |
-| 2    | Chạy nền                    | Dừng cập nhật theo chu kỳ khi onStop                           | —                    |
-| 3    | `NotificationListScreen` mở | Cập nhật theo chu kỳ mỗi 30 giây           | Đọc `notifications`  |
+| Bước | Giao diện                    | Dịch vụ                                             | Bảng                  |
+|------|-----------------------------|-----------------------------------------------------|-----------------------|
+| 1    | `ConversationScreen` mở     | Theo dõi realtime `GetMessages(convId)` qua listener | Đọc `messages`        |
+| 2    | Chạy nền                    | Dừng listener khi màn hình bị hủy (`awaitClose`)    | —                     |
+| 3    | `NotificationListScreen` mở | Theo dõi realtime list + unread count               | Đọc `notifications`   |
+
+> Ghi chú: Nếu cần tối ưu pin/network ở giai đoạn sau, có thể bổ sung cơ chế polling hoặc throttling theo lifecycle.
