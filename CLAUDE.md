@@ -27,9 +27,15 @@ Clean Architecture with vertical feature slicing. Three strict layers — each l
 
 - **`domain/`** — Pure Kotlin only. No `android.*` or `firebase.*` imports. Contains interfaces (`AuthRepository`, etc.), domain models, and single-responsibility use cases (`<Verb><Noun>UseCase`). This is the source of truth for business rules.
 - **`data/`** — Implements domain interfaces. Contains `repository/*Impl.kt`, DTO mappers (`mapper/`), Cloud Firestore source, Cloudflare R2 client (OkHttp + AWS SigV4), and DataStore for local caching.
-- **`ui/`** — Jetpack Compose + MVVM. ViewModels expose `StateFlow<UiState>` and Composables consume it via `collectAsStateWithLifecycle()`. Single-activity architecture with Compose Navigation; all routes are string constants in `ui/navigation/Routes.kt`.
+- **`ui/`** — Jetpack Compose + MVVM. Flat structure: every feature lives directly under `ui/<feature>/` (no intermediate `ui/feature/*` namespace). ViewModels expose `StateFlow<UiState>` and Composables consume it via `collectAsStateWithLifecycle()`. Single-activity architecture with Compose Navigation; all routes are string constants in `ui/navigation/Routes.kt`.
+  - **Design system** in `ui/theme/`: `Color.kt` (brand palette), `Type.kt` (Material3 typography scale), `Dimens.kt` (spacing/elevation/icon tokens), `Shape.kt` (Material3 Shapes), `Theme.kt` (`dynamicColor` defaults to `false` to keep brand identity). Always use `Dimens.SpaceLg/SpaceMd/...` instead of literal `dp` values inside screens.
+  - **Reusable composables** in `ui/common/`: `LoadingContent` / `ErrorContent` / `EmptyContent` / `InlineErrorText` (state placeholders), `StatusPill` + `IdeaStatusPill` / `IssueStatusPill` / `IssuePriorityPill` (status badges), `IssueCard`, `AvatarImage`. Reuse these instead of inlining the same boilerplate per screen.
+  - **Strings** live in `res/values/strings.xml` with namespace prefixes (`home_*`, `idea_*`, `issue_*`, `notification_*`, `message_*`, `profile_*`, `settings_*`, `auth_*`, `action_*`). Hardcoded UI text inside `*Screen.kt` is forbidden.
+  - **UiState pattern** is split deliberately by use case shape:
+    - **Form/action ViewModels** (Create/Edit Idea/Issue) use `sealed interface` state machines with `Idle/Loading/Loaded?/Success/ValidationError/NetworkError/...` variants — fits one-shot mutations.
+    - **List/detail/auth/profile ViewModels** use `data class(isLoading, errorMessage, data)` — fits continuous data streams.
 
-**Cross-cutting concerns** live in `core/`: `Result.kt` sealed class (Success/Error/Loading), `AppException`, `ErrorMapper`, and Hilt DI modules.
+**Cross-cutting concerns** live in `core/`: `core/util/Result.kt` sealed class (Success/Error/Loading), `core/error/AppException.kt`, `ErrorMapper`, and Hilt DI modules. Newer content/interaction use cases throw `AppException` directly (caught by ViewModel); the older auth/profile use cases still return `Result<T>` — both are acceptable.
 
 **DI:** Hilt throughout. `RedSharkApp.kt` is `@HiltAndroidApp`. Modules in `core/di/`: `AppModule`, `FirebaseModule` (FirebaseAuth + FirebaseFirestore), `R2Module`, `NetworkModule`.
 

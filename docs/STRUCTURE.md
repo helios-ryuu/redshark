@@ -40,7 +40,7 @@ redshark/
         │       │   │   ├── AppModule.kt           # ✅ DataStore
         │       │   │   ├── FirebaseModule.kt      # ✅ FirebaseAuth + FirebaseFirestore
         │       │   │   ├── R2Module.kt            # ✅ OkHttpClient
-        │       │   │   └── RepositoryModule.kt    # ✅ Auth/Profile/Media + Idea/Issue/Comment/Notification
+        │       │   │   └── RepositoryModule.kt    # ✅ Auth/Profile/Media + Idea/Issue/Comment/Notification/Message
         │       │   ├── NetworkChecker.kt          # ✅ ConnectivityManager online check
         │       │   ├── util/
         │       │   │   └── Result.kt              # ✅ Sealed class Success/Error/Loading
@@ -66,7 +66,10 @@ redshark/
         │       │   │   │       ├── UserDto.kt             # ✅
         │       │   │   │       ├── IdeaDto.kt             # ✅
         │       │   │   │       ├── IssueDto.kt            # ✅
-        │       │   │   │       └── CommentDto.kt          # ✅
+        │       │   │   │       ├── CommentDto.kt          # ✅
+        │       │   │   │       ├── NotificationDto.kt     # ✅
+        │       │   │   │       ├── ConversationDto.kt     # ✅
+        │       │   │   │       └── MessageDto.kt          # ✅
         │       │   │   │
         │       │   │   └── r2/
         │       │   │       └── R2Client.kt            # OkHttp + AWS SigV4
@@ -74,16 +77,19 @@ redshark/
         │       │   │   ├── AuthRepositoryImpl.kt          # ✅ sign-in + upsertUser Firestore
         │       │   │   ├── ProfileRepositoryImpl.kt       # ✅ + getUsers()
         │       │   │   ├── MediaRepositoryImpl.kt         # ✅ R2Client upload
-        │       │   │   ├── IdeaRepositoryImpl.kt          # ✅ + NetworkChecker guard
+        │       │   │   ├── IdeaRepositoryImpl.kt          # ✅ + NetworkChecker guard + addCollaborator
         │       │   │   ├── IssueRepositoryImpl.kt         # ✅
         │       │   │   ├── CommentRepositoryImpl.kt       # ✅
         │       │   │   ├── NotificationRepositoryImpl.kt  # ✅
-        │       │   │   └── MessageRepositoryImpl.kt       # (giai đoạn 5)
+        │       │   │   └── MessageRepositoryImpl.kt       # ✅ Firestore real-time listeners
         │       │   └── mapper/                    # DTO ↔ Domain model
         │       │       ├── UserMapper.kt              # ✅ FirebaseUser + UserDto → User
         │       │       ├── IdeaMapper.kt              # ✅
         │       │       ├── IssueMapper.kt             # ✅
-        │       │       └── CommentMapper.kt           # ✅
+        │       │       ├── CommentMapper.kt           # ✅
+        │       │       ├── NotificationMapper.kt      # ✅
+        │       │       ├── ConversationMapper.kt      # ✅
+        │       │       └── MessageMapper.kt           # ✅
         │       │
         │       ├── domain/                        # Domain layer (pure Kotlin, no Android)
         │       │   ├── model/
@@ -100,10 +106,11 @@ redshark/
         │       │   │   ├── AuthRepository.kt          # ✅
         │       │   │   ├── ProfileRepository.kt       # ✅ + getUsers()
         │       │   │   ├── MediaRepository.kt         # ✅
-        │       │   │   ├── IdeaRepository.kt          # ✅
+        │       │   │   ├── IdeaRepository.kt          # ✅ + addCollaborator()
         │       │   │   ├── IssueRepository.kt         # ✅
         │       │   │   ├── CommentRepository.kt       # ✅
-        │       │   │   └── NotificationRepository.kt  # ✅
+        │       │   │   ├── NotificationRepository.kt  # ✅
+        │       │   │   └── MessageRepository.kt       # ✅
         │       │   └── usecase/
         │       │       ├── auth/
         │       │       │   ├── SignInGoogleUseCase.kt         # ✅
@@ -116,52 +123,37 @@ redshark/
         │       │       ├── issue/                         # ✅ GetIssues, Create (w/ limit check), Update, Delete, ChangeStatus, GetHomeFeed
         │       │       ├── comment/                       # ✅ GetComments, CreateComment (+ notification)
         │       │       ├── user/                          # ✅ GetUsersUseCase
-        │       │       ├── notification/                  # (giai đoạn 5)
-        │       │       └── message/                       # (giai đoạn 5)
+        │       │       ├── notification/                  # ✅ Get, MarkRead, GetUnreadCount, RequestCollab, AcceptCollab, RejectCollab
+        │       │       └── message/                       # ✅ GetConversations, GetMessages, SendMessage, FindOrCreateDirectConversation
         │       │
-        │       └── ui/                            # Presentation layer
-        │           ├── theme/
-        │           │   ├── Color.kt
-        │           │   ├── Theme.kt
-        │           │   ├── Type.kt
-        │           │   └── Shape.kt
+        │       └── ui/                            # Presentation layer (cấu trúc phẳng — mỗi feature một thư mục)
+        │           ├── theme/                          # ✅ Design system tokens
+        │           │   ├── Color.kt                    # Brand palette (Red/Teal/Amber + neutrals)
+        │           │   ├── Type.kt                     # Material3 typography scale đầy đủ
+        │           │   ├── Dimens.kt                   # Spacing/Elevation/Icon/Avatar tokens
+        │           │   ├── Shape.kt                    # Material3 Shapes
+        │           │   └── Theme.kt                    # RedSharkTheme (dynamicColor=false default)
         │           ├── navigation/
-        │           │   ├── NavGraph.kt            # ✅ + deep link redshark://idea/{id}
-        │           │   ├── Routes.kt              # ✅
-        │           │   └── BottomNavBar.kt
-        │           ├── common/                    # Reusable composables
-        │           │   ├── AppButton.kt
-        │           │   ├── AppTextField.kt
-        │           │   ├── Avatar.kt
-        │           │   ├── FAB.kt
-        │           │   ├── SkillChip.kt
-        │           │   ├── TagChip.kt
-        │           │   ├── EmptyState.kt
-        │           │   ├── ErrorState.kt
-        │           │   └── LoadingIndicator.kt
-        │           ├── home/                          # ✅ Shared content components (IssueCard)
-        │           ├── createidea/                    # ✅ CreateIdeaScreen, CreateIdeaViewModel
-        │           ├── editidea/                      # ✅ EditIdeaScreen, EditIdeaViewModel
-        │           ├── myideas/                       # ✅ MyIdeasScreen, MyIdeasViewModel (tag filter, offline check)
-        │           ├── ideadetail/                    # ✅ IdeaDetailScreen, IdeaDetailViewModel, CommentItem, CommentInput
-        │           ├── createissue/                   # ✅ CreateIssueScreen, CreateIssueViewModel
-        │           ├── editissue/                     # ✅ EditIssueScreen, EditIssueViewModel (assignee dropdown)
-        │           ├── issuedetail/                   # ✅ IssueDetailScreen, IssueDetailViewModel (AssigneeRow)
-        │           └── feature/
-        │               ├── auth/
-        │               │   ├── GoogleSignInScreen.kt  # ✅
-        │               │   ├── ProfileSetupScreen.kt  # ✅
-        │               │   └── AuthViewModel.kt       # ✅ (sign-in, setup, sign-out)
-        │               ├── home/
-        │               │   └── HomeScreen.kt          # ✅ TopAppBar + BottomNav + feed
-        │               ├── profile/
-        │               │   ├── ProfileViewModel.kt    # ✅
-        │               │   ├── ProfileViewScreen.kt   # ✅
-        │               │   └── ProfileEditScreen.kt   # ✅ (name, bio, skills, avatar picker)
-        │               ├── settings/
-        │               │   └── SettingsScreen.kt      # ✅ (sign out + "Mở Idea đã xóa" dialog)
-        │               ├── message/                   # (giai đoạn 5)
-        │               └── notification/              # (giai đoạn 5)
+        │           │   ├── NavGraph.kt                 # ✅ + deep link redshark://idea/{id}
+        │           │   └── Routes.kt                   # ✅ (orphan NOTIFICATIONS/MESSAGES đã loại bỏ — render dưới dạng tab)
+        │           ├── common/                         # ✅ Reusable composables
+        │           │   ├── AvatarImage.kt              # Avatar w/ Coil + initial-letter fallback
+        │           │   ├── StateContent.kt             # LoadingContent / ErrorContent / EmptyContent / InlineErrorText
+        │           │   ├── StatusPill.kt               # Generic StatusPill + IdeaStatusPill / IssueStatusPill / IssuePriorityPill
+        │           │   └── IssueCard.kt                # IssueCard (dùng ở Feed + IdeaDetail)
+        │           ├── auth/                           # ✅ GoogleSignInScreen, ProfileSetupScreen, AuthViewModel
+        │           ├── home/                           # ✅ HomeScreen (shell 4-tab) + HomeFeedScreen (Feed tab) + HomeViewModel
+        │           ├── myideas/                        # ✅ MyIdeasScreen, MyIdeasViewModel (tag filter, offline check)
+        │           ├── createidea/                     # ✅ CreateIdeaScreen, CreateIdeaViewModel
+        │           ├── editidea/                       # ✅ EditIdeaScreen, EditIdeaViewModel
+        │           ├── ideadetail/                     # ✅ IdeaDetailScreen, IdeaDetailViewModel, CommentItem, CommentInput; nút "Xin tham gia" (FR-IDEA-07)
+        │           ├── createissue/                    # ✅ CreateIssueScreen, CreateIssueViewModel
+        │           ├── editissue/                      # ✅ EditIssueScreen, EditIssueViewModel (assignee dropdown)
+        │           ├── issuedetail/                    # ✅ IssueDetailScreen, IssueDetailViewModel (AssigneeRow)
+        │           ├── notification/                   # ✅ NotificationListScreen, NotificationViewModel
+        │           ├── message/                        # ✅ ConversationListScreen, ConversationScreen, MessageViewModel
+        │           ├── profile/                        # ✅ ProfileViewModel, ProfileViewScreen, ProfileEditScreen
+        │           └── settings/                       # ✅ SettingsScreen (sign out + "Mở Idea đã xóa" dialog)
         │
         ├── test/                                  # Unit tests (JVM)
         │   └── java/com/helios/redshark/
@@ -196,22 +188,32 @@ redshark/
 - **Responsibility:** Jetpack Compose UI + `ViewModel` (MVVM).
 - State flow: `ViewModel` expose `StateFlow<UiState>`; Composable `collectAsStateWithLifecycle()`.
 - Navigation: single-activity, Compose Navigation, route strings trong `Routes.kt`. Deep link `redshark://idea/{ideaId}` được khai báo tại `NavGraph.kt` và `AndroidManifest.xml`.
-- Polling dùng `viewModelScope.launch { while (isActive) { delay(...); refresh() } }`, không dùng `rememberCoroutineScope` cho tác vụ nền.
-- **Quy ước thư mục:** Các màn hình Content (Ideas/Issues) dùng vertical slicing by screen dưới `ui/<screenname>/` (vd: `ui/createidea/`, `ui/ideadetail/`). Pattern `ui/feature/<domain>/` giữ nguyên cho Auth, Home, Profile, Settings.
+- **Home split:** `ui/home/HomeScreen.kt` là shell (TopAppBar + BottomNav **4 tab**: Feed / Ideas / Notifications-badge / Messages); `ui/home/HomeFeedScreen.kt` là nội dung tab Feed; `ui/myideas/MyIdeasScreen.kt` là tab Ideas (kèm tag chip filter — TC-C24); `ui/notification/NotificationListScreen.kt` là tab Notifications; `ui/message/ConversationListScreen.kt` là tab Messages. Tab Notifications và Messages **không có route riêng** trong NavGraph — chỉ render dưới dạng tab.
+- Real-time update dùng **Firestore snapshot listener** (`callbackFlow` + `addSnapshotListener`) cho Notifications và Messages; không cần polling thủ công.
+- **Quy ước thư mục:** Mọi feature đặt phẳng trực tiếp dưới `ui/<feature>/`. Đã loại bỏ namespace trung gian `ui/feature/*` (giai đoạn UI consolidation 2026-04-26).
+- **Common composables** (`ui/common/`): mọi list screen dùng `LoadingContent` / `ErrorContent` / `EmptyContent` thay cho `CircularProgressIndicator + Text` inline. Status badge thống nhất qua `StatusPill` + 3 wrapper (`IdeaStatusPill`, `IssueStatusPill`, `IssuePriorityPill`). `IssueCard` được tái sử dụng giữa Feed và IdeaDetail.
+- **Theme tokens** (`ui/theme/Dimens.kt`): mọi screen dùng `Dimens.SpaceLg/SpaceMd/SpaceSm/...` thay vì literal `16.dp`. `dynamicColor` mặc định = `false` để giữ brand identity.
+- **Strings**: 100% chuỗi UI shell (titles, labels, buttons, empty/error states, dialogs) đã chuyển vào `res/values/strings.xml` với namespace prefix (`home_*`, `idea_*`, `issue_*`, `notification_*`, `message_*`, `profile_*`, `settings_*`, `auth_*`, `action_*`).
+- **UiState patterns** (cố ý không thống nhất 1 pattern duy nhất, mỗi pattern phù hợp use case):
+  - **Form ViewModels** (Create/Edit Idea/Issue) dùng `sealed interface` với state machine `Idle/Loading/Loaded?/Success/ValidationError/NetworkError/Failure.*` — phù hợp cho action 1 lần.
+  - **List/Detail ViewModels** (Home, MyIdeas, IdeaDetail, IssueDetail, Notification, Message, Auth, Profile) dùng `data class` với `isLoading/errorMessage/data` — phù hợp cho luồng dữ liệu liên tục.
 
 ### Logging
 - Dùng **Timber** thay `Log.*` trực tiếp. Debug: `Timber.d(...)`, Warning+: `Timber.w(...)`.
 - Release build chỉ plant `ReleaseTree` (log WARN+, không log token/email).
 
-### `core/util/Result.kt`
+### Core types (`core/util/Result.kt` + `core/error/AppException.kt`)
+
+`AppException` là sealed class duy nhất cho mọi lỗi nghiệp vụ; `Result<T>` (Success/Error/Loading) là kiểu trả về chuẩn cho repository và use case. **Không** dùng `core/AppException.kt` hoặc `core/Result.kt` — các path đó đã loại bỏ.
+
+
 ```kotlin
 sealed class Result<out T> {
     data class Success<T>(val data: T) : Result<T>()
     data class Error(val exception: AppException) : Result<Nothing>()
-    object Loading : Result<Nothing>()
+    data object Loading : Result<Nothing>()
 }
 ```
-Đây là kiểu trả về chuẩn cho toàn bộ repository và use case trong dự án.
 
 ## Quy ước đặt tên
 
