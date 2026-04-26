@@ -1,6 +1,7 @@
 package com.helios.redshark.domain.usecase.notification
 
-import com.helios.redshark.core.AppException
+import com.google.firebase.auth.FirebaseAuth
+import com.helios.redshark.core.error.AppException
 import com.helios.redshark.domain.model.CreateNotificationInput
 import com.helios.redshark.domain.model.Notification
 import com.helios.redshark.domain.model.NotificationTargetType
@@ -10,25 +11,22 @@ import javax.inject.Inject
 
 class RejectCollabUseCase @Inject constructor(
     private val notificationRepository: NotificationRepository,
+    private val auth: FirebaseAuth,
 ) {
     suspend operator fun invoke(notification: Notification) {
-        if (notification.type != NotificationType.COLLAB_REQUEST) {
-            throw AppException.ValidationException("notificationType", "Invalid collaboration request.")
-        }
-        val requesterId = notification.actorId
-            ?: throw AppException.ValidationException("actorId", "Requester was not found.")
-
+        val currentUserId = auth.currentUser?.uid ?: throw AppException.UnauthorizedException()
+        val actorId = notification.actorId
+            ?: throw AppException.ValidationException("Thiếu thông tin người gửi yêu cầu.")
         notificationRepository.markAsRead(notification.id)
         notificationRepository.create(
             CreateNotificationInput(
-                recipientId = requesterId,
-                actorId = notification.recipientId,
+                recipientId = actorId,
+                actorId = currentUserId,
                 type = NotificationType.COLLAB_REJECTED,
                 targetType = NotificationTargetType.IDEA,
                 targetId = notification.targetId,
-                message = "Your collaboration request has been rejected.",
+                message = "Yêu cầu cộng tác của bạn đã bị từ chối.",
             )
         )
     }
 }
-

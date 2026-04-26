@@ -7,8 +7,7 @@ import javax.inject.Inject
 class FindOrCreateDirectConversationUseCase @Inject constructor(
     private val messageRepository: MessageRepository,
 ) {
-    suspend operator fun invoke(peerId: String): Conversation {
-        return messageRepository.findOrCreateDirectConversation(peerId)
-    }
+    suspend operator fun invoke(peerId: String): Conversation =
+        messageRepository.findDirectConversation(peerId)
+            ?: messageRepository.createDirectConversation(peerId)
 }
-

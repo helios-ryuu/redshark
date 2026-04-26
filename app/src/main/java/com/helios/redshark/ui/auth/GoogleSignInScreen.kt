@@ -1,5 +1,6 @@
-package com.helios.redshark.ui.feature.auth
+package com.helios.redshark.ui.auth
 
+import android.app.Activity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -7,11 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -19,33 +19,38 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.helios.redshark.R
 
 @Composable
-fun ProfileSetupScreen(
+fun GoogleSignInScreen(
     onNavigateToHome: () -> Unit,
+    onNavigateToProfileSetup: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
-    var displayName by rememberSaveable { mutableStateOf("") }
-
-    val isNameValid = displayName.trim().length in 3..50
-    val charCount = displayName.trim().length
 
     LaunchedEffect(uiState.navigateTo) {
-        if (uiState.navigateTo is AuthDestination.Home) {
-            viewModel.onNavigationHandled()
-            onNavigateToHome()
+        when (uiState.navigateTo) {
+            is AuthDestination.Home -> {
+                viewModel.onNavigationHandled()
+                onNavigateToHome()
+            }
+            is AuthDestination.ProfileSetup -> {
+                viewModel.onNavigationHandled()
+                onNavigateToProfileSetup()
+            }
+            null -> Unit
         }
     }
 
@@ -66,49 +71,30 @@ fun ProfileSetupScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = "Complete your profile",
-                style = MaterialTheme.typography.headlineMedium,
+                text = stringResource(R.string.app_name),
+                style = MaterialTheme.typography.displayMedium,
+                color = MaterialTheme.colorScheme.primary,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Choose a display name to get started",
-                style = MaterialTheme.typography.bodyMedium,
+                text = stringResource(R.string.auth_tagline),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            Spacer(modifier = Modifier.height(32.dp))
-
-            OutlinedTextField(
-                value = displayName,
-                onValueChange = { if (it.length <= 50) displayName = it },
-                label = { Text("Display name") },
-                supportingText = {
-                    Text(
-                        text = "$charCount / 50  (min 3)",
-                        color = if (!isNameValid && displayName.isNotEmpty())
-                            MaterialTheme.colorScheme.error
-                        else
-                            MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                },
-                isError = displayName.isNotEmpty() && !isNameValid,
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                modifier = Modifier.fillMaxWidth(),
-            )
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(48.dp))
 
             if (uiState.isLoading) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(modifier = Modifier.size(48.dp))
             } else {
                 Button(
                     onClick = {
-                        val userId = uiState.user?.id ?: return@Button
-                        viewModel.onCompleteProfile(userId, displayName)
+                        val activity = context as? Activity ?: return@Button
+                        viewModel.onSignInClicked(activity)
                     },
-                    enabled = isNameValid,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Text("Continue")
+                    Text(stringResource(R.string.auth_sign_in_google))
                 }
             }
         }

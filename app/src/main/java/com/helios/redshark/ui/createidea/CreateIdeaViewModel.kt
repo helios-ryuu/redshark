@@ -2,7 +2,7 @@ package com.helios.redshark.ui.createidea
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.helios.redshark.core.AppException
+import com.helios.redshark.core.error.AppException
 import com.helios.redshark.domain.model.CreateIdeaInput
 import com.helios.redshark.domain.usecase.idea.CreateIdeaUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -12,4 +12,3 @@ class GetMessagesUseCase @Inject constructor(
     operator fun invoke(conversationId: UUID): Flow<List<Message>> =
         messageRepository.getMessages(conversationId)
 }
-

@@ -13,8 +13,8 @@
 - [x] Cấu trúc thư mục tuân thủ [STRUCTURE.md](STRUCTURE.md) — scaffold đã được commit
 - [x] Tài liệu quy ước mã nguồn được commit — toàn bộ `docs/` đã có trên `main`
 - [x] Hoàn tất kiểm tra biên dịch cục bộ — Compose cơ bản build thành công
-- [ ] Firebase Auth + Firestore SDK kết nối thành công (đọc thử `users/{uid}`) — **chuyển sang giai đoạn 2**
-- [ ] Cloudflare R2 upload thử nghiệm thành công 1 file — **chuyển sang giai đoạn 2**
+- [x] Firebase Auth + Firestore SDK kết nối thành công (đọc thử `users/{uid}`) — hoàn tất tại giai đoạn 2 (`feature/auth-google-signin`)
+- [x] Cloudflare R2 upload thử nghiệm thành công 1 file — hoàn tất tại giai đoạn 2 (`R2Client` + `UploadAvatarUseCase`)
 
 ## 2. Công việc chi tiết
 

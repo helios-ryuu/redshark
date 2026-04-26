@@ -1,4 +1,4 @@
-package com.helios.redshark.ui.feature.profile
+package com.helios.redshark.ui.profile
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -44,10 +44,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.helios.redshark.R
 import com.helios.redshark.ui.common.AvatarImage
 
 private val PREDEFINED_SKILLS = listOf(
@@ -109,10 +111,10 @@ fun ProfileEditScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Edit Profile") },
+                title = { Text(stringResource(R.string.profile_edit_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
             )
@@ -143,7 +145,7 @@ fun ProfileEditScreen(
                     )
                     Icon(
                         imageVector = Icons.Default.AddCircle,
-                        contentDescription = "Change avatar",
+                        contentDescription = stringResource(R.string.profile_avatar_change_cd),
                         modifier = Modifier
                             .size(24.dp)
                             .align(Alignment.BottomEnd),
@@ -152,7 +154,7 @@ fun ProfileEditScreen(
                 }
             }
             Text(
-                text = "Tap to change avatar",
+                text = stringResource(R.string.profile_avatar_change_hint),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -161,10 +163,10 @@ fun ProfileEditScreen(
             OutlinedTextField(
                 value = displayName,
                 onValueChange = { if (it.length <= 50) displayName = it },
-                label = { Text("Display name") },
+                label = { Text(stringResource(R.string.profile_field_display_name)) },
                 supportingText = {
                     Text(
-                        "${displayName.trim().length} / 50  (min 3)",
+                        stringResource(R.string.auth_display_name_helper, displayName.trim().length),
                         color = if (!isNameValid && displayName.isNotEmpty())
                             MaterialTheme.colorScheme.error
                         else
@@ -181,10 +183,10 @@ fun ProfileEditScreen(
             OutlinedTextField(
                 value = bio,
                 onValueChange = { if (it.length <= 280) bio = it },
-                label = { Text("Bio") },
+                label = { Text(stringResource(R.string.profile_field_bio)) },
                 supportingText = {
                     Text(
-                        "${bio.trim().length} / 280",
+                        stringResource(R.string.profile_bio_helper, bio.trim().length),
                         color = if (!isBioValid)
                             MaterialTheme.colorScheme.error
                         else
@@ -200,7 +202,7 @@ fun ProfileEditScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Skills",
+                text = stringResource(R.string.profile_field_skills),
                 style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -230,7 +232,7 @@ fun ProfileEditScreen(
                     enabled = isNameValid && isBioValid,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Text("Save")
+                    Text(stringResource(R.string.action_save))
                 }
             }
         }

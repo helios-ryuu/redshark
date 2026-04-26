@@ -27,4 +27,4 @@ WBS tham chiếu: [WBS.md](WBS.md) — kiểm thử cho nhóm công việc `4.0`
 | TC-C21 | Mất mạng khi tạo Idea            | Airplane mode → submit                                  | Error "Không có kết nối", form giữ nguyên                    | ✅          |
 | TC-C22 | Mất mạng khi load list           | Vào tab Ideas khi offline                               | Hiện empty/error state có nút Retry                          | ✅          |
 | TC-C23 | Xem idea đã xóa (deep link)      | Mở link idea đã soft delete                             | Hiện "Idea không tồn tại"                                    | ✅          |
-| TC-C24 | Tag filter                       | Home/Ideas → lọc theo tag                               | Kết quả đúng với tag đã chọn                                 | ✅          |
+| TC-C24 | Tag filter (MyIdeas)             | Tab Ideas → tap tag chip để lọc                         | Danh sách ideas chỉ còn idea có chứa tag đã chọn             | ✅          |

@@ -94,5 +94,6 @@ WBS tham chiếu: [WBS.md](WBS.md) (đối chiếu tuần triển khai với cá
 
 ## 4. Vùng đệm rủi ro
 
+- **Cập nhật 25/04/2026:** Giai đoạn 3 (Nội dung) hoàn thành sớm vào 20/04/2026 — tận dụng để implement luôn toàn bộ WBS 5.0 (Thông báo + Nhắn tin) vào 25/04/2026, sớm hơn lịch (Tuần 8: 05–11/05) khoảng 10 ngày. Tuần 7–8 giờ dành cho kiểm thử CHECK-2/3 và ổn định kỹ thuật.
 - Mỗi giai đoạn có tối thiểu **1 ngày dự phòng** để sửa lỗi.
 - Nếu mốc xác thực trước 21/04 có rủi ro: ưu tiên Google Sign-In + duy trì phiên đăng nhập + hoàn thiện hồ sơ lần đầu (`displayName` 3..50), dời các phần hoàn thiện không bắt buộc sang Tuần 6.

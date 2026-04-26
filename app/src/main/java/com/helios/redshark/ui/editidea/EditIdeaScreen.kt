@@ -1,14 +1,37 @@
 package com.helios.redshark.ui.editidea
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.res.stringResource
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.helios.redshark.R
+import com.helios.redshark.ui.common.ErrorContent
+import com.helios.redshark.ui.common.InlineErrorText
+import com.helios.redshark.ui.common.LoadingContent
+import com.helios.redshark.ui.theme.Dimens
 import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,41 +65,36 @@ fun EditIdeaScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Sửa Idea") },
+                title = { Text(stringResource(R.string.idea_edit_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Quay lại")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
-                }
+                },
             )
-        }
+        },
     ) { padding ->
         when (uiState) {
-            is EditIdeaUiState.Loading, EditIdeaUiState.Idle -> Box(
-                modifier = Modifier.fillMaxSize().padding(padding),
-                contentAlignment = androidx.compose.ui.Alignment.Center,
-            ) { CircularProgressIndicator() }
+            is EditIdeaUiState.Loading, EditIdeaUiState.Idle ->
+                LoadingContent(modifier = Modifier.fillMaxSize().padding(padding))
 
-            is EditIdeaUiState.Error -> Box(
-                modifier = Modifier.fillMaxSize().padding(padding),
-                contentAlignment = androidx.compose.ui.Alignment.Center,
-            ) {
-                Text(
-                    text = (uiState as EditIdeaUiState.Error).message,
-                    color = MaterialTheme.colorScheme.error,
+            is EditIdeaUiState.Error ->
+                ErrorContent(
+                    message = (uiState as EditIdeaUiState.Error).message,
+                    onRetry = { viewModel.loadIdea(ideaId) },
+                    modifier = Modifier.fillMaxSize().padding(padding),
                 )
-            }
 
             else -> Column(
-                modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxSize().padding(padding).padding(Dimens.SpaceLg),
+                verticalArrangement = Arrangement.spacedBy(Dimens.SpaceLg),
             ) {
                 val validationError = (uiState as? EditIdeaUiState.ValidationError)?.message
 
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = { Text("Tiêu đề *") },
+                    label = { Text(stringResource(R.string.idea_field_title)) },
                     isError = validationError != null,
                     supportingText = {
                         if (validationError != null) Text(validationError, color = MaterialTheme.colorScheme.error)
@@ -89,10 +107,12 @@ fun EditIdeaScreen(
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("Mô tả") },
-                    modifier = Modifier.fillMaxWidth().height(160.dp),
+                    label = { Text(stringResource(R.string.idea_field_description)) },
+                    modifier = Modifier.fillMaxWidth().height(Dimens.InputFieldHeightMultiline),
                     maxLines = 6,
                 )
+
+                (uiState as? EditIdeaUiState.NetworkError)?.let { InlineErrorText(it.message) }
 
                 Button(
                     onClick = {
@@ -105,7 +125,7 @@ fun EditIdeaScreen(
                     enabled = uiState !is EditIdeaUiState.Loading && title.isNotBlank(),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Text("Lưu thay đổi")
+                    Text(stringResource(R.string.action_save_changes))
                 }
             }
         }

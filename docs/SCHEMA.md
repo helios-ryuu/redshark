@@ -105,13 +105,12 @@ Mọi collection đều dùng document ID Firestore (tự sinh UUID hoặc bằn
 
 | Thuộc tính     | Kiểu Firestore  | Ràng buộc                               | Toàn vẹn |
 |----------------|------------------|-----------------------------------------|----------|
-| id             | String (auto)    | NOT NULL                                | Strong   |
-| type           | String (Enum)    | {DIRECT}, default DIRECT               | Strong   |
-| participantIds | Array\<String\>  | → `users`, size = 2                    | Strong   |
-| directKey      | String           | NOT NULL, format `<uidA>_<uidB>` (sorted) | Strong |
-| lastMessage    | String?          | NULL đến khi có tin nhắn đầu           | Medium   |
-| lastMessageAt  | Timestamp?       | NULL đến khi có tin nhắn đầu           | Medium   |
-| createdAt      | Timestamp        | Server timestamp khi tạo               | Strong   |
+| id                 | String (auto)    | NOT NULL                                    | Strong   |
+| type               | String (Enum)    | {DIRECT}, default DIRECT                    | Strong   |
+| participantIds     | Array\<String\>  | → `users`, size = 2                         | Strong   |
+| lastMessageAt      | Timestamp?       | NULL đến khi có tin nhắn đầu                | Medium   |
+| lastMessagePreview | String?          | NULL; tối đa 80 ký tự đầu của tin cuối cùng | Weak     |
+| createdAt          | Timestamp        | Server timestamp khi tạo                    | Strong   |
 
 ## 9. Collection `messages`
 

@@ -1,6 +1,6 @@
 package com.helios.redshark.domain.usecase.issue
 
-import com.helios.redshark.core.AppException
+import com.helios.redshark.core.error.AppException
 import com.helios.redshark.domain.model.ISSUE_STATE_MACHINE
 import com.helios.redshark.domain.model.Issue
 import com.helios.redshark.domain.model.IssueStatus

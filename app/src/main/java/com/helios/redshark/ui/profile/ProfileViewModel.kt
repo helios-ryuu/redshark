@@ -1,4 +1,4 @@
-package com.helios.redshark.ui.feature.profile
+package com.helios.redshark.ui.profile
 
 import android.content.Context
 import android.net.Uri

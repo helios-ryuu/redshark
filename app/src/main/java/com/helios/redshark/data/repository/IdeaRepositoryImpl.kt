@@ -4,7 +4,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.helios.redshark.core.AppException
+import com.helios.redshark.core.error.AppException
 import com.helios.redshark.core.NetworkChecker
 import com.helios.redshark.data.mapper.toDomain
 import com.helios.redshark.data.remote.firestore.dto.IdeaDto
@@ -150,16 +150,16 @@ class IdeaRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addCollaborator(id: UUID, collaboratorId: String): Idea {
+    override suspend fun addCollaborator(ideaId: UUID, userId: String): Idea {
         if (!networkChecker.isOnline()) throw AppException.NetworkException()
         return try {
-            ideas.document(id.toString()).update(
+            ideas.document(ideaId.toString()).update(
                 mapOf(
-                    "collaboratorIds" to FieldValue.arrayUnion(collaboratorId),
+                    "collaboratorIds" to FieldValue.arrayUnion(userId),
                     "updatedAt" to FieldValue.serverTimestamp(),
                 )
             ).await()
-            val doc = ideas.document(id.toString()).get().await()
+            val doc = ideas.document(ideaId.toString()).get().await()
             doc.toObject(IdeaDto::class.java)?.copy(id = doc.id)?.toDomain()
                 ?: throw AppException.UnknownException()
         } catch (e: AppException) {

@@ -11,23 +11,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.UUID
 import javax.inject.Inject
 
 data class HomeUiState(
-    /** Full list from the server — filter applied on top for TC-C24. */
-    val allIssues: List<Issue> = emptyList(),
-    /** TC-C24: currently selected tag UUID; null = no filter active. */
-    val activeTagFilter: UUID? = null,
+    val issues: List<Issue> = emptyList(),
     val isLoading: Boolean = false,
     /** TC-C22: network failure details; null = no error. */
     val errorMessage: String? = null
-) {
-    /** TC-C24: derived — UI observes this list directly. */
-    val displayedIssues: List<Issue>
-        get() = if (activeTagFilter == null) allIssues
-                else allIssues.filter { it.ideaId == activeTagFilter } // swap for actual tag join once model has tagIds
-}
+)
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -51,7 +42,7 @@ class HomeViewModel @Inject constructor(
                     }
                 }
                 .collect { issues ->
-                    _uiState.update { it.copy(allIssues = issues, isLoading = false, errorMessage = null) }
+                    _uiState.update { it.copy(issues = issues, isLoading = false, errorMessage = null) }
                 }
         }
     }
@@ -60,13 +51,5 @@ class HomeViewModel @Inject constructor(
     fun retry() {
         _uiState.update { it.copy(isLoading = true, errorMessage = null) }
         observeFeed()
-    }
-
-    /**
-     * TC-C24: set/clear tag filter.
-     * Passing null removes the filter and shows all issues.
-     */
-    fun filterByTag(tagId: UUID?) {
-        _uiState.update { it.copy(activeTagFilter = tagId) }
     }
 }

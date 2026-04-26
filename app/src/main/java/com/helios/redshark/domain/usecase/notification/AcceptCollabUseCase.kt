@@ -1,42 +1,35 @@
 package com.helios.redshark.domain.usecase.notification
 
-import com.helios.redshark.core.AppException
-import com.helios.redshark.domain.model.Conversation
+import com.google.firebase.auth.FirebaseAuth
+import com.helios.redshark.core.error.AppException
 import com.helios.redshark.domain.model.CreateNotificationInput
 import com.helios.redshark.domain.model.Notification
 import com.helios.redshark.domain.model.NotificationTargetType
 import com.helios.redshark.domain.model.NotificationType
 import com.helios.redshark.domain.repository.IdeaRepository
-import com.helios.redshark.domain.repository.MessageRepository
 import com.helios.redshark.domain.repository.NotificationRepository
 import javax.inject.Inject
 
 class AcceptCollabUseCase @Inject constructor(
     private val ideaRepository: IdeaRepository,
     private val notificationRepository: NotificationRepository,
-    private val messageRepository: MessageRepository,
+    private val auth: FirebaseAuth,
 ) {
-    suspend operator fun invoke(notification: Notification): Conversation {
-        if (notification.type != NotificationType.COLLAB_REQUEST) {
-            throw AppException.ValidationException("notificationType", "Invalid collaboration request.")
-        }
-        val requesterId = notification.actorId
-            ?: throw AppException.ValidationException("actorId", "Requester was not found.")
-
-        ideaRepository.addCollaborator(notification.targetId, requesterId)
-        val conversation = messageRepository.findOrCreateDirectConversation(requesterId)
+    suspend operator fun invoke(notification: Notification) {
+        val currentUserId = auth.currentUser?.uid ?: throw AppException.UnauthorizedException()
+        val actorId = notification.actorId
+            ?: throw AppException.ValidationException("Thiếu thông tin người gửi yêu cầu.")
+        ideaRepository.addCollaborator(notification.targetId, actorId)
         notificationRepository.markAsRead(notification.id)
         notificationRepository.create(
             CreateNotificationInput(
-                recipientId = requesterId,
-                actorId = notification.recipientId,
+                recipientId = actorId,
+                actorId = currentUserId,
                 type = NotificationType.COLLAB_ACCEPTED,
                 targetType = NotificationTargetType.IDEA,
                 targetId = notification.targetId,
-                message = "Your collaboration request has been accepted.",
+                message = "Yêu cầu cộng tác của bạn đã được chấp nhận.",
             )
         )
-        return conversation
     }
 }
-

@@ -1,4 +1,4 @@
-package com.helios.redshark.ui.feature.settings
+package com.helios.redshark.ui.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -28,11 +28,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import java.util.UUID
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.helios.redshark.ui.feature.auth.AuthViewModel
+import com.helios.redshark.R
+import com.helios.redshark.ui.auth.AuthViewModel
+import com.helios.redshark.ui.theme.Dimens
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,22 +54,26 @@ fun SettingsScreen(
     if (showOpenIdeaDialog) {
         AlertDialog(
             onDismissRequest = { showOpenIdeaDialog = false; ideaIdInput = ""; ideaIdError = false },
-            title = { Text("Mở Idea đã xóa") },
+            title = { Text(stringResource(R.string.settings_open_deleted_idea)) },
             text = {
                 OutlinedTextField(
                     value = ideaIdInput,
                     onValueChange = { ideaIdInput = it; ideaIdError = false },
-                    label = { Text("Idea UUID") },
+                    label = { Text(stringResource(R.string.settings_idea_uuid_label)) },
                     isError = ideaIdError,
-                    supportingText = { if (ideaIdError) Text("UUID không hợp lệ", color = MaterialTheme.colorScheme.error) },
+                    supportingText = {
+                        if (ideaIdError) Text(
+                            stringResource(R.string.settings_invalid_uuid),
+                            color = MaterialTheme.colorScheme.error,
+                        )
+                    },
                     singleLine = true,
                 )
             },
             confirmButton = {
                 TextButton(onClick = {
                     try {
-                        val raw = ideaIdInput.trim()
-                            .removePrefix("redshark://idea/")
+                        val raw = ideaIdInput.trim().removePrefix("redshark://idea/")
                         val uuid = UUID.fromString(raw)
                         showOpenIdeaDialog = false
                         ideaIdInput = ""
@@ -75,10 +81,12 @@ fun SettingsScreen(
                     } catch (_: IllegalArgumentException) {
                         ideaIdError = true
                     }
-                }) { Text("Mở") }
+                }) { Text(stringResource(R.string.settings_open)) }
             },
             dismissButton = {
-                TextButton(onClick = { showOpenIdeaDialog = false; ideaIdInput = ""; ideaIdError = false }) { Text("Hủy") }
+                TextButton(onClick = { showOpenIdeaDialog = false; ideaIdInput = ""; ideaIdError = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
             },
         )
     }
@@ -86,20 +94,20 @@ fun SettingsScreen(
     if (showSignOutDialog) {
         AlertDialog(
             onDismissRequest = { showSignOutDialog = false },
-            title = { Text("Sign out") },
-            text = { Text("Are you sure you want to sign out?") },
+            title = { Text(stringResource(R.string.settings_sign_out_dialog_title)) },
+            text = { Text(stringResource(R.string.settings_sign_out_dialog_text)) },
             confirmButton = {
                 TextButton(onClick = {
                     showSignOutDialog = false
                     authViewModel.onSignOutClicked()
                     onSignedOut()
                 }) {
-                    Text("Sign out")
+                    Text(stringResource(R.string.settings_sign_out))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showSignOutDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
             },
         )
@@ -108,10 +116,8 @@ fun SettingsScreen(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Delete account") },
-            text = {
-                Text("This will permanently delete your account and all associated data. This action cannot be undone.")
-            },
+            title = { Text(stringResource(R.string.settings_delete_account)) },
+            text = { Text(stringResource(R.string.settings_delete_account_dialog_text)) },
             confirmButton = {
                 TextButton(
                     onClick = { showDeleteDialog = false },
@@ -119,12 +125,12 @@ fun SettingsScreen(
                         contentColor = MaterialTheme.colorScheme.error,
                     ),
                 ) {
-                    Text("Delete")
+                    Text(stringResource(R.string.action_delete))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.action_cancel))
                 }
             },
         )
@@ -133,10 +139,10 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Settings") },
+                title = { Text(stringResource(R.string.settings_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
             )
@@ -146,40 +152,37 @@ fun SettingsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = Dimens.SpaceLg),
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpaceLg))
 
             uiState.user?.let { user ->
-                Text(
-                    text = user.displayName,
-                    style = MaterialTheme.typography.titleMedium,
-                )
+                Text(text = user.displayName, style = MaterialTheme.typography.titleMedium)
                 Text(
                     text = user.email,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpaceXl))
                 HorizontalDivider()
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpaceXl))
             }
 
             OutlinedButton(
                 onClick = { showOpenIdeaDialog = true },
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Mở Idea đã xóa")
+                Text(stringResource(R.string.settings_open_deleted_idea))
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpaceMd))
 
             OutlinedButton(
                 onClick = { showSignOutDialog = true },
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Sign out")
+                Text(stringResource(R.string.settings_sign_out))
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpaceMd))
 
             Button(
                 onClick = { showDeleteDialog = true },
@@ -189,7 +192,7 @@ fun SettingsScreen(
                     contentColor = MaterialTheme.colorScheme.onErrorContainer,
                 ),
             ) {
-                Text("Delete account")
+                Text(stringResource(R.string.settings_delete_account))
             }
         }
     }

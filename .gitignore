@@ -16,6 +16,8 @@
 .cxx
 local.properties
 .obsidian
+deviceManager.xml
+*.log
 serviceAccountKey.json
 google-services.json
-.claude/
+.claude

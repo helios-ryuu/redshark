@@ -1,7 +1,15 @@
 package com.helios.redshark.ui.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -14,19 +22,17 @@ import com.helios.redshark.ui.createidea.CreateIdeaScreen
 import com.helios.redshark.ui.createissue.CreateIssueScreen
 import com.helios.redshark.ui.editidea.EditIdeaScreen
 import com.helios.redshark.ui.editissue.EditIssueScreen
-import com.helios.redshark.ui.feature.auth.AuthViewModel
-import com.helios.redshark.ui.feature.auth.GoogleSignInScreen
-import com.helios.redshark.ui.feature.auth.ProfileSetupScreen
-import com.helios.redshark.ui.feature.home.HomeScreen
-import com.helios.redshark.ui.feature.interaction.message.ConversationListScreen
-import com.helios.redshark.ui.feature.interaction.message.ConversationNewScreen
-import com.helios.redshark.ui.feature.interaction.message.ConversationScreen
-import com.helios.redshark.ui.feature.interaction.notification.NotificationListScreen
-import com.helios.redshark.ui.feature.profile.ProfileEditScreen
-import com.helios.redshark.ui.feature.profile.ProfileViewScreen
-import com.helios.redshark.ui.feature.settings.SettingsScreen
+import com.helios.redshark.ui.auth.AuthViewModel
+import com.helios.redshark.ui.auth.GoogleSignInScreen
+import com.helios.redshark.ui.auth.ProfileSetupScreen
+import com.helios.redshark.ui.home.HomeScreen
+import com.helios.redshark.ui.profile.ProfileEditScreen
+import com.helios.redshark.ui.profile.ProfileViewScreen
+import com.helios.redshark.ui.settings.SettingsScreen
 import com.helios.redshark.ui.ideadetail.IdeaDetailScreen
 import com.helios.redshark.ui.issuedetail.IssueDetailScreen
+import com.helios.redshark.ui.message.ConversationScreen
+import com.helios.redshark.ui.message.MessageViewModel
 import java.util.UUID
 
 @Composable
@@ -68,6 +74,11 @@ fun NavGraph(
                 currentUserId = currentUserId,
                 onNavigateToProfile = { userId -> navController.navigate(Routes.profileView(userId)) },
                 onNavigateToSettings = { navController.navigate(Routes.SETTINGS) },
+                onSignOut = {
+                    navController.navigate(Routes.AUTH_GOOGLE) {
+                        popUpTo(Routes.HOME) { inclusive = true }
+                    }
+                },
                 onNavigateToIdeaDetail = { ideaId ->
                     navController.navigate(Routes.ideaDetail(ideaId.toString()))
                 },
@@ -75,67 +86,9 @@ fun NavGraph(
                 onIssueClick = { issueId ->
                     navController.navigate(Routes.issueDetail(issueId.toString()))
                 },
-                onOpenConversation = { conversationId, title ->
-                    navController.navigate(Routes.conversation(conversationId, title))
+                onOpenConversation = { convId ->
+                    navController.navigate(Routes.conversation(convId.toString()))
                 },
-                onCreateConversation = { peerId ->
-                    navController.navigate(Routes.conversationNew(peerId))
-                },
-            )
-        }
-
-        composable(Routes.NOTIFICATIONS) {
-            NotificationListScreen(
-                onOpenConversation = { conversationId ->
-                    navController.navigate(Routes.conversation(conversationId))
-                },
-            )
-        }
-
-        composable(Routes.MESSAGES) {
-            ConversationListScreen(
-                onOpenConversation = { conversationId, title ->
-                    navController.navigate(Routes.conversation(conversationId, title))
-                },
-                onCreateConversation = { peerId ->
-                    navController.navigate(Routes.conversationNew(peerId))
-                },
-                currentUserId = currentUserId,
-            )
-        }
-
-        composable(
-            route = Routes.CONVERSATION_NEW,
-            arguments = listOf(navArgument("peerId") { type = NavType.StringType }),
-        ) { backStackEntry ->
-            val peerId = backStackEntry.arguments?.getString("peerId") ?: return@composable
-            ConversationNewScreen(
-                peerId = peerId,
-                onResolved = { conversationId ->
-                    navController.navigate(Routes.conversation(conversationId)) {
-                        popUpTo(Routes.CONVERSATION_NEW) { inclusive = true }
-                    }
-                },
-            )
-        }
-
-        composable(
-            route = Routes.CONVERSATION,
-            arguments = listOf(
-                navArgument("id") { type = NavType.StringType },
-                navArgument("title") {
-                    type = NavType.StringType
-                    nullable = true
-                    defaultValue = ""
-                },
-            ),
-        ) { backStackEntry ->
-            val conversationId = backStackEntry.arguments?.getString("id") ?: return@composable
-            val conversationTitle = backStackEntry.arguments?.getString("title")
-            ConversationScreen(
-                conversationId = conversationId,
-                conversationTitle = conversationTitle,
-                onNavigateBack = { navController.popBackStack() },
             )
         }
 
@@ -260,6 +213,60 @@ fun NavGraph(
                     navController.navigate(Routes.ideaDetail(ideaId.toString()))
                 },
             )
+        }
+
+        composable(
+            route = Routes.CONVERSATION,
+            arguments = listOf(navArgument("conversationId") { type = NavType.StringType }),
+        ) { backStackEntry ->
+            val conversationId = backStackEntry.arguments?.getString("conversationId")
+                ?.let { UUID.fromString(it) } ?: return@composable
+            ConversationScreen(
+                conversationId = conversationId,
+                currentUserId = currentUserId ?: "",
+                onNavigateBack = { navController.popBackStack() },
+            )
+        }
+
+        composable(
+            route = Routes.CONVERSATION_NEW,
+            arguments = listOf(
+                navArgument("peerId") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                },
+            ),
+        ) { backStackEntry ->
+            val peerId = backStackEntry.arguments?.getString("peerId") ?: return@composable
+            val messageViewModel: MessageViewModel = hiltViewModel()
+            val convState by messageViewModel.convState.collectAsStateWithLifecycle()
+
+            LaunchedEffect(peerId) {
+                messageViewModel.findOrCreateConversation(peerId)
+            }
+
+            LaunchedEffect(convState.navigateToConversation) {
+                convState.navigateToConversation?.let { convId ->
+                    messageViewModel.clearNavigation()
+                    navController.navigate(Routes.conversation(convId.toString())) {
+                        popUpTo(Routes.CONVERSATION_NEW) { inclusive = true }
+                    }
+                }
+            }
+
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                if (convState.errorMessage != null) {
+                    Text(
+                        text = convState.errorMessage!!,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                } else {
+                    CircularProgressIndicator()
+                }
+            }
         }
     }
 }

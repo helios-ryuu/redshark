@@ -127,11 +127,11 @@ ProfileEditScreen → pick image
 
 > Trạng thái kiểm tra thủ công tính đến 16/04/2026:
 
-- [ ] Đăng nhập Google trên emulator (thêm SHA-1 debug vào Firebase) — cần test thiết bị
+- [x] Đăng nhập Google trên emulator (thêm SHA-1 debug vào Firebase) — đã xác nhận thủ công (CHECK-1 TC-A01)
 - [x] Login lần đầu thiếu `displayName` → bắt buộc vào `profile/setup` — logic trong `AuthViewModel`
 - [x] `displayName` chỉ chấp nhận 3..50 ký tự — validate trong `CompleteFirstProfileUseCase` + `UpdateProfileUseCase` + UI
 - [x] `onAuthStateChanged` persist qua restart app — `FirebaseAuthSource.observeAuthState()` + DataStore
-- [x] Avatar upload R2 — `R2Client` (OkHttp + AWS SigV4), `UploadAvatarUseCase`, `MediaRepositoryImpl` — cần test thiết bị
+- [x] Avatar upload R2 — `R2Client` (OkHttp + AWS SigV4), `UploadAvatarUseCase`, `MediaRepositoryImpl`
 - [x] Không lộ token đăng nhập trong logcat release — `Timber.DebugTree` chỉ plant trong DEBUG
 
 ### Tiến độ triển khai (16/04/2026)

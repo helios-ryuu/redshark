@@ -4,7 +4,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.helios.redshark.core.AppException
+import com.helios.redshark.core.error.AppException
 import com.helios.redshark.data.mapper.toDomain
 import com.helios.redshark.data.remote.firestore.dto.CommentDto
 import com.helios.redshark.domain.model.Comment
