@@ -7,8 +7,5 @@ import javax.inject.Inject
 class MarkNotificationReadUseCase @Inject constructor(
     private val notificationRepository: NotificationRepository,
 ) {
-    suspend operator fun invoke(id: UUID) {
-        notificationRepository.markAsRead(id)
-    }
+    suspend operator fun invoke(id: UUID) = notificationRepository.markAsRead(id)
 }
-

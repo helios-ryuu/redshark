@@ -2,7 +2,7 @@ package com.helios.redshark.ui.editidea
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.helios.redshark.core.AppException
+import com.helios.redshark.core.error.AppException
 import com.helios.redshark.domain.model.Idea
 import com.helios.redshark.domain.model.UpdateIdeaInput
 import com.helios.redshark.domain.usecase.idea.GetIdeaDetailUseCase
@@ -22,6 +22,7 @@ sealed interface EditIdeaUiState {
     /** TC-C05: mutation succeeded — screen navigates back to detail. */
     data object Success : EditIdeaUiState
     data class ValidationError(val message: String) : EditIdeaUiState
+    data class NetworkError(val message: String) : EditIdeaUiState
     data class Error(val message: String) : EditIdeaUiState
 }
 
@@ -55,6 +56,8 @@ class EditIdeaViewModel @Inject constructor(
                 EditIdeaUiState.Success
             } catch (e: AppException.ValidationException) {
                 EditIdeaUiState.ValidationError(e.message ?: "Dữ liệu không hợp lệ.")
+            } catch (e: AppException.NetworkException) {
+                EditIdeaUiState.NetworkError(e.message ?: "Lỗi kết nối mạng.")
             } catch (e: AppException) {
                 EditIdeaUiState.Error(e.message ?: "Lưu thất bại. Vui lòng thử lại.")
             }

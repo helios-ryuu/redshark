@@ -1,6 +1,6 @@
 package com.helios.redshark.domain.usecase.idea
 
-import com.helios.redshark.core.AppException
+import com.helios.redshark.core.error.AppException
 import com.helios.redshark.domain.model.Idea
 import com.helios.redshark.domain.model.UpdateIdeaInput
 import com.helios.redshark.domain.repository.IdeaRepository

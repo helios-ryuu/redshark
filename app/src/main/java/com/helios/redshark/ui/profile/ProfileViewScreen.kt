@@ -1,4 +1,4 @@
-package com.helios.redshark.ui.feature.profile
+package com.helios.redshark.ui.profile
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,9 +33,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.helios.redshark.R
 import com.helios.redshark.ui.common.AvatarImage
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -66,16 +68,16 @@ fun ProfileViewScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text(uiState.user?.displayName ?: "Profile") },
+                title = { Text(uiState.user?.displayName ?: stringResource(R.string.profile_title_fallback)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 actions = {
                     if (uiState.isOwner) {
                         IconButton(onClick = onNavigateToEdit) {
-                            Icon(Icons.Default.Edit, contentDescription = "Edit profile")
+                            Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.action_edit))
                         }
                     }
                 },
@@ -100,7 +102,7 @@ fun ProfileViewScreen(
                         .padding(padding),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Text("Profile not found", style = MaterialTheme.typography.bodyLarge)
+                    Text(stringResource(R.string.profile_not_found), style = MaterialTheme.typography.bodyLarge)
                 }
             }
             else -> {
@@ -149,7 +151,7 @@ fun ProfileViewScreen(
                     if (user.skills.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            text = "Skills",
+                            text = stringResource(R.string.profile_field_skills),
                             style = MaterialTheme.typography.titleSmall,
                             modifier = Modifier.fillMaxWidth(),
                         )

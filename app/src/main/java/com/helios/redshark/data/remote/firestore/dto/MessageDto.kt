@@ -10,6 +10,4 @@ data class MessageDto(
     val senderId: String = "",
     val content: String = "",
     val createdAt: Timestamp? = null,
-    val status: String = "SENT",
 )
-

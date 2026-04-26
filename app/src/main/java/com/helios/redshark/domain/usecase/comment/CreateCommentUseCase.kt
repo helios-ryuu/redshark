@@ -1,6 +1,6 @@
 package com.helios.redshark.domain.usecase.comment
 
-import com.helios.redshark.core.AppException
+import com.helios.redshark.core.error.AppException
 import com.helios.redshark.domain.model.Comment
 import com.helios.redshark.domain.model.CreateCommentInput
 import com.helios.redshark.domain.model.CreateNotificationInput

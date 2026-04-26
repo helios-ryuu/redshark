@@ -9,8 +9,8 @@ WBS tham chiếu: [WBS.md](WBS.md) — nhóm công việc `3.0`.
 | 1    | `AuthScreen` → "Tiếp tục với Google" | `GoogleSignInHelper.requestCredential()`                               | —                                                        |
 | 2    | Người dùng chọn tài khoản            | Google trả `idToken`                                                   | —                                                        |
 | 3    | Đổi credential                       | `GoogleAuthProvider.getCredential(idToken)` → `signInWithCredential()` | Firebase Auth                                            |
-| 4    | Sau khi Firebase trả UID             | `DataConnectSource.upsertUser(uid, email, displayName?)`               | Insert/Update `users(id, email, displayName, createdAt)` |
-| 5    | `onAuthStateChanged` fire            | `GetMe` query                                                          | Select `users` where id = auth.uid                       |
+| 4    | Sau khi Firebase trả UID             | `FirestoreSourceImpl.upsertUser(uid, email, displayName?)`             | Insert/Update `users/{uid}` (set/merge: `email`, `displayName`, `createdAt`, `updatedAt`) |
+| 5    | `onAuthStateChanged` fire            | `FirestoreSourceImpl.getUser(uid)`                                     | Đọc `users/{uid}`                                        |
 | 6    | Nếu thiếu `displayName` hợp lệ       | Điều hướng tới `profile/setup`                                         | —                                                        |
 | 7    | Nếu hồ sơ đã hợp lệ                  | Điều hướng tới `home`                                                  | —                                                        |
 
@@ -20,7 +20,7 @@ WBS tham chiếu: [WBS.md](WBS.md) — nhóm công việc `3.0`.
 |------|----------------------------------------------|--------------------------------------------------------------|-----------------------------------------|
 | 1    | `ProfileSetupScreen` hiện sau login đầu tiên | —                                                            | —                                       |
 | 2    | User nhập `displayName` (3..50 ký tự)        | Client validate độ dài + trim                                | —                                       |
-| 3    | Bấm "Tiếp tục"                               | `CompleteFirstProfileUseCase` → `UpdateProfile(displayName)` | Update `users.displayName`, `updatedAt` |
+| 3    | Bấm "Tiếp tục"                               | `CompleteFirstProfileUseCase` → `FirestoreSourceImpl.updateProfile(displayName)` | Update `users.displayName`, `updatedAt` |
 | 4    | Thành công                                   | Navigate `home`                                              | —                                       |
 | 5    | Thất bại mạng                                | Hiển thị lỗi + cho phép retry                                | —                                       |
 
@@ -48,6 +48,6 @@ WBS tham chiếu: [WBS.md](WBS.md) — nhóm công việc `3.0`.
 
 | Bước | UI                                      | Service                 | Bảng         |
 |------|-----------------------------------------|-------------------------|--------------|
-| 1    | Tap avatar/tên user trong Comment/Issue | Navigate `profile/{id}` | —            |
-| 2    | `ProfileViewScreen` load                | `GetUserById(id)` query | Read `users` |
+| 1    | Tap avatar/tên user trong Comment/Issue | Navigate `profile/{id}`              | —            |
+| 2    | `ProfileViewScreen` load                | `FirestoreSourceImpl.getUser(id)`    | Read `users/{id}` |
 | 3    | Hiển thị info + nút "Nhắn tin"          | —                       | —            |

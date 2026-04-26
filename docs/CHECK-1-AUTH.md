@@ -22,7 +22,7 @@ WBS tham chiếu: [WBS.md](WBS.md) — kiểm thử cho nhóm công việc `3.0`
 | TC-A11 | Xem profile chính mình            | Icon AccountCircle trên HomeScreen → ProfileViewScreen | Hiển thị `displayName`, bio, skills; nút Edit hiện (isOwner)           | ✅          |
 | TC-A12 | Edit displayName hợp lệ           | ProfileEditScreen → đổi name (3..50) → Save            | UI cập nhật, `updateProfile` thành công, navigate back                 | ✅          |
 | TC-A13 | Upload avatar (R2)                | Edit → tap avatar → chọn ảnh → tự động upload          | Upload R2 SigV4 → `avatarUrl` cập nhật                                 | ✅          |
-| TC-A14 | Upload avatar > 5MB               | Chọn ảnh > 5MB                                         | `UploadAvatarUseCase` trả `ValidationException`, Snackbar              | ✅          |
+| TC-A14 | Upload avatar ảnh thô > 5MB       | Chọn ảnh raw > 5MB (trước nén ≤ 1MB)                   | `UploadAvatarUseCase` trả `ValidationException`, Snackbar              | ✅          |
 | TC-A15 | Xem profile user khác             | Điều hướng `profile/{id}` với id khác currentUser      | `ProfileViewScreen`, isOwner=false, không hiện nút Edit                | ✅          |
 | TC-A16 | Edit bio > 280 ký tự              | Nhập bio > 280 ký tự                                   | UI cap 280 + validate, nút Save disabled                               | ✅          |
 | TC-A17 | Chọn skills                       | ProfileEditScreen → tap skill chip                     | Toggle selected, `updateProfile` gửi đúng danh sách                    | ✅          |

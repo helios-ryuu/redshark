@@ -1,22 +1,43 @@
 package com.helios.redshark.ui.myideas
 
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.res.stringResource
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.helios.redshark.R
 import com.helios.redshark.domain.model.Idea
-import com.helios.redshark.domain.model.IdeaStatus
+import com.helios.redshark.ui.common.EmptyContent
+import com.helios.redshark.ui.common.ErrorContent
+import com.helios.redshark.ui.common.IdeaStatusPill
+import com.helios.redshark.ui.common.LoadingContent
+import com.helios.redshark.ui.theme.Dimens
 import java.util.UUID
 
 @Composable
@@ -29,19 +50,18 @@ fun MyIdeasScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(modifier = modifier.fillMaxSize()) {
-        // TC-C24: show tag filter chips only when ideas have distinct tags
         val allTags = uiState.allIdeas.flatMap { it.tagIds }.distinct()
         if (allTags.size > 1) {
             Row(
                 modifier = Modifier
                     .horizontalScroll(rememberScrollState())
-                    .padding(horizontal = 12.dp, vertical = 6.dp),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    .padding(horizontal = Dimens.SpaceMd, vertical = Dimens.SpaceXs + Dimens.SpaceXxs),
+                horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceXs + Dimens.SpaceXxs),
             ) {
                 FilterChip(
                     selected = uiState.activeTagFilter == null,
                     onClick = { viewModel.filterByTag(null) },
-                    label = { Text("Tất cả") },
+                    label = { Text(stringResource(R.string.ideas_filter_all)) },
                 )
                 allTags.forEach { tagId ->
                     FilterChip(
@@ -56,21 +76,22 @@ fun MyIdeasScreen(
 
         Box(modifier = Modifier.weight(1f)) {
             when {
-                uiState.isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                uiState.isLoading -> LoadingContent()
                 uiState.errorMessage != null -> ErrorContent(
                     message = uiState.errorMessage!!,
                     onRetry = viewModel::retry,
-                    modifier = Modifier.align(Alignment.Center),
                 )
-                uiState.displayedIdeas.isEmpty() -> Text(
-                    text = "Chưa có idea nào. Nhấn + để tạo mới.",
-                    modifier = Modifier.align(Alignment.Center).padding(16.dp),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                uiState.displayedIdeas.isEmpty() -> EmptyContent(
+                    message = stringResource(R.string.ideas_empty),
                 )
                 else -> LazyColumn(
-                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 88.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(
+                        start = Dimens.SpaceLg,
+                        end = Dimens.SpaceLg,
+                        top = Dimens.SpaceLg,
+                        bottom = Dimens.ListBottomPaddingWithFab,
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(Dimens.SpaceSm),
                 ) {
                     items(uiState.displayedIdeas, key = { it.id.toString() }) { idea ->
                         IdeaCard(idea = idea, onClick = { onIdeaClick(idea.id) })
@@ -81,9 +102,9 @@ fun MyIdeasScreen(
                 onClick = onCreateIdea,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(16.dp),
+                    .padding(Dimens.SpaceLg),
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Tạo Idea")
+                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.ideas_fab_create_cd))
             }
         }
     }
@@ -94,22 +115,22 @@ private fun IdeaCard(idea: Idea, onClick: () -> Unit) {
     Card(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevation),
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(Dimens.SpaceLg)) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
                     text = idea.title,
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f),
                 )
-                IdeaStatusBadge(idea.status)
+                IdeaStatusPill(idea.status)
             }
             idea.description?.let {
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(Dimens.SpaceXs))
                 Text(
                     text = it,
                     style = MaterialTheme.typography.bodyMedium,
@@ -118,34 +139,5 @@ private fun IdeaCard(idea: Idea, onClick: () -> Unit) {
                 )
             }
         }
-    }
-}
-
-@Composable
-fun IdeaStatusBadge(status: IdeaStatus) {
-    val (label, color) = when (status) {
-        IdeaStatus.ACTIVE -> "ACTIVE" to MaterialTheme.colorScheme.primary
-        IdeaStatus.CLOSED -> "CLOSED" to MaterialTheme.colorScheme.secondary
-        IdeaStatus.CANCELLED -> "CANCELLED" to MaterialTheme.colorScheme.error
-    }
-    Surface(
-        shape = MaterialTheme.shapes.small,
-        color = color.copy(alpha = 0.15f),
-    ) {
-        Text(
-            text = label,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-            style = MaterialTheme.typography.labelSmall,
-            color = color,
-        )
-    }
-}
-
-@Composable
-fun ErrorContent(message: String, onRetry: () -> Unit, modifier: Modifier = Modifier) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = message, style = MaterialTheme.typography.bodyMedium)
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = onRetry) { Text("Thử lại") }
     }
 }

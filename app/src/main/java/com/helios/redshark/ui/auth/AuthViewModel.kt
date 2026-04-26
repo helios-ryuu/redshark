@@ -1,4 +1,4 @@
-package com.helios.redshark.ui.feature.auth
+package com.helios.redshark.ui.auth
 
 import android.content.Context
 import androidx.lifecycle.ViewModel

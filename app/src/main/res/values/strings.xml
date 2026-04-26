@@ -1,22 +1,136 @@
 <resources>
     <string name="app_name">RedShark</string>
-    <string name="common_error_generic">Something went wrong</string>
 
-    <string name="interaction_notifications_empty">No notifications yet</string>
-    <string name="interaction_notifications_mark_read">Mark as read</string>
-    <string name="interaction_notifications_accept">Accept</string>
-    <string name="interaction_notifications_reject">Reject</string>
+    <!-- Common -->
+    <string name="action_retry">Thử lại</string>
+    <string name="action_save">Lưu</string>
+    <string name="action_save_changes">Lưu thay đổi</string>
+    <string name="action_cancel">Hủy</string>
+    <string name="action_delete">Xóa</string>
+    <string name="action_edit">Sửa</string>
+    <string name="action_back">Quay lại</string>
+    <string name="action_ok">OK</string>
+    <string name="action_send">Gửi</string>
+    <string name="action_continue">Tiếp tục</string>
 
-    <string name="interaction_messages_title_fallback">Message</string>
-    <string name="interaction_messages_invalid_conversation">Invalid conversation</string>
-    <string name="interaction_messages_empty_conversations">No conversations yet</string>
-    <string name="interaction_messages_empty_messages">No messages yet</string>
-    <string name="interaction_messages_create">New conversation</string>
-    <string name="interaction_messages_create_content_description">Create conversation</string>
-    <string name="interaction_messages_no_available_users">No available users to start a conversation.</string>
-    <string name="interaction_messages_close">Close</string>
-    <string name="interaction_messages_input_placeholder">Type a message</string>
-    <string name="interaction_messages_send">Send</string>
-    <string name="interaction_messages_status_sending">Sending</string>
-    <string name="interaction_messages_status_failed">Failed to send</string>
+    <!-- Auth -->
+    <string name="auth_tagline">Cộng tác trên những ý tưởng có ý nghĩa</string>
+    <string name="auth_sign_in_google">Đăng nhập với Google</string>
+    <string name="auth_complete_profile">Hoàn tất hồ sơ</string>
+    <string name="auth_choose_display_name">Chọn tên hiển thị để bắt đầu</string>
+    <string name="auth_display_name_label">Tên hiển thị</string>
+    <string name="auth_display_name_helper">%1$d / 50  (tối thiểu 3)</string>
+
+    <!-- Home tabs -->
+    <string name="home_tab_feed">Feed</string>
+    <string name="home_tab_ideas">Ideas</string>
+    <string name="home_tab_notifications">Thông báo</string>
+    <string name="home_tab_messages">Tin nhắn</string>
+    <string name="home_title_feed">Feed</string>
+    <string name="home_title_ideas">Ý tưởng của tôi</string>
+    <string name="home_title_notifications">Thông báo</string>
+    <string name="home_title_messages">Tin nhắn</string>
+    <string name="home_action_profile">Hồ sơ</string>
+    <string name="home_action_settings">Cài đặt</string>
+
+    <!-- Feed (Issues) -->
+    <string name="feed_empty">Không có issue nào từ người dùng khác.</string>
+
+    <!-- My Ideas -->
+    <string name="ideas_filter_all">Tất cả</string>
+    <string name="ideas_empty">Chưa có idea nào. Nhấn + để tạo mới.</string>
+    <string name="ideas_fab_create_cd">Tạo Idea</string>
+
+    <!-- Idea form -->
+    <string name="idea_create_title">Tạo Idea mới</string>
+    <string name="idea_edit_title">Sửa Idea</string>
+    <string name="idea_field_title">Tiêu đề *</string>
+    <string name="idea_field_description">Mô tả</string>
+    <string name="idea_action_create">Tạo Idea</string>
+
+    <!-- Idea detail -->
+    <string name="idea_detail_title_fallback">Chi tiết Idea</string>
+    <string name="idea_delete_dialog_title">Xóa Idea</string>
+    <string name="idea_delete_dialog_text">Bạn có chắc muốn xóa idea này không?</string>
+    <string name="idea_action_close">Đóng Idea</string>
+    <string name="idea_action_cancel">Hủy Idea</string>
+    <string name="idea_action_request_collab">Xin tham gia</string>
+    <string name="idea_action_collab_sending">Đang gửi…</string>
+    <string name="idea_action_collab_sent">Đã gửi yêu cầu</string>
+    <string name="idea_share_link_cd">Sao chép link</string>
+    <string name="idea_section_issues">Issues (%1$d)</string>
+    <string name="idea_section_issues_add_cd">Thêm Issue</string>
+    <string name="idea_issues_empty">Chưa có issue nào.</string>
+    <string name="idea_section_comments">Bình luận (%1$d)</string>
+    <string name="idea_comment_placeholder">Viết bình luận...</string>
+
+    <!-- Issue form -->
+    <string name="issue_create_title">Tạo Issue mới</string>
+    <string name="issue_edit_title">Sửa Issue</string>
+    <string name="issue_field_title">Tiêu đề *</string>
+    <string name="issue_field_description">Mô tả</string>
+    <string name="issue_field_priority">Độ ưu tiên</string>
+    <string name="issue_field_assignee">Assignee</string>
+    <string name="issue_assignee_none">Không có</string>
+    <string name="issue_action_create">Tạo Issue</string>
+    <string name="issue_error_limit_exceeded">Đạt giới hạn 20 issue active.</string>
+    <string name="issue_error_idea_not_active">Idea này đã đóng hoặc hủy, không thể thêm issue.</string>
+
+    <!-- Issue detail -->
+    <string name="issue_detail_title_fallback">Chi tiết Issue</string>
+    <string name="issue_delete_dialog_title">Xóa Issue</string>
+    <string name="issue_delete_dialog_text">Bạn có chắc muốn xóa issue này không?</string>
+    <string name="issue_action_view_idea">Xem Idea gốc</string>
+    <string name="issue_section_status_change">Chuyển trạng thái:</string>
+
+    <!-- Notifications -->
+    <string name="notification_empty">Không có thông báo nào.</string>
+    <string name="notification_action_accept">Chấp nhận</string>
+    <string name="notification_action_reject">Từ chối</string>
+    <string name="notification_type_issue_created">Issue mới</string>
+    <string name="notification_type_collab_request">Yêu cầu cộng tác</string>
+    <string name="notification_type_collab_accepted">Cộng tác được chấp nhận</string>
+    <string name="notification_type_collab_rejected">Cộng tác bị từ chối</string>
+    <string name="notification_type_comment">Bình luận mới</string>
+    <string name="notification_error_mark_read">Không thể đánh dấu đã đọc.</string>
+    <string name="notification_error_load">Lỗi tải thông báo.</string>
+
+    <!-- Messages -->
+    <string name="message_conversation_title">Cuộc trò chuyện</string>
+    <string name="message_list_empty">Chưa có cuộc trò chuyện nào.</string>
+    <string name="message_thread_empty">Chưa có tin nhắn nào. Hãy bắt đầu cuộc trò chuyện!</string>
+    <string name="message_input_placeholder">Nhập tin nhắn...</string>
+    <string name="message_unknown_user">Người dùng</string>
+    <string name="message_error_load_list">Lỗi tải danh sách tin nhắn.</string>
+    <string name="message_error_load_thread">Lỗi tải tin nhắn.</string>
+
+    <!-- Profile -->
+    <string name="profile_title_fallback">Hồ sơ</string>
+    <string name="profile_edit_title">Chỉnh sửa hồ sơ</string>
+    <string name="profile_not_found">Không tìm thấy hồ sơ</string>
+    <string name="profile_field_display_name">Tên hiển thị</string>
+    <string name="profile_field_bio">Giới thiệu</string>
+    <string name="profile_field_skills">Kỹ năng</string>
+    <string name="profile_avatar_change_hint">Nhấn để đổi ảnh đại diện</string>
+    <string name="profile_avatar_change_cd">Đổi ảnh đại diện</string>
+    <string name="profile_bio_helper">%1$d / 280</string>
+    <string name="profile_avatar_read_failed">Không thể đọc ảnh.</string>
+    <string name="profile_avatar_upload_failed">Tải ảnh thất bại.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Cài đặt</string>
+    <string name="settings_open_deleted_idea">Mở Idea đã xóa</string>
+    <string name="settings_idea_uuid_label">Idea UUID</string>
+    <string name="settings_invalid_uuid">UUID không hợp lệ</string>
+    <string name="settings_open">Mở</string>
+    <string name="settings_sign_out">Đăng xuất</string>
+    <string name="settings_sign_out_dialog_title">Đăng xuất</string>
+    <string name="settings_sign_out_dialog_text">Bạn có chắc muốn đăng xuất?</string>
+    <string name="settings_delete_account">Xóa tài khoản</string>
+    <string name="settings_delete_account_dialog_text">Hành động này sẽ xóa vĩnh viễn tài khoản và toàn bộ dữ liệu liên quan. Không thể hoàn tác.</string>
+
+    <!-- Generic errors -->
+    <string name="error_offline">Không có kết nối. Kiểm tra mạng và nhấn Thử lại.</string>
+    <string name="error_load_list">Lỗi tải danh sách.</string>
+    <string name="error_load_data">Lỗi tải dữ liệu.</string>
 </resources>

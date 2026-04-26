@@ -24,8 +24,8 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 
 ## 3. Mốc hiện tại (hiện trạng)
 
-- **Ngày ghi nhận:** 22/04/2026.
-- **Trạng thái hiện tại:** WBS 3.0 (Auth) ✅, WBS 4.0 (Content) ✅; WBS 5.0 (Interaction) đang review, đã hoàn thiện phần lớn luồng Notifications/Messages.
+- **Ngày ghi nhận:** 25/04/2026.
+- **Trạng thái hiện tại:** WBS 3.0 (Auth) ✅, WBS 4.0 (Content) ✅ và WBS 5.0 (Tương tác) ✅ hoàn thành — toàn bộ code feature từ giai đoạn 1 đến giai đoạn 4 đã implement xong trên nhánh working tree. Sẵn sàng vào WBS 6.0 (Kiểm thử/NFR) và WBS 7.0 (Phát hành) theo lịch Tuần 9 (12–17/05/2026).
 - **Người thực hiện commit init:** **Sỹ**.
 - **Đề xuất commit chuẩn:** `chore(init): bootstrap Android project and project documents`.
 
@@ -236,7 +236,7 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 - Thành viên phối hợp: Hải.
 - Phụ thuộc: 4.0.
 - Thời gian: 05/05 - 09/05.
-- Ghi chú: ✅ Hoàn thành sớm (22/04/2026) trên nhánh feature; dùng Firestore snapshot listener cho list + unread count.
+- Ghi chú: ✅ Hoàn thành 25/04/2026. Sản phẩm: `NotificationListScreen`, `NotificationViewModel`, `GetNotificationsUseCase`, `GetUnreadCountUseCase`, `MarkNotificationReadUseCase`; badge hiển thị trên tab Notifications trong HomeScreen.
 
 #### 5.1.2 Đọc thông báo và xử lý Collab accept/reject
 - Sản phẩm bàn giao: đánh dấu đã đọc, chấp nhận/từ chối cộng tác, tạo thông báo phản hồi.
@@ -244,7 +244,15 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 - Thành viên phối hợp: Hải.
 - Phụ thuộc: 5.1.1.
 - Thời gian: 05/05 - 10/05.
-- Ghi chú: ✅ Hoàn thành sớm (22/04/2026) trên nhánh feature; Accept tạo/mở DIRECT conversation và gửi `COLLAB_ACCEPTED`.
+- Ghi chú: ✅ Hoàn thành 25/04/2026. Sản phẩm: `AcceptCollabUseCase` (thêm collaboratorIds + COLLAB_ACCEPTED notification), `RejectCollabUseCase` (COLLAB_REJECTED notification); nút Chấp nhận/Từ chối hiện trên COLLAB_REQUEST notification chưa đọc.
+
+#### 5.1.3 Gửi yêu cầu cộng tác (chuyển từ 4.3.2)
+- Sản phẩm bàn giao: `RequestCollabUseCase` tạo notification `COLLAB_REQUEST`; UI nút "Xin tham gia" trên `IdeaDetailScreen` (FR-IDEA-07 SHOULD).
+- Phụ trách chính: Nam.
+- Thành viên phối hợp: Hải.
+- Phụ thuộc: 5.1.1, 4.1.1.
+- Thời gian: 05/05 - 10/05.
+- Ghi chú: ✅ Hoàn thành 25/04/2026. Sản phẩm: `RequestCollabUseCase`; nút "Xin tham gia" hiện với non-author trên idea ACTIVE, ẩn khi đã là collaborator hoặc là tác giả.
 
 ### 5.2 Messages (DIRECT 1-1)
 #### 5.2.1 Danh sách hội thoại và luồng tạo/đi tới hội thoại
@@ -253,15 +261,15 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 - Thành viên phối hợp: Hải.
 - Phụ thuộc: 5.1.*.
 - Thời gian: 06/05 - 10/05.
-- Ghi chú: ✅ Hoàn thành sớm (22/04/2026) trên nhánh feature; có FAB tạo hội thoại và luồng `conversation/new?peerId=`.
+- Ghi chú: ✅ Hoàn thành 25/04/2026. Sản phẩm: `ConversationListScreen`, `FindOrCreateDirectConversationUseCase`, `MessageViewModel`; route `conversation/new?peerId=` xử lý redirect.
 
 #### 5.2.2 Gửi/nhận tin nhắn với cập nhật lạc quan và cập nhật theo chu kỳ
-- Sản phẩm bàn giao: `ConversationScreen`, gửi tin, cập nhật mỗi 5 giây, chống trùng hội thoại.
+- Sản phẩm bàn giao: `ConversationScreen`, gửi tin, cập nhật real-time (Firestore listener thay poll), chống trùng hội thoại.
 - Phụ trách chính: Nam.
 - Thành viên phối hợp: Hải.
 - Phụ thuộc: 5.2.1.
 - Thời gian: 07/05 - 11/05.
-- Ghi chú: ✅ Hoàn thành sớm phần chính (22/04/2026) trên nhánh feature; đang dùng realtime listener thay cho polling theo chu kỳ.
+- Ghi chú: ✅ Hoàn thành 25/04/2026. Sản phẩm: `ConversationScretaen`, `SendMessageUseCase`, `GetMessagesUseCase`; optimistic send + real-time Firestore listener; chống trùng qua `findDirectConversation` trước `createDirectConversation`.
 
 ## 6.0 Chất lượng, kiểm thử và tuân thủ NFR
 

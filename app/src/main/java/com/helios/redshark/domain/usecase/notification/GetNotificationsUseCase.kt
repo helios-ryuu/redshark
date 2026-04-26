@@ -10,4 +10,3 @@ class GetNotificationsUseCase @Inject constructor(
 ) {
     operator fun invoke(): Flow<List<Notification>> = notificationRepository.getMyNotifications()
 }
-

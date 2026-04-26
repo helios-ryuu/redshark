@@ -2,7 +2,7 @@ package com.helios.redshark.ui.ideadetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.helios.redshark.core.AppException
+import com.helios.redshark.core.error.AppException
 import com.helios.redshark.domain.model.Comment
 import com.helios.redshark.domain.model.CreateCommentInput
 import com.helios.redshark.domain.model.Idea
@@ -36,8 +36,7 @@ data class IdeaDetailUiState(
     val commentSubmitState: CommentSubmitState = CommentSubmitState.Idle,
     val statusUpdateError: String? = null,
     val errorMessage: String? = null,
-    val isRequestingCollab: Boolean = false,
-    val collabRequestSent: Boolean = false,
+    val collabRequestState: CollabRequestState = CollabRequestState.Idle,
     /** TC-C22: true while a retry attempt is in flight. */
     val isRetrying: Boolean = false,
     val navigateBack: Boolean = false,
@@ -48,6 +47,13 @@ sealed interface CommentSubmitState {
     data object Submitting : CommentSubmitState
     data object Success : CommentSubmitState
     data class Error(val message: String) : CommentSubmitState
+}
+
+sealed interface CollabRequestState {
+    data object Idle : CollabRequestState
+    data object Sending : CollabRequestState
+    data object Sent : CollabRequestState
+    data class Error(val message: String) : CollabRequestState
 }
 
 @HiltViewModel
@@ -75,7 +81,7 @@ class IdeaDetailViewModel @Inject constructor(
                         idea = idea,
                         isLoadingIdea = false,
                         isCurrentUserAuthor = idea.authorId == currentUserId,
-                        collabRequestSent = false,
+                        collabRequestState = CollabRequestState.Idle,
                     )
                 }
             } catch (e: AppException) {
@@ -193,32 +199,25 @@ class IdeaDetailViewModel @Inject constructor(
         }
     }
 
-    fun requestCollab(ideaId: UUID, currentUserId: String) {
-        if (_uiState.value.isRequestingCollab || _uiState.value.collabRequestSent) return
-
+    fun requestCollab(ideaId: UUID) {
+        if (_uiState.value.collabRequestState is CollabRequestState.Sending) return
+        _uiState.update { it.copy(collabRequestState = CollabRequestState.Sending) }
         viewModelScope.launch {
-            _uiState.update { it.copy(isRequestingCollab = true, errorMessage = null) }
             try {
-                requestCollabUseCase(ideaId, currentUserId)
-                _uiState.update {
-                    it.copy(
-                        isRequestingCollab = false,
-                        collabRequestSent = true,
-                    )
-                }
+                requestCollabUseCase(ideaId)
+                _uiState.update { it.copy(collabRequestState = CollabRequestState.Sent) }
             } catch (e: AppException) {
-                _uiState.update {
-                    it.copy(
-                        isRequestingCollab = false,
-                        errorMessage = e.message,
-                    )
-                }
+                _uiState.update { it.copy(collabRequestState = CollabRequestState.Error(e.message ?: "Gửi yêu cầu thất bại.")) }
             }
         }
     }
 
     fun clearCommentState() {
         _uiState.update { it.copy(commentSubmitState = CommentSubmitState.Idle) }
+    }
+
+    fun clearCollabRequestState() {
+        _uiState.update { it.copy(collabRequestState = CollabRequestState.Idle) }
     }
 
     fun clearError() {

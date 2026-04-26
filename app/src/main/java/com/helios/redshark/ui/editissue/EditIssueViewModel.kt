@@ -2,7 +2,7 @@ package com.helios.redshark.ui.editissue
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.helios.redshark.core.AppException
+import com.helios.redshark.core.error.AppException
 import com.helios.redshark.core.util.Result
 import com.helios.redshark.domain.model.Issue
 import com.helios.redshark.domain.model.IssuePriority
@@ -26,6 +26,7 @@ sealed interface EditIssueUiState {
     /** TC-C11: mutation OK — screen pops back to issue detail. */
     data object Success : EditIssueUiState
     data class ValidationError(val message: String) : EditIssueUiState
+    data class NetworkError(val message: String) : EditIssueUiState
     data class Error(val message: String) : EditIssueUiState
 }
 
@@ -73,6 +74,8 @@ class EditIssueViewModel @Inject constructor(
                 EditIssueUiState.Success
             } catch (e: AppException.ValidationException) {
                 EditIssueUiState.ValidationError(e.message ?: "Dữ liệu không hợp lệ.")
+            } catch (e: AppException.NetworkException) {
+                EditIssueUiState.NetworkError(e.message ?: "Lỗi kết nối mạng.")
             } catch (e: AppException) {
                 EditIssueUiState.Error(e.message ?: "Lưu thất bại. Vui lòng thử lại.")
             }

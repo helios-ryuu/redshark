@@ -1,27 +1,52 @@
 package com.helios.redshark.ui.issuedetail
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.res.stringResource
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.helios.redshark.R
 import com.helios.redshark.domain.model.ISSUE_STATE_MACHINE
-import com.helios.redshark.domain.model.IssueStatus
 import com.helios.redshark.domain.model.User
-import com.helios.redshark.ui.home.PriorityChip
-import com.helios.redshark.ui.myideas.ErrorContent
+import com.helios.redshark.ui.common.ErrorContent
+import com.helios.redshark.ui.common.InlineErrorText
+import com.helios.redshark.ui.common.IssuePriorityPill
+import com.helios.redshark.ui.common.IssueStatusPill
+import com.helios.redshark.ui.common.LoadingContent
+import com.helios.redshark.ui.theme.Dimens
 import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,80 +71,77 @@ fun IssueDetailScreen(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Xóa Issue") },
-            text = { Text("Bạn có chắc muốn xóa issue này không?") },
+            title = { Text(stringResource(R.string.issue_delete_dialog_title)) },
+            text = { Text(stringResource(R.string.issue_delete_dialog_text)) },
             confirmButton = {
                 TextButton(onClick = {
                     showDeleteDialog = false
                     viewModel.deleteIssue(issueId)
-                }) { Text("Xóa", color = MaterialTheme.colorScheme.error) }
+                }) { Text(stringResource(R.string.action_delete), color = MaterialTheme.colorScheme.error) }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteDialog = false }) { Text("Hủy") }
-            }
+                TextButton(onClick = { showDeleteDialog = false }) { Text(stringResource(R.string.action_cancel)) }
+            },
         )
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(uiState.issue?.title ?: "Chi tiết Issue") },
+                title = { Text(uiState.issue?.title ?: stringResource(R.string.issue_detail_title_fallback)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Quay lại")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 actions = {
                     if (uiState.canEdit) {
                         IconButton(onClick = { onEditIssue(issueId) }) {
-                            Icon(Icons.Default.Edit, contentDescription = "Sửa")
+                            Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.action_edit))
                         }
                         IconButton(onClick = { showDeleteDialog = true }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Xóa", tint = MaterialTheme.colorScheme.error)
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = stringResource(R.string.action_delete),
+                                tint = MaterialTheme.colorScheme.error,
+                            )
                         }
                     }
-                }
+                },
             )
-        }
+        },
     ) { padding ->
         when {
-            uiState.isLoading -> Box(
-                modifier = Modifier.fillMaxSize().padding(padding),
-                contentAlignment = Alignment.Center,
-            ) { CircularProgressIndicator() }
+            uiState.isLoading ->
+                LoadingContent(modifier = Modifier.fillMaxSize().padding(padding))
 
-            uiState.errorMessage != null && uiState.issue == null -> Box(
-                modifier = Modifier.fillMaxSize().padding(padding),
-                contentAlignment = Alignment.Center,
-            ) {
+            uiState.errorMessage != null && uiState.issue == null ->
                 ErrorContent(
                     message = uiState.errorMessage!!,
                     onRetry = { viewModel.loadIssue(issueId, currentUserId) },
+                    modifier = Modifier.fillMaxSize().padding(padding),
                 )
-            }
 
             else -> uiState.issue?.let { issue ->
                 Column(
-                    modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxSize().padding(padding).padding(Dimens.SpaceLg),
+                    verticalArrangement = Arrangement.spacedBy(Dimens.SpaceMd),
                 ) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        IssueStatusChip(issue.status)
-                        PriorityChip(issue.priority)
+                    Row(horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceSm)) {
+                        IssueStatusPill(issue.status)
+                        IssuePriorityPill(issue.priority)
                     }
 
                     issue.description?.let {
                         Text(text = it, style = MaterialTheme.typography.bodyMedium)
                     }
 
-                    // TC-C16: show assignee avatar + name
                     if (uiState.assigneeUser != null || issue.assigneeId != null) {
                         AssigneeRow(user = uiState.assigneeUser, fallbackId = issue.assigneeId)
                     }
 
-                    // TC-C06: Navigate to parent idea — allows testing non-owner idea access
                     TextButton(onClick = { onViewIdea(issue.ideaId) }) {
-                        Text("Xem Idea gốc")
+                        Text(stringResource(R.string.issue_action_view_idea))
                     }
 
                     HorizontalDivider()
@@ -127,8 +149,8 @@ fun IssueDetailScreen(
                     if (uiState.canEdit) {
                         val availableStatuses = ISSUE_STATE_MACHINE[issue.status] ?: emptySet()
                         if (availableStatuses.isNotEmpty()) {
-                            Text("Chuyển trạng thái:", style = MaterialTheme.typography.labelMedium)
-                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(stringResource(R.string.issue_section_status_change), style = MaterialTheme.typography.labelMedium)
+                            Row(horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceSm)) {
                                 availableStatuses.forEach { newStatus ->
                                     OutlinedButton(
                                         onClick = { viewModel.updateStatus(issueId, newStatus) },
@@ -142,10 +164,8 @@ fun IssueDetailScreen(
                     }
 
                     when (val s = uiState.statusUpdateState) {
-                        is StatusUpdateState.InvalidTransition ->
-                            Text(s.message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
-                        is StatusUpdateState.Error ->
-                            Text(s.message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                        is StatusUpdateState.InvalidTransition -> InlineErrorText(s.message)
+                        is StatusUpdateState.Error -> InlineErrorText(s.message)
                         else -> Unit
                     }
                 }
@@ -156,45 +176,34 @@ fun IssueDetailScreen(
 
 @Composable
 private fun AssigneeRow(user: User?, fallbackId: String?) {
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceSm),
+    ) {
         if (user?.avatarUrl != null) {
             AsyncImage(
                 model = user.avatarUrl,
-                contentDescription = "Avatar",
-                modifier = Modifier.size(32.dp).clip(CircleShape),
+                contentDescription = null,
+                modifier = Modifier.size(Dimens.AvatarSm).clip(CircleShape),
                 contentScale = ContentScale.Crop,
             )
         } else {
             val initials = user?.displayName?.take(1)?.uppercase() ?: fallbackId?.take(1)?.uppercase() ?: "?"
             Box(
-                modifier = Modifier.size(32.dp).clip(CircleShape)
+                modifier = Modifier.size(Dimens.AvatarSm).clip(CircleShape)
                     .background(MaterialTheme.colorScheme.primaryContainer),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(initials, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                Text(
+                    text = initials,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
             }
         }
         Text(
             text = user?.displayName ?: fallbackId?.take(8) ?: "",
             style = MaterialTheme.typography.bodySmall,
-        )
-    }
-}
-
-@Composable
-fun IssueStatusChip(status: IssueStatus) {
-    val (label, color) = when (status) {
-        IssueStatus.OPEN -> "OPEN" to MaterialTheme.colorScheme.primary
-        IssueStatus.IN_PROGRESS -> "IN PROGRESS" to MaterialTheme.colorScheme.tertiary
-        IssueStatus.CLOSED -> "CLOSED" to MaterialTheme.colorScheme.secondary
-        IssueStatus.CANCELLED -> "CANCELLED" to MaterialTheme.colorScheme.error
-    }
-    Surface(shape = MaterialTheme.shapes.small, color = color.copy(alpha = 0.15f)) {
-        Text(
-            text = label,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-            style = MaterialTheme.typography.labelSmall,
-            color = color,
         )
     }
 }

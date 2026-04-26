@@ -8,6 +8,5 @@ import javax.inject.Inject
 class GetConversationsUseCase @Inject constructor(
     private val messageRepository: MessageRepository,
 ) {
-    operator fun invoke(): Flow<List<Conversation>> = messageRepository.getMyConversations()
+    operator fun invoke(): Flow<List<Conversation>> = messageRepository.getConversations()
 }
-

@@ -54,7 +54,7 @@
 - [x] Soft delete không mất dữ liệu trên DB, chỉ ẩn UI
 - [x] Khi tạo issue, tự gửi notification `ISSUE_CREATED` cho chủ idea
 - [x] Trạng thái chuyển sai (CLOSED → OPEN) bị chặn client + server
-- [ ] Gửi Collab Request → dời Phase 5.0 (WBS 5.1.2, tạo COLLAB_REQUEST notification — phụ thuộc notification infrastructure)
+- [x] Gửi Collab Request → hoàn thành tại giai đoạn 5.0 (WBS 5.1.3, 25/04/2026) — `RequestCollabUseCase` tạo notification `COLLAB_REQUEST`; nút "Xin tham gia" trên `IdeaDetailScreen` (FR-IDEA-07 SHOULD)
 
 ## 5. Phân công theo WBS
 - Phụ trách nhóm nội dung: **Hải** (lập trình chính, chịu trách nhiệm commit chính).
