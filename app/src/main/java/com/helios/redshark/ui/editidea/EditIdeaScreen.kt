@@ -115,6 +115,10 @@ fun EditIdeaScreen(
                     label = { Text(stringResource(R.string.idea_field_description)) },
                     modifier = Modifier.fillMaxWidth().height(Dimens.InputFieldHeightMultiline),
                     maxLines = 6,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    ),
                 )
 
                 (uiState as? EditIdeaUiState.NetworkError)?.let { InlineErrorText(it.message) }

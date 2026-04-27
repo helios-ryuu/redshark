@@ -126,6 +126,10 @@ fun EditIssueScreen(
                     label = { Text(stringResource(R.string.issue_field_description)) },
                     modifier = Modifier.fillMaxWidth().height(Dimens.InputFieldHeightMultilineSm),
                     maxLines = 4,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    ),
                 )
 
                 ExposedDropdownMenuBox(
@@ -139,6 +143,10 @@ fun EditIssueScreen(
                         label = { Text(stringResource(R.string.issue_field_priority)) },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = priorityExpanded) },
                         modifier = Modifier.menuAnchor().fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        ),
                     )
                     ExposedDropdownMenu(
                         expanded = priorityExpanded,
@@ -167,6 +175,10 @@ fun EditIssueScreen(
                         label = { Text(stringResource(R.string.issue_field_assignee)) },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = assigneeExpanded) },
                         modifier = Modifier.menuAnchor().fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        ),
                     )
                     ExposedDropdownMenu(
                         expanded = assigneeExpanded,

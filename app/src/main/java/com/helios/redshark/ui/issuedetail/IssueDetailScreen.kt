@@ -1,14 +1,11 @@
 package com.helios.redshark.ui.issuedetail
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -32,15 +29,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import com.helios.redshark.R
 import com.helios.redshark.domain.model.ISSUE_STATE_MACHINE
 import com.helios.redshark.domain.model.User
+import com.helios.redshark.ui.common.AvatarImage
 import com.helios.redshark.ui.common.ErrorContent
 import com.helios.redshark.ui.common.InlineErrorText
 import com.helios.redshark.ui.common.IssuePriorityPill
@@ -133,10 +128,19 @@ fun IssueDetailScreen(
                     }
 
                     issue.description?.let {
-                        Text(text = it, style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
                     }
 
                     if (uiState.assigneeUser != null || issue.assigneeId != null) {
+                        Text(
+                            text = stringResource(R.string.issue_field_assignee),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
                         AssigneeRow(user = uiState.assigneeUser, fallbackId = issue.assigneeId)
                     }
 
@@ -180,30 +184,14 @@ private fun AssigneeRow(user: User?, fallbackId: String?) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceSm),
     ) {
-        if (user?.avatarUrl != null) {
-            AsyncImage(
-                model = user.avatarUrl,
-                contentDescription = null,
-                modifier = Modifier.size(Dimens.AvatarSm).clip(CircleShape),
-                contentScale = ContentScale.Crop,
-            )
-        } else {
-            val initials = user?.displayName?.take(1)?.uppercase() ?: fallbackId?.take(1)?.uppercase() ?: "?"
-            Box(
-                modifier = Modifier.size(Dimens.AvatarSm).clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = initials,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
-            }
-        }
+        AvatarImage(
+            avatarUrl = user?.avatarUrl,
+            displayName = user?.displayName ?: fallbackId?.take(1) ?: "?",
+            size = Dimens.AvatarSm,
+        )
         Text(
             text = user?.displayName ?: fallbackId?.take(8) ?: "",
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodyMedium,
         )
     }
 }
