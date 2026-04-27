@@ -231,16 +231,16 @@ class GetAllIdeasUseCase @Inject constructor(private val repo: IdeaRepository) {
 
 ### Checklist
 
-- [ ] **Step 0** — Git setup: create `feature/ui-fluent-overhaul`, commit WBS 4A baseline
-- [ ] **Step 1** — Lexend font: `build.gradle.kts` + `Type.kt`
-- [ ] **Step 2** — Color palette & design tokens: `Color.kt`, `Dimens.kt`, `Shape.kt`
-- [ ] **Step 3** — Full English strings: `strings.xml` (all Vietnamese → English)
-- [ ] **Step 4** — Common components: `StatusPill.kt`, `IdeaCard.kt`, `IssueCard.kt`, `StateContent.kt`
-- [ ] **Step 5** — Navigation: filled/outlined icon distinction for active/inactive tabs
-- [ ] **Step 6** — Feed screens: `HomeFeedScreen.kt`, `MyIdeasScreen.kt`
-- [ ] **Step 7** — Notifications: read/unread visual diff, empty state
-- [ ] **Step 8** — Chat (CRITICAL): strong sent bubble color, asymmetric bubble shapes, flat input bar
-- [ ] **Step 9** — Profile: skill chips (`AssistChip`), Fluent input fields
-- [ ] **Step 10** — Idea/Issue detail & form screens polish
-- [ ] **Step 11** — Auth screens: clean Fluent layout
-- [ ] **Verify** — `assembleDebug` green, `testDebugUnitTest` green, no Vietnamese visible
+- [x] **Step 0** — Git setup: create `feature/ui-fluent-overhaul`, commit WBS 4A baseline
+- [x] **Step 1** — Lexend font: `build.gradle.kts` + `Type.kt`
+- [x] **Step 2** — Color palette & design tokens: `Color.kt`, `Dimens.kt`, `Shape.kt`
+- [x] **Step 3** — Full English strings: `strings.xml` (all Vietnamese → English)
+- [x] **Step 4** — Common components: `StatusPill.kt`, `IdeaCard.kt`, `IssueCard.kt`, `StateContent.kt`
+- [x] **Step 5** — Navigation: filled/outlined icon distinction for active/inactive tabs
+- [x] **Step 6** — Feed screens: `HomeFeedScreen.kt`, `MyIdeasScreen.kt`
+- [x] **Step 7** — Notifications: read/unread visual diff, empty state
+- [x] **Step 8** — Chat (CRITICAL): strong sent bubble color, asymmetric bubble shapes, flat input bar
+- [x] **Step 9** — Profile: skill chips (`AssistChip`), Fluent input fields
+- [x] **Step 10** — Idea/Issue detail & form screens polish
+- [x] **Step 11** — Auth screens: clean Fluent layout
+- [x] **Verify** — assembleDebug + testDebugUnitTest GREEN (commit 3e97326)
