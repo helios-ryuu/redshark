@@ -15,14 +15,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.helios.redshark.R
 import com.helios.redshark.ui.common.EmptyContent
 import com.helios.redshark.ui.common.ErrorContent
-import com.helios.redshark.ui.common.IssueCard
+import com.helios.redshark.ui.common.IdeaCard
 import com.helios.redshark.ui.common.LoadingContent
 import com.helios.redshark.ui.theme.Dimens
 import java.util.UUID
 
 @Composable
 fun HomeFeedScreen(
-    onIssueClick: (UUID) -> Unit,
+    onIdeaClick: (UUID) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -35,13 +35,13 @@ fun HomeFeedScreen(
                 message = uiState.errorMessage!!,
                 onRetry = viewModel::retry,
             )
-            uiState.issues.isEmpty() -> EmptyContent(message = stringResource(R.string.feed_empty))
+            uiState.ideas.isEmpty() -> EmptyContent(message = stringResource(R.string.home_feed_empty))
             else -> LazyColumn(
                 contentPadding = PaddingValues(Dimens.SpaceLg),
                 verticalArrangement = Arrangement.spacedBy(Dimens.SpaceSm),
             ) {
-                items(uiState.issues, key = { it.id.toString() }) { issue ->
-                    IssueCard(issue = issue, onClick = { onIssueClick(issue.id) })
+                items(uiState.ideas, key = { it.id.toString() }) { idea ->
+                    IdeaCard(idea = idea, onClick = { onIdeaClick(idea.id) })
                 }
             }
         }

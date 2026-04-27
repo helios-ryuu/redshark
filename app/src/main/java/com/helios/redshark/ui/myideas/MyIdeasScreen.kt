@@ -6,23 +6,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,10 +26,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.helios.redshark.R
-import com.helios.redshark.domain.model.Idea
 import com.helios.redshark.ui.common.EmptyContent
 import com.helios.redshark.ui.common.ErrorContent
-import com.helios.redshark.ui.common.IdeaStatusPill
+import com.helios.redshark.ui.common.IdeaCard
 import com.helios.redshark.ui.common.LoadingContent
 import com.helios.redshark.ui.theme.Dimens
 import java.util.UUID
@@ -105,38 +98,6 @@ fun MyIdeasScreen(
                     .padding(Dimens.SpaceLg),
             ) {
                 Icon(Icons.Default.Add, contentDescription = stringResource(R.string.ideas_fab_create_cd))
-            }
-        }
-    }
-}
-
-@Composable
-private fun IdeaCard(idea: Idea, onClick: () -> Unit) {
-    Card(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevation),
-    ) {
-        Column(modifier = Modifier.padding(Dimens.SpaceLg)) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(
-                    text = idea.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.weight(1f),
-                )
-                IdeaStatusPill(idea.status)
-            }
-            idea.description?.let {
-                Spacer(modifier = Modifier.height(Dimens.SpaceXs))
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 2,
-                )
             }
         }
     }

@@ -23,18 +23,25 @@
 
     <!-- Home tabs -->
     <string name="home_tab_feed">Feed</string>
+    <string name="home_tab_home">Home</string>
     <string name="home_tab_ideas">Ideas</string>
     <string name="home_tab_notifications">Thông báo</string>
     <string name="home_tab_messages">Tin nhắn</string>
+    <string name="home_tab_profile">Hồ sơ</string>
     <string name="home_title_feed">Feed</string>
+    <string name="home_title_app">RedShark</string>
     <string name="home_title_ideas">Ý tưởng của tôi</string>
     <string name="home_title_notifications">Thông báo</string>
     <string name="home_title_messages">Tin nhắn</string>
+    <string name="home_title_profile">Hồ sơ</string>
     <string name="home_action_profile">Hồ sơ</string>
     <string name="home_action_settings">Cài đặt</string>
+    <string name="home_action_open_menu">Mở menu</string>
+    <string name="home_drawer_settings">Cài đặt</string>
 
-    <!-- Feed (Issues) -->
+    <!-- Feed -->
     <string name="feed_empty">Không có issue nào từ người dùng khác.</string>
+    <string name="home_feed_empty">Chưa có ý tưởng nào.</string>
 
     <!-- My Ideas -->
     <string name="ideas_filter_all">Tất cả</string>
@@ -47,6 +54,10 @@
     <string name="idea_field_title">Tiêu đề *</string>
     <string name="idea_field_description">Mô tả</string>
     <string name="idea_action_create">Tạo Idea</string>
+    <string name="idea_action_upvote">Upvote</string>
+    <string name="idea_action_downvote">Downvote</string>
+    <string name="idea_action_comment">Bình luận</string>
+    <string name="idea_action_share">Chia sẻ</string>
 
     <!-- Idea detail -->
     <string name="idea_detail_title_fallback">Chi tiết Idea</string>
@@ -96,6 +107,7 @@
     <string name="notification_error_load">Lỗi tải thông báo.</string>
 
     <!-- Messages -->
+    <string name="message_preview_you_prefix">Bạn: %1$s</string>
     <string name="message_conversation_title">Cuộc trò chuyện</string>
     <string name="message_list_empty">Chưa có cuộc trò chuyện nào.</string>
     <string name="message_thread_empty">Chưa có tin nhắn nào. Hãy bắt đầu cuộc trò chuyện!</string>

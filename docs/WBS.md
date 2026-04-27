@@ -24,8 +24,8 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 
 ## 3. Mốc hiện tại (hiện trạng)
 
-- **Ngày ghi nhận:** 25/04/2026.
-- **Trạng thái hiện tại:** WBS 3.0 (Auth) ✅, WBS 4.0 (Content) ✅ và WBS 5.0 (Tương tác) ✅ hoàn thành — toàn bộ code feature từ giai đoạn 1 đến giai đoạn 4 đã implement xong trên nhánh working tree. Sẵn sàng vào WBS 6.0 (Kiểm thử/NFR) và WBS 7.0 (Phát hành) theo lịch Tuần 9 (12–17/05/2026).
+- **Ngày ghi nhận:** 27/04/2026.
+- **Trạng thái hiện tại:** WBS 3.0 (Auth) ✅, WBS 4.0 (Content) ✅, WBS 5.0 (Tương tác) ✅, WBS 4A.0 (UI Overhaul) ✅ hoàn thành. Sẵn sàng vào WBS 6.0 (Kiểm thử/NFR) và WBS 7.0 (Phát hành) theo lịch Tuần 9 (12–17/05/2026).
 - **Người thực hiện commit init:** **Sỹ**.
 - **Đề xuất commit chuẩn:** `chore(init): bootstrap Android project and project documents`.
 
@@ -271,6 +271,52 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 - Thời gian: 07/05 - 11/05.
 - Ghi chú: ✅ Hoàn thành 25/04/2026. Sản phẩm: `ConversationScretaen`, `SendMessageUseCase`, `GetMessagesUseCase`; optimistic send + real-time Firestore listener; chống trùng qua `findDirectConversation` trước `createDirectConversation`.
 
+## 4A.0 Nâng cấp giao diện người dùng (UI Overhaul — Fluent Minimal)
+
+**Thực hiện ngoài lịch:** 27/04/2026 — bổ sung sau WBS 5.0, trước WBS 6.0.
+**Tài liệu tham chiếu:** [PLAN-4A-UI.md](PLAN-4A-UI.md).
+**Phụ trách chính:** Sỹ. Phối hợp: Nam, Hải.
+
+### 4A.1 Hệ thống điều hướng toàn cục
+#### 4A.1.1 Mở rộng Bottom Navigation lên 5 tab + Sidebar Drawer
+- Sản phẩm bàn giao: `ui/home/HomeScreen.kt` — 5 tab (Home/Ideas/Notifications/Messages/Profile), `ModalNavigationDrawer` chứa Settings.
+- Phụ trách chính: Sỹ.
+- Phụ thuộc: 5.0.
+- Thời gian: 27/04/2026.
+- Ghi chú: ✅ Hoàn thành. TopAppBar cố định "RedShark"; hamburger mở Drawer; Profile tab điều hướng đến ProfileViewScreen.
+
+#### 4A.1.2 Scroll-aware animation cho Top Bar và Bottom Nav
+- Sản phẩm bàn giao: `NestedScrollConnection` + `AnimatedVisibility` — ẩn/hiện đồng thời cả hai bar khi cuộn.
+- Phụ trách chính: Sỹ.
+- Phụ thuộc: 4A.1.1.
+- Thời gian: 27/04/2026.
+- Ghi chú: ✅ Hoàn thành.
+
+### 4A.2 Shared IdeaCard
+#### 4A.2.1 Tạo `IdeaCard` dùng chung
+- Sản phẩm bàn giao: `ui/common/IdeaCard.kt` — header (avatar + author + title), body (description + image slot), footer (upvote/downvote/comment/share).
+- Phụ trách chính: Sỹ.
+- Phụ thuộc: 4.1.
+- Thời gian: 27/04/2026.
+- Ghi chú: ✅ Hoàn thành. Vote count = 0 placeholder; imageUrl slot sẵn sàng cho extension sau.
+
+#### 4A.2.2 Áp dụng IdeaCard vào HomeFeed và MyIdeas
+- Sản phẩm bàn giao: `HomeFeedScreen` + `HomeViewModel` dùng `GetAllIdeasUseCase`; `MyIdeasScreen` dùng shared `IdeaCard`.
+- Phụ trách chính: Sỹ.
+- Thành viên phối hợp: Hải.
+- Phụ thuộc: 4A.2.1.
+- Thời gian: 27/04/2026.
+- Ghi chú: ✅ Hoàn thành. `GetAllIdeasUseCase` + `getAllIdeas()` thêm vào domain/data layer.
+
+### 4A.3 Conversation List Tile
+#### 4A.3.1 Redesign ConversationItem
+- Sản phẩm bàn giao: `ConversationListScreen.kt` — tile dạng Row(avatar + Column(tên + preview)); bold nếu unread; prefix "Bạn: " nếu mình gửi.
+- Phụ trách chính: Sỹ.
+- Thành viên phối hợp: Nam.
+- Phụ thuộc: 5.2.
+- Thời gian: 27/04/2026.
+- Ghi chú: ✅ Hoàn thành. Mở rộng `Conversation` model + DTO với `lastMessageSenderId` và `hasUnread`; DTO `@IgnoreExtraProperties` đảm bảo tương thích ngược.
+
 ## 6.0 Chất lượng, kiểm thử và tuân thủ NFR
 
 ### 6.1 Kế hoạch kiểm thử
@@ -353,6 +399,7 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 | Giai đoạn 2 Xác thực              | 16/04 - 20/04 | 3.0           | Xác thực Google-only, hoàn thiện hồ sơ lần đầu, commit tính năng xác thực trước 21/04 |
 | Giai đoạn 3 Nội dung              | 21/04 - 04/05 | 4.0           | Ý tưởng/Công việc/Bình luận + ràng buộc nghiệp vụ                                     |
 | Giai đoạn 4 Tương tác             | 05/05 - 11/05 | 5.0           | Thông báo/Nhắn tin trực tiếp 1-1                                                      |
+| Giai đoạn 4A UI Overhaul (bổ sung) | 27/04/2026   | 4A.0          | Fluent Minimal UI: 5-tab nav, Drawer, scroll animation, IdeaCard, Conversation tile   |
 | Giai đoạn 5 Hoàn thiện            | 12/05 - 17/05 | 6.0, 7.0      | Kiểm thử, dọn dẹp, phát hành APK, bàn giao                                            |
 
 ## 7. Tiêu chí hoàn thành WBS
