@@ -1,5 +1,6 @@
 package com.helios.redshark.ui.common
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,10 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.ChatBubbleOutline
-import androidx.compose.material.icons.filled.ThumbDown
-import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.icons.outlined.ChatBubble
+import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.outlined.ThumbDown
+import androidx.compose.material.icons.outlined.ThumbUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -28,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.helios.redshark.R
@@ -52,13 +54,15 @@ fun IdeaCard(
         modifier = modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevation),
         shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(Dimens.CardBorderWidth, MaterialTheme.colorScheme.outlineVariant),
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             // Header: Avatar + author + title
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = Dimens.SpaceMd, end = Dimens.SpaceMd, top = Dimens.SpaceMd),
+                    .padding(start = Dimens.SpaceLg, end = Dimens.SpaceLg, top = Dimens.SpaceLg),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 AvatarImage(
@@ -70,29 +74,29 @@ fun IdeaCard(
                 Column {
                     Text(
                         text = idea.authorId.take(8),
-                        style = MaterialTheme.typography.labelSmall,
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Medium),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Text(
                         text = idea.title,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
                     )
                 }
             }
 
             // Body: description
             idea.description?.let { desc ->
-                Spacer(modifier = Modifier.height(Dimens.SpaceSm))
+                Spacer(modifier = Modifier.height(Dimens.SpaceXs))
                 Text(
                     text = desc,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 5,
-                    modifier = Modifier.padding(horizontal = Dimens.SpaceMd),
+                    modifier = Modifier.padding(horizontal = Dimens.SpaceLg),
                 )
             }
 
-            // Optional image below text
+            // Optional image — edge-to-edge for visual impact
             imageUrl?.let { url ->
                 Spacer(modifier = Modifier.height(Dimens.SpaceSm))
                 AsyncImage(
@@ -109,16 +113,16 @@ fun IdeaCard(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = Dimens.SpaceXs),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                    .padding(horizontal = Dimens.SpaceXs, vertical = Dimens.SpaceXxs),
+                horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 TextButton(
                     onClick = onUpvote,
-                    contentPadding = PaddingValues(horizontal = Dimens.SpaceXs),
+                    contentPadding = PaddingValues(horizontal = Dimens.SpaceSm),
                 ) {
                     Icon(
-                        imageVector = Icons.Default.ThumbUp,
+                        imageVector = Icons.Outlined.ThumbUp,
                         contentDescription = stringResource(R.string.idea_action_upvote),
                         modifier = Modifier.size(Dimens.IconSm),
                     )
@@ -127,17 +131,18 @@ fun IdeaCard(
                 }
                 IconButton(onClick = onDownvote) {
                     Icon(
-                        imageVector = Icons.Default.ThumbDown,
+                        imageVector = Icons.Outlined.ThumbDown,
                         contentDescription = stringResource(R.string.idea_action_downvote),
                         modifier = Modifier.size(Dimens.IconSm),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 TextButton(
                     onClick = onComment,
-                    contentPadding = PaddingValues(horizontal = Dimens.SpaceXs),
+                    contentPadding = PaddingValues(horizontal = Dimens.SpaceSm),
                 ) {
                     Icon(
-                        imageVector = Icons.Default.ChatBubbleOutline,
+                        imageVector = Icons.Outlined.ChatBubble,
                         contentDescription = stringResource(R.string.idea_action_comment),
                         modifier = Modifier.size(Dimens.IconSm),
                     )
@@ -146,9 +151,10 @@ fun IdeaCard(
                 }
                 IconButton(onClick = onShare) {
                     Icon(
-                        imageVector = Icons.Default.Share,
+                        imageVector = Icons.Outlined.Share,
                         contentDescription = stringResource(R.string.idea_action_share),
                         modifier = Modifier.size(Dimens.IconSm),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }

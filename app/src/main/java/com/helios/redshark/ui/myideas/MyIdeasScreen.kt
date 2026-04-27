@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.material.icons.outlined.Lightbulb
 import com.helios.redshark.R
 import com.helios.redshark.ui.common.EmptyContent
 import com.helios.redshark.ui.common.ErrorContent
@@ -76,6 +77,7 @@ fun MyIdeasScreen(
                 )
                 uiState.displayedIdeas.isEmpty() -> EmptyContent(
                     message = stringResource(R.string.ideas_empty),
+                    icon = Icons.Outlined.Lightbulb,
                 )
                 else -> LazyColumn(
                     contentPadding = PaddingValues(

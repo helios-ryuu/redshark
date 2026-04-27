@@ -56,9 +56,9 @@ fun IssueStatusPill(status: IssueStatus, modifier: Modifier = Modifier) {
 @Composable
 fun IssuePriorityPill(priority: IssuePriority, modifier: Modifier = Modifier) {
     val (label, color) = when (priority) {
-        IssuePriority.HIGH -> "CAO" to MaterialTheme.colorScheme.error
-        IssuePriority.MEDIUM -> "TB" to MaterialTheme.colorScheme.primary
-        IssuePriority.LOW -> "THẤP" to MaterialTheme.colorScheme.secondary
+        IssuePriority.HIGH -> "HIGH" to MaterialTheme.colorScheme.error
+        IssuePriority.MEDIUM -> "MEDIUM" to MaterialTheme.colorScheme.primary
+        IssuePriority.LOW -> "LOW" to MaterialTheme.colorScheme.secondary
     }
     StatusPill(label = label, color = color, modifier = modifier)
 }

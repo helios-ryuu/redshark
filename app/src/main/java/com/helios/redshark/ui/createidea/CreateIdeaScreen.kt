@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -87,6 +88,10 @@ fun CreateIdeaScreen(
                 isError = titleError != null,
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                ),
             )
 
             OutlinedTextField(
@@ -95,6 +100,10 @@ fun CreateIdeaScreen(
                 label = { Text(stringResource(R.string.idea_field_description)) },
                 modifier = Modifier.fillMaxWidth().height(Dimens.InputFieldHeightMultiline),
                 maxLines = 6,
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                ),
             )
 
             (uiState as? CreateIdeaUiState.Failure.NetworkError)?.let { InlineErrorText(it.message) }

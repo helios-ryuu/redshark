@@ -1,5 +1,6 @@
 package com.helios.redshark.ui.message
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,15 +16,18 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -36,6 +40,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -94,8 +100,8 @@ fun ConversationScreen(
                     )
                     else -> LazyColumn(
                         state = listState,
-                        contentPadding = PaddingValues(Dimens.SpaceMd),
-                        verticalArrangement = Arrangement.spacedBy(Dimens.SpaceSm),
+                        contentPadding = PaddingValues(horizontal = Dimens.SpaceMd, vertical = Dimens.SpaceSm),
+                        verticalArrangement = Arrangement.spacedBy(Dimens.SpaceXs),
                         modifier = Modifier.fillMaxSize(),
                     ) {
                         items(uiState.messages, key = { it.id.toString() }) { message ->
@@ -115,34 +121,63 @@ fun ConversationScreen(
                 )
             }
 
-            Surface(shadowElevation = Dimens.CardElevationRaised) {
+            // Input bar — flat Fluent style
+            Surface(
+                shadowElevation = Dimens.CardElevationRaised,
+                color = MaterialTheme.colorScheme.surface,
+            ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = Dimens.SpaceMd, vertical = Dimens.SpaceSm),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    OutlinedTextField(
-                        value = inputText,
-                        onValueChange = { inputText = it },
-                        placeholder = { Text(stringResource(R.string.message_input_placeholder)) },
-                        modifier = Modifier.weight(1f),
-                        maxLines = 4,
-                        enabled = !uiState.isSending,
-                    )
-                    Spacer(modifier = Modifier.width(Dimens.SpaceSm))
-                    IconButton(
-                        onClick = {
-                            if (inputText.isNotBlank()) {
-                                viewModel.sendMessage(conversationId, inputText.trim(), currentUserId)
-                                inputText = ""
-                            }
-                        },
-                        enabled = inputText.isNotBlank() && !uiState.isSending,
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .background(
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                shape = RoundedCornerShape(24.dp),
+                            )
+                            .padding(horizontal = Dimens.SpaceMd, vertical = Dimens.SpaceSm),
                     ) {
-                        if (uiState.isSending) {
-                            CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
-                        } else {
+                        if (inputText.isEmpty()) {
+                            Text(
+                                text = stringResource(R.string.message_input_placeholder),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                            )
+                        }
+                        BasicTextField(
+                            value = inputText,
+                            onValueChange = { inputText = it },
+                            maxLines = 4,
+                            enabled = !uiState.isSending,
+                            textStyle = MaterialTheme.typography.bodyMedium.copy(
+                                color = MaterialTheme.colorScheme.onSurface,
+                            ),
+                            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(Dimens.SpaceSm))
+                    if (uiState.isSending) {
+                        CircularProgressIndicator(modifier = Modifier.size(Dimens.IconMd), strokeWidth = 2.dp)
+                    } else {
+                        FilledIconButton(
+                            onClick = {
+                                if (inputText.isNotBlank()) {
+                                    viewModel.sendMessage(conversationId, inputText.trim(), currentUserId)
+                                    inputText = ""
+                                }
+                            },
+                            enabled = inputText.isNotBlank(),
+                            colors = IconButtonDefaults.filledIconButtonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary,
+                                disabledContainerColor = MaterialTheme.colorScheme.outlineVariant,
+                            ),
+                        ) {
                             Icon(Icons.AutoMirrored.Filled.Send, contentDescription = stringResource(R.string.action_send))
                         }
                     }
@@ -154,11 +189,24 @@ fun ConversationScreen(
 
 @Composable
 private fun MessageBubble(message: Message, isCurrentUser: Boolean) {
-    val alignment = if (isCurrentUser) Alignment.End else Alignment.Start
-    val bubbleColor = if (isCurrentUser) {
-        MaterialTheme.colorScheme.primaryContainer
+    val sentShape = RoundedCornerShape(topStart = 12.dp, topEnd = 4.dp, bottomStart = 12.dp, bottomEnd = 12.dp)
+    val receivedShape = RoundedCornerShape(topStart = 4.dp, topEnd = 12.dp, bottomStart = 12.dp, bottomEnd = 12.dp)
+
+    val bubbleColor: Color
+    val textColor: Color
+    val timestampColor: Color
+    val alignment: Alignment.Horizontal
+
+    if (isCurrentUser) {
+        bubbleColor = MaterialTheme.colorScheme.primary
+        textColor = MaterialTheme.colorScheme.onPrimary
+        timestampColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
+        alignment = Alignment.End
     } else {
-        MaterialTheme.colorScheme.surfaceVariant
+        bubbleColor = MaterialTheme.colorScheme.surfaceVariant
+        textColor = MaterialTheme.colorScheme.onSurface
+        timestampColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+        alignment = Alignment.Start
     }
 
     Column(
@@ -166,17 +214,21 @@ private fun MessageBubble(message: Message, isCurrentUser: Boolean) {
         horizontalAlignment = alignment,
     ) {
         Surface(
-            shape = MaterialTheme.shapes.medium,
+            shape = if (isCurrentUser) sentShape else receivedShape,
             color = bubbleColor,
             modifier = Modifier.widthIn(max = 280.dp),
         ) {
             Column(modifier = Modifier.padding(horizontal = Dimens.SpaceMd, vertical = Dimens.SpaceSm)) {
-                Text(text = message.content, style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    text = message.content,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = textColor,
+                )
                 Text(
                     text = message.createdAt.atZone(ZoneId.systemDefault())
                         .format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)),
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = timestampColor,
                 )
             }
         }

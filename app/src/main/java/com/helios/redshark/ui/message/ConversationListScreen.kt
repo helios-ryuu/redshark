@@ -22,6 +22,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Chat
 import com.helios.redshark.R
 import com.helios.redshark.domain.model.Conversation
 import com.helios.redshark.ui.common.AvatarImage
@@ -47,7 +49,11 @@ fun ConversationListScreen(
                 message = uiState.errorMessage!!,
                 onRetry = viewModel::retryList,
             )
-            uiState.conversations.isEmpty() -> EmptyContent(message = stringResource(R.string.message_list_empty))
+            uiState.conversations.isEmpty() -> EmptyContent(
+                message = stringResource(R.string.message_list_empty),
+                subtitle = stringResource(R.string.message_list_empty_subtitle),
+                icon = Icons.AutoMirrored.Outlined.Chat,
+            )
             else -> LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(uiState.conversations, key = { it.id.toString() }) { conv ->
                     ConversationItem(

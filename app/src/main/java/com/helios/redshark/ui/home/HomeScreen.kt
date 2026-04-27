@@ -8,12 +8,17 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.LightbulbCircle
+import androidx.compose.material.icons.outlined.NotificationsNone
+import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.DrawerValue
@@ -139,13 +144,23 @@ fun HomeScreen(
                         NavigationBarItem(
                             selected = selectedTab == HomeTab.HOME,
                             onClick = { selectedTab = HomeTab.HOME },
-                            icon = { Icon(Icons.Default.Home, contentDescription = null) },
+                            icon = {
+                                Icon(
+                                    if (selectedTab == HomeTab.HOME) Icons.Default.Home else Icons.Outlined.Home,
+                                    contentDescription = null,
+                                )
+                            },
                             label = { Text(stringResource(R.string.home_tab_home)) },
                         )
                         NavigationBarItem(
                             selected = selectedTab == HomeTab.IDEAS,
                             onClick = { selectedTab = HomeTab.IDEAS },
-                            icon = { Icon(Icons.Default.Lightbulb, contentDescription = null) },
+                            icon = {
+                                Icon(
+                                    if (selectedTab == HomeTab.IDEAS) Icons.Default.Lightbulb else Icons.Outlined.LightbulbCircle,
+                                    contentDescription = null,
+                                )
+                            },
                             label = { Text(stringResource(R.string.home_tab_ideas)) },
                         )
                         NavigationBarItem(
@@ -159,7 +174,10 @@ fun HomeScreen(
                                         }
                                     },
                                 ) {
-                                    Icon(Icons.Default.Notifications, contentDescription = null)
+                                    Icon(
+                                        if (selectedTab == HomeTab.NOTIFICATIONS) Icons.Default.Notifications else Icons.Outlined.NotificationsNone,
+                                        contentDescription = null,
+                                    )
                                 }
                             },
                             label = { Text(stringResource(R.string.home_tab_notifications)) },
@@ -167,13 +185,23 @@ fun HomeScreen(
                         NavigationBarItem(
                             selected = selectedTab == HomeTab.MESSAGES,
                             onClick = { selectedTab = HomeTab.MESSAGES },
-                            icon = { Icon(Icons.AutoMirrored.Filled.Chat, contentDescription = null) },
+                            icon = {
+                                Icon(
+                                    if (selectedTab == HomeTab.MESSAGES) Icons.AutoMirrored.Filled.Chat else Icons.AutoMirrored.Outlined.Chat,
+                                    contentDescription = null,
+                                )
+                            },
                             label = { Text(stringResource(R.string.home_tab_messages)) },
                         )
                         NavigationBarItem(
                             selected = false,
                             onClick = { onNavigateToProfile(currentUserId ?: "") },
-                            icon = { Icon(Icons.Default.Person, contentDescription = null) },
+                            icon = {
+                                Icon(
+                                    if (false) Icons.Default.Person else Icons.Outlined.PersonOutline,
+                                    contentDescription = null,
+                                )
+                            },
                             label = { Text(stringResource(R.string.home_tab_profile)) },
                         )
                     }

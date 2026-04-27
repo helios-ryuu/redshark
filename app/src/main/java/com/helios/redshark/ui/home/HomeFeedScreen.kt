@@ -12,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Lightbulb
 import com.helios.redshark.R
 import com.helios.redshark.ui.common.EmptyContent
 import com.helios.redshark.ui.common.ErrorContent
@@ -35,7 +37,11 @@ fun HomeFeedScreen(
                 message = uiState.errorMessage!!,
                 onRetry = viewModel::retry,
             )
-            uiState.ideas.isEmpty() -> EmptyContent(message = stringResource(R.string.home_feed_empty))
+            uiState.ideas.isEmpty() -> EmptyContent(
+                message = stringResource(R.string.home_feed_empty),
+                subtitle = "Check back soon.",
+                icon = Icons.Outlined.Lightbulb,
+            )
             else -> LazyColumn(
                 contentPadding = PaddingValues(Dimens.SpaceLg),
                 verticalArrangement = Arrangement.spacedBy(Dimens.SpaceSm),

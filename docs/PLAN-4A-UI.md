@@ -221,3 +221,26 @@ class GetAllIdeasUseCase @Inject constructor(private val repo: IdeaRepository) {
 | Ảnh trong IdeaCard | Domain `Idea` chưa có `imageUrl` — slot `imageUrl: String?` đã có sẵn để wire sau |
 | Tên thật trong tile tin nhắn | Chưa có profile lookup per-conversation — dùng `userId.take(8)` tạm |
 | `hasUnread`/`lastMessageSenderId` trên Firestore | DTO có `@IgnoreExtraProperties`, mặc định `false`/`null` nếu backend chưa write |
+
+---
+
+## Phase 2 — Mission Objective: Full Fluent Overhaul
+
+**Started:** 27/04/2026 | **Branch:** `feature/ui-fluent-overhaul`
+**Goal:** Deep Fluent Minimalist polish — Lexend font, clean white palette, full English, beautiful empty states, strong chat bubbles, skill chips, polished forms.
+
+### Checklist
+
+- [ ] **Step 0** — Git setup: create `feature/ui-fluent-overhaul`, commit WBS 4A baseline
+- [ ] **Step 1** — Lexend font: `build.gradle.kts` + `Type.kt`
+- [ ] **Step 2** — Color palette & design tokens: `Color.kt`, `Dimens.kt`, `Shape.kt`
+- [ ] **Step 3** — Full English strings: `strings.xml` (all Vietnamese → English)
+- [ ] **Step 4** — Common components: `StatusPill.kt`, `IdeaCard.kt`, `IssueCard.kt`, `StateContent.kt`
+- [ ] **Step 5** — Navigation: filled/outlined icon distinction for active/inactive tabs
+- [ ] **Step 6** — Feed screens: `HomeFeedScreen.kt`, `MyIdeasScreen.kt`
+- [ ] **Step 7** — Notifications: read/unread visual diff, empty state
+- [ ] **Step 8** — Chat (CRITICAL): strong sent bubble color, asymmetric bubble shapes, flat input bar
+- [ ] **Step 9** — Profile: skill chips (`AssistChip`), Fluent input fields
+- [ ] **Step 10** — Idea/Issue detail & form screens polish
+- [ ] **Step 11** — Auth screens: clean Fluent layout
+- [ ] **Verify** — `assembleDebug` green, `testDebugUnitTest` green, no Vietnamese visible
