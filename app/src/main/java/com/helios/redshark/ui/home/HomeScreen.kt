@@ -1,10 +1,8 @@
 package com.helios.redshark.ui.home
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
@@ -27,6 +25,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationBar
@@ -36,18 +35,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.helios.redshark.R
@@ -60,7 +58,7 @@ import com.helios.redshark.ui.theme.Dimens
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-private enum class HomeTab { HOME, IDEAS, NOTIFICATIONS, MESSAGES }
+private enum class HomeTab { HOME, IDEAS, MESSAGES }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,16 +75,25 @@ fun HomeScreen(
     notificationViewModel: NotificationViewModel = hiltViewModel(),
 ) {
     val notifState by notificationViewModel.uiState.collectAsStateWithLifecycle()
-    var selectedTab by remember { mutableStateOf(HomeTab.HOME) }
+    var selectedTab by rememberSaveable { mutableStateOf(HomeTab.HOME) }
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    var barsVisible by remember { mutableStateOf(true) }
+    var showNotifSheet by remember { mutableStateOf(false) }
+    val notifSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    val nestedScrollConnection = remember {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                barsVisible = available.y >= 0f
-                return Offset.Zero
+    if (showNotifSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showNotifSheet = false },
+            sheetState = notifSheetState,
+        ) {
+            Text(
+                text = stringResource(R.string.home_title_notifications),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(start = Dimens.SpaceLg, bottom = Dimens.SpaceSm),
+            )
+            HorizontalDivider()
+            Box(modifier = Modifier.fillMaxWidth().height(480.dp)) {
+                NotificationListScreen(viewModel = notificationViewModel)
             }
         }
     }
@@ -114,97 +121,79 @@ fun HomeScreen(
         },
     ) {
         Scaffold(
-            modifier = Modifier.nestedScroll(nestedScrollConnection),
             topBar = {
-                AnimatedVisibility(
-                    visible = barsVisible,
-                    enter = slideInVertically { -it } + fadeIn(),
-                    exit = slideOutVertically { -it } + fadeOut(),
-                ) {
-                    TopAppBar(
-                        title = { Text(stringResource(R.string.home_title_app)) },
-                        navigationIcon = {
-                            IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                TopAppBar(
+                    title = { Text(stringResource(R.string.home_title_app)) },
+                    navigationIcon = {
+                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                            Icon(
+                                imageVector = Icons.Default.Menu,
+                                contentDescription = stringResource(R.string.home_action_open_menu),
+                            )
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = { showNotifSheet = true }) {
+                            BadgedBox(
+                                badge = {
+                                    if (notifState.unreadCount > 0) Badge()
+                                },
+                            ) {
                                 Icon(
-                                    imageVector = Icons.Default.Menu,
-                                    contentDescription = stringResource(R.string.home_action_open_menu),
+                                    imageVector = if (notifState.unreadCount > 0)
+                                        Icons.Default.Notifications
+                                    else
+                                        Icons.Outlined.NotificationsNone,
+                                    contentDescription = stringResource(R.string.home_tab_notifications),
                                 )
                             }
-                        },
-                    )
-                }
+                        }
+                    },
+                )
             },
             bottomBar = {
-                AnimatedVisibility(
-                    visible = barsVisible,
-                    enter = slideInVertically { it } + fadeIn(),
-                    exit = slideOutVertically { it } + fadeOut(),
-                ) {
-                    NavigationBar {
-                        NavigationBarItem(
-                            selected = selectedTab == HomeTab.HOME,
-                            onClick = { selectedTab = HomeTab.HOME },
-                            icon = {
-                                Icon(
-                                    if (selectedTab == HomeTab.HOME) Icons.Default.Home else Icons.Outlined.Home,
-                                    contentDescription = null,
-                                )
-                            },
-                            label = { Text(stringResource(R.string.home_tab_home)) },
-                        )
-                        NavigationBarItem(
-                            selected = selectedTab == HomeTab.IDEAS,
-                            onClick = { selectedTab = HomeTab.IDEAS },
-                            icon = {
-                                Icon(
-                                    if (selectedTab == HomeTab.IDEAS) Icons.Default.Lightbulb else Icons.Outlined.LightbulbCircle,
-                                    contentDescription = null,
-                                )
-                            },
-                            label = { Text(stringResource(R.string.home_tab_ideas)) },
-                        )
-                        NavigationBarItem(
-                            selected = selectedTab == HomeTab.NOTIFICATIONS,
-                            onClick = { selectedTab = HomeTab.NOTIFICATIONS },
-                            icon = {
-                                BadgedBox(
-                                    badge = {
-                                        if (notifState.unreadCount > 0) {
-                                            Badge { Text(notifState.unreadCount.coerceAtMost(99).toString()) }
-                                        }
-                                    },
-                                ) {
-                                    Icon(
-                                        if (selectedTab == HomeTab.NOTIFICATIONS) Icons.Default.Notifications else Icons.Outlined.NotificationsNone,
-                                        contentDescription = null,
-                                    )
-                                }
-                            },
-                            label = { Text(stringResource(R.string.home_tab_notifications)) },
-                        )
-                        NavigationBarItem(
-                            selected = selectedTab == HomeTab.MESSAGES,
-                            onClick = { selectedTab = HomeTab.MESSAGES },
-                            icon = {
-                                Icon(
-                                    if (selectedTab == HomeTab.MESSAGES) Icons.AutoMirrored.Filled.Chat else Icons.AutoMirrored.Outlined.Chat,
-                                    contentDescription = null,
-                                )
-                            },
-                            label = { Text(stringResource(R.string.home_tab_messages)) },
-                        )
-                        NavigationBarItem(
-                            selected = false,
-                            onClick = { onNavigateToProfile(currentUserId ?: "") },
-                            icon = {
-                                Icon(
-                                    if (false) Icons.Default.Person else Icons.Outlined.PersonOutline,
-                                    contentDescription = null,
-                                )
-                            },
-                            label = { Text(stringResource(R.string.home_tab_profile)) },
-                        )
-                    }
+                NavigationBar {
+                    NavigationBarItem(
+                        selected = selectedTab == HomeTab.HOME,
+                        onClick = { selectedTab = HomeTab.HOME },
+                        icon = {
+                            Icon(
+                                if (selectedTab == HomeTab.HOME) Icons.Default.Home else Icons.Outlined.Home,
+                                contentDescription = null,
+                            )
+                        },
+                        label = { Text(stringResource(R.string.home_tab_home)) },
+                    )
+                    NavigationBarItem(
+                        selected = selectedTab == HomeTab.IDEAS,
+                        onClick = { selectedTab = HomeTab.IDEAS },
+                        icon = {
+                            Icon(
+                                if (selectedTab == HomeTab.IDEAS) Icons.Default.Lightbulb else Icons.Outlined.LightbulbCircle,
+                                contentDescription = null,
+                            )
+                        },
+                        label = { Text(stringResource(R.string.home_tab_ideas)) },
+                    )
+                    NavigationBarItem(
+                        selected = selectedTab == HomeTab.MESSAGES,
+                        onClick = { selectedTab = HomeTab.MESSAGES },
+                        icon = {
+                            Icon(
+                                if (selectedTab == HomeTab.MESSAGES) Icons.AutoMirrored.Filled.Chat else Icons.AutoMirrored.Outlined.Chat,
+                                contentDescription = null,
+                            )
+                        },
+                        label = { Text(stringResource(R.string.home_tab_messages)) },
+                    )
+                    NavigationBarItem(
+                        selected = false,
+                        onClick = { onNavigateToProfile(currentUserId ?: "") },
+                        icon = {
+                            Icon(Icons.Outlined.PersonOutline, contentDescription = null)
+                        },
+                        label = { Text(stringResource(R.string.home_tab_profile)) },
+                    )
                 }
             },
         ) { padding ->
@@ -217,10 +206,6 @@ fun HomeScreen(
                     onIdeaClick = onNavigateToIdeaDetail,
                     onCreateIdea = onCreateIdea,
                     modifier = Modifier.padding(padding),
-                )
-                HomeTab.NOTIFICATIONS -> NotificationListScreen(
-                    modifier = Modifier.padding(padding),
-                    viewModel = notificationViewModel,
                 )
                 HomeTab.MESSAGES -> ConversationListScreen(
                     currentUserId = currentUserId,
