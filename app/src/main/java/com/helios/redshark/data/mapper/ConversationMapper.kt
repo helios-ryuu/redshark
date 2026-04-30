@@ -10,5 +10,7 @@ fun ConversationDto.toDomain(): Conversation = Conversation(
     participantIds = participantIds,
     lastMessageAt = lastMessageAt?.toDate()?.toInstant(),
     lastMessagePreview = lastMessagePreview,
+    lastMessageSenderId = lastMessageSenderId,
+    hasUnread = hasUnread,
     type = runCatching { ConversationType.valueOf(type) }.getOrDefault(ConversationType.DIRECT),
 )

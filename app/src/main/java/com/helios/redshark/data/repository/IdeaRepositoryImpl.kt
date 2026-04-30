@@ -30,6 +30,25 @@ class IdeaRepositoryImpl @Inject constructor(
 
     private val ideas = firestore.collection("ideas")
 
+    override fun getAllIdeas(): Flow<List<Idea>> = callbackFlow {
+        val registration = ideas
+            .whereEqualTo("deletedAt", null)
+            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(AppException.NetworkException(error))
+                    return@addSnapshotListener
+                }
+                val list = snapshot?.documents
+                    ?.mapNotNull { doc ->
+                        doc.toObject(IdeaDto::class.java)?.copy(id = doc.id)?.toDomain()
+                    }
+                    ?: emptyList()
+                trySend(list)
+            }
+        awaitClose { registration.remove() }
+    }
+
     override fun getMyIdeas(): Flow<List<Idea>> = callbackFlow {
         val uid = auth.currentUser?.uid ?: run {
             close(AppException.UnauthorizedException())

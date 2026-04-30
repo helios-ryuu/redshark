@@ -9,5 +9,7 @@ data class ConversationDto(
     val participantIds: List<String> = emptyList(),
     val lastMessageAt: Timestamp? = null,
     val lastMessagePreview: String? = null,
+    val lastMessageSenderId: String? = null,
+    val hasUnread: Boolean = false,
     val type: String = "DIRECT",
 )

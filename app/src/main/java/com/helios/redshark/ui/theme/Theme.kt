@@ -8,26 +8,27 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val LightColorScheme = lightColorScheme(
     primary = RedSharkRed,
-    onPrimary = androidx.compose.ui.graphics.Color.White,
+    onPrimary = Color.White,
     primaryContainer = RedSharkRedContainer,
     onPrimaryContainer = OnRedSharkRedContainer,
 
     secondary = SeaTeal,
-    onSecondary = androidx.compose.ui.graphics.Color.White,
+    onSecondary = Color.White,
     secondaryContainer = SeaTealContainer,
     onSecondaryContainer = OnSeaTealContainer,
 
     tertiary = Amber,
-    onTertiary = androidx.compose.ui.graphics.Color.White,
+    onTertiary = Color.White,
     tertiaryContainer = AmberContainer,
     onTertiaryContainer = OnAmberContainer,
 
     error = ErrorRed,
-    onError = androidx.compose.ui.graphics.Color.White,
+    onError = Color.White,
     errorContainer = ErrorRedContainer,
     onErrorContainer = OnErrorRedContainer,
 
@@ -38,6 +39,7 @@ private val LightColorScheme = lightColorScheme(
     surfaceVariant = NeutralSurfaceVariantLight,
     onSurfaceVariant = NeutralOnSurfaceVariantLight,
     outline = NeutralOutlineLight,
+    outlineVariant = NeutralOutlineVariantLight,
 )
 
 private val DarkColorScheme = darkColorScheme(
@@ -68,6 +70,7 @@ private val DarkColorScheme = darkColorScheme(
     surfaceVariant = NeutralSurfaceVariantDark,
     onSurfaceVariant = NeutralOnSurfaceVariantDark,
     outline = NeutralOutlineDark,
+    outlineVariant = NeutralOutlineVariantDark,
 )
 
 @Composable

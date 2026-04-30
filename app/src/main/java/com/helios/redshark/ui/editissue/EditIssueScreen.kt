@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -112,7 +113,11 @@ fun EditIssueScreen(
                         else Text("${title.length}/120")
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                ),
+                singleLine = true,
                 )
 
                 OutlinedTextField(
@@ -121,6 +126,10 @@ fun EditIssueScreen(
                     label = { Text(stringResource(R.string.issue_field_description)) },
                     modifier = Modifier.fillMaxWidth().height(Dimens.InputFieldHeightMultilineSm),
                     maxLines = 4,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    ),
                 )
 
                 ExposedDropdownMenuBox(
@@ -134,6 +143,10 @@ fun EditIssueScreen(
                         label = { Text(stringResource(R.string.issue_field_priority)) },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = priorityExpanded) },
                         modifier = Modifier.menuAnchor().fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        ),
                     )
                     ExposedDropdownMenu(
                         expanded = priorityExpanded,
@@ -162,6 +175,10 @@ fun EditIssueScreen(
                         label = { Text(stringResource(R.string.issue_field_assignee)) },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = assigneeExpanded) },
                         modifier = Modifier.menuAnchor().fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        ),
                     )
                     ExposedDropdownMenu(
                         expanded = assigneeExpanded,

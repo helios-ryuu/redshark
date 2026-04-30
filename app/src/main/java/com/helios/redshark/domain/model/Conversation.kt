@@ -10,5 +10,7 @@ data class Conversation(
     val participantIds: List<String>,
     val lastMessageAt: Instant?,
     val lastMessagePreview: String?,
+    val lastMessageSenderId: String?,
+    val hasUnread: Boolean,
     val type: ConversationType,
 )

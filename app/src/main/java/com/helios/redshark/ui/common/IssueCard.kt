@@ -1,5 +1,6 @@
 package com.helios.redshark.ui.common
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import com.helios.redshark.domain.model.Issue
 import com.helios.redshark.ui.theme.Dimens
 
@@ -23,6 +25,9 @@ fun IssueCard(issue: Issue, onClick: () -> Unit, modifier: Modifier = Modifier) 
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevation),
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(Dimens.CardBorderWidth, MaterialTheme.colorScheme.outlineVariant),
     ) {
         Column(modifier = Modifier.padding(Dimens.SpaceLg)) {
             Row(
@@ -32,7 +37,7 @@ fun IssueCard(issue: Issue, onClick: () -> Unit, modifier: Modifier = Modifier) 
             ) {
                 Text(
                     text = issue.title,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
                     modifier = Modifier.weight(1f),
                 )
                 IssuePriorityPill(issue.priority)

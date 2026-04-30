@@ -135,7 +135,7 @@ fun ProfileViewScreen(
                     if (!uiState.isOwner) {
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(onClick = onNavigateToMessage) {
-                            Text("Nhan tin")
+                            Text("Message")
                         }
                     }
 

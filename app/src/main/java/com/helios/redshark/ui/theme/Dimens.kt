@@ -11,15 +11,20 @@ object Dimens {
     val SpaceXl = 24.dp
     val SpaceXxl = 32.dp
 
-    val CardElevation = 2.dp
-    val CardElevationRaised = 4.dp
+    val CardElevation = 0.dp
+    val CardElevationRaised = 2.dp
+    val CardBorderWidth = 1.dp
 
     val IconSm = 16.dp
     val IconMd = 24.dp
     val IconLg = 32.dp
+    val IconXl = 48.dp
     val AvatarSm = 32.dp
     val AvatarMd = 48.dp
     val AvatarLg = 96.dp
+
+    val UnreadDotSize = 8.dp
+    val NotificationAccentBar = 4.dp
 
     val ListBottomPaddingWithFab = 88.dp
     val InputFieldHeightMultiline = 160.dp

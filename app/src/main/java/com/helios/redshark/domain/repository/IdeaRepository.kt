@@ -11,6 +11,9 @@ interface IdeaRepository {
     /** Emits a live list of ideas authored by the current user (deletedAt IS NULL). */
     fun getMyIdeas(): Flow<List<Idea>>
 
+    /** Emits a live list of all non-deleted ideas ordered by createdAt desc, for the home feed. */
+    fun getAllIdeas(): Flow<List<Idea>>
+
     suspend fun getIdeaDetail(id: UUID): Idea
 
     /** Inserts a new idea with status=ACTIVE. Validation occurs in the use-case layer. */
