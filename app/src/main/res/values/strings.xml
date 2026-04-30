@@ -117,6 +117,8 @@
     <string name="message_unknown_user">Unknown user</string>
     <string name="message_error_load_list">Failed to load conversations.</string>
     <string name="message_error_load_thread">Failed to load messages.</string>
+    <string name="message_date_today">Today</string>
+    <string name="message_date_yesterday">Yesterday</string>
 
     <!-- Profile -->
     <string name="profile_title_fallback">Profile</string>
