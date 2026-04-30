@@ -6,7 +6,7 @@ Tài liệu này tổng hợp toàn bộ kế hoạch triển khai từ các tà
 - Phân rã công việc theo cấu trúc phân cấp (1.0, 1.1, 1.1.1...).
 - Xác định rõ sản phẩm bàn giao, người phụ trách, phụ thuộc và mốc thời gian.
 - Đồng bộ với quyết định hiện tại của dự án:
-  - Xác thực chỉ dùng Google Sign-In.
+  - Xác thực hỗ trợ Google Sign-In và Email/Password (Firebase Auth).
   - Luồng **hoàn thiện hồ sơ lần đầu** bắt buộc `displayName` hợp lệ (3..50 ký tự).
   - Chưa triển khai CI bắt buộc ở giai đoạn hiện tại (duy trì kiểm tra biên dịch cục bộ).
   - Không sử dụng thư mục `.github/` trong cấu trúc hiện tại.
@@ -15,19 +15,57 @@ Tài liệu này tổng hợp toàn bộ kế hoạch triển khai từ các tà
 ## 2. Cơ sở lập WBS
 
 WBS được xây dựng dựa trên các nhóm tài liệu sau:
-- Định hướng dự án: `PROJECT_CHARTER.md`, `TIMELINE.md`, `README.md`.
-- Yêu cầu: `REQUIREMENT-1-FUNCTIONAL.md`, `REQUIREMENT-2-NONFUNCTIONAL.md`.
-- Kế hoạch theo pha: `PLAN-1-FOUNDATION.md` đến `PLAN-5-FINAL.md`.
+- Định hướng dự án: `PROJECT_CHARTER.md`.
+- Kế hoạch thực thi cuối: `PLAN-1-AUTH.md`, `PLAN-2-CONTENT.md`, `PLAN-3-INTERACTION.md`, `PLAN-4-FINALIZE.md`.
 - Quy trình nghiệp vụ: `PROCESS-1-AUTH.md` đến `PROCESS-3-INTERACTION.md`.
-- Kiểm thử: `CHECK-1-AUTH.md` đến `CHECK-3-INTERACTION.md`.
-- Ràng buộc kỹ thuật: `STRUCTURE.md`, `SCHEMA.md`, `SECRET.md`, `GIT.md`, `REPORT.md`.
+- Tiêu chuẩn nghiệm thu: `CHECK-1-AUTH.md` đến `CHECK-3-INTERACTION.md`.
+- Ràng buộc kỹ thuật: `SCHEMA.md`, `SECRET.md`, `GIT.md`, `REPORT.md`, `CLAUDE.md`.
 
 ## 3. Mốc hiện tại (hiện trạng)
 
-- **Ngày ghi nhận:** 25/04/2026.
-- **Trạng thái hiện tại:** WBS 3.0 (Auth) ✅, WBS 4.0 (Content) ✅ và WBS 5.0 (Tương tác) ✅ hoàn thành — toàn bộ code feature từ giai đoạn 1 đến giai đoạn 4 đã implement xong trên nhánh working tree. Sẵn sàng vào WBS 6.0 (Kiểm thử/NFR) và WBS 7.0 (Phát hành) theo lịch Tuần 9 (12–17/05/2026).
+- **Ngày cập nhật:** 30/04/2026.
+- **Trạng thái hiện tại:** WBS 3.0 (Auth) ✅, WBS 4.0 (Content) ✅, WBS 5.0 (Tương tác) ✅, WBS 4A.0 (UI Overhaul) ✅ hoàn thành. Đang trong giai đoạn dọn dẹp docs + chuẩn bị thực thi PLAN-1..4 để vào WBS 6.0 (Kiểm thử/NFR) và WBS 7.0 (Phát hành).
 - **Người thực hiện commit init:** **Sỹ**.
-- **Đề xuất commit chuẩn:** `chore(init): bootstrap Android project and project documents`.
+- **Commit init chuẩn:** `chore(init): bootstrap Android project and project documents`.
+
+### Lịch thực thi còn lại
+
+```
+Tuần 7 ─ 28/04 → 04/05 │ PLAN-1-AUTH (Sỹ) + PLAN-2-CONTENT (Hải) song song
+                        │ PLAN-3-INTERACTION (Nam) — hard deadline 18:00 ngày 03/05
+Tuần 8 ─ 05/05 → 11/05 │ PLAN-4-FINALIZE (Sỹ): email/password auth + NFR + release prep
+Tuần 9 ─ 12/05 → 17/05 │ Kiểm thử hồi quy + phát hành v1.0.0
+```
+
+**Phân công Tuần 7 (28/04–04/05):**
+
+| Thành viên | Công việc |
+|---|---|
+| **Sỹ** | PLAN-1-AUTH: rà soát + commit UI auth/profile; manual test CHECK-1-AUTH |
+| **Hải** | PLAN-2-CONTENT: rà soát + commit UI content; manual test CHECK-2-CONTENT |
+| **Nam** | PLAN-3-INTERACTION: commit UI interaction; manual test CHECK-3-INTERACTION TC-N/M (xong trước 18:00 03/05) |
+
+**Phân công Tuần 8 (05/05–11/05):**
+
+| Thành viên | Công việc |
+|---|---|
+| **Sỹ** | PLAN-4-FINALIZE Phần 1: implement email/password auth (domain + data + UI) |
+| **Hải** | Phối hợp review + test tính năng email-register mới |
+| **Nam** | Phối hợp NFR: dark mode, rotation, back nav |
+
+**Phân công Tuần 9 (12/05–17/05):**
+
+| Ngày | Thành viên | Công việc |
+|---|---|---|
+| 12–14/05 | Cả nhóm | Kiểm thử hồi quy CHECK-1/2/3 trên 3 thiết bị; sửa lỗi P0/P1 |
+| 15/05 | Sỹ + Nam | PLAN-4-FINALIZE Phần 2: NFR TC-X01..X07 + dọn kỹ thuật |
+| 16/05 | Sỹ + Hải | Release hardening, signed APK, đo hiệu năng, cập nhật REPORT |
+| 17/05 | Cả nhóm | Smoke test bản phát hành, git tag v1.0.0, nộp bài |
+
+**Vùng đệm rủi ro:**
+- Giai đoạn Content hoàn thành sớm 20/04; WBS 5.0 implement xong 25/04 — tận dụng buffer cho NFR và email-auth.
+- Mỗi giai đoạn có tối thiểu 1 ngày dự phòng để sửa lỗi.
+- Nếu PLAN-3 trễ deadline 03/05: PLAN-4 vẫn có thể bắt đầu Phần 1 (email-auth) độc lập; chỉ cần PLAN-3 merge trước khi vào Phần 2 (NFR full regression).
 
 ## 4. Cấu trúc phân rã công việc (WBS)
 

@@ -6,16 +6,21 @@ Mọi collection đều dùng document ID Firestore (tự sinh UUID hoặc bằn
 
 ## 1. Collection `users`
 
-| Thuộc tính  | Kiểu Firestore | Ràng buộc                               | Toàn vẹn |
-|-------------|----------------|-----------------------------------------|----------|
-| id          | String         | NOT NULL, = Firebase Auth UID (doc ID)  | Strong   |
-| email       | String         | NOT NULL, format email                  | Strong   |
-| displayName | String         | NOT NULL, length 3..50                  | Medium   |
-| avatarUrl   | String?        | NULL cho phép; URL R2                   | Weak     |
-| bio         | String?        | NULL, max 280 ký tự                     | Weak     |
-| skills      | Array\<String\>| Mảng tên skill, có thể rỗng             | Medium   |
-| createdAt   | Timestamp      | NOT NULL, server timestamp khi tạo      | Strong   |
-| updatedAt   | Timestamp      | NOT NULL, server timestamp mỗi lần ghi  | Strong   |
+| Thuộc tính   | Kiểu Firestore  | Ràng buộc                                                    | Toàn vẹn |
+|--------------|-----------------|--------------------------------------------------------------|----------|
+| id           | String          | NOT NULL, = Firebase Auth UID (doc ID)                       | Strong   |
+| email        | String          | NOT NULL, format email                                       | Strong   |
+| username     | String          | NOT NULL, UNIQUE, 3..30 ký tự, `[a-z0-9._-]`, enforce app   | Medium   |
+| displayName  | String          | NOT NULL, length 3..50                                       | Medium   |
+| authProvider | String (Enum)   | {GOOGLE, EMAIL}, NOT NULL; backfill user cũ = "GOOGLE"       | Strong   |
+| dateOfBirth  | Timestamp?      | NULL cho Google user cũ; NOT NULL cho email-register         | Medium   |
+| avatarUrl    | String?         | NULL cho phép; URL R2                                        | Weak     |
+| bio          | String?         | NULL, max 280 ký tự                                          | Weak     |
+| skills       | Array\<String\> | Mảng tên skill, có thể rỗng                                  | Medium   |
+| createdAt    | Timestamp       | NOT NULL, server timestamp khi tạo                           | Strong   |
+| updatedAt    | Timestamp       | NOT NULL, server timestamp mỗi lần ghi                       | Strong   |
+
+> **Lưu ý bảo mật:** Password KHÔNG lưu Firestore. Firebase Auth (`createUserWithEmailAndPassword` / `signInWithEmailAndPassword`) quản lý toàn bộ credential. `username` được enforce duy nhất ở tầng app (query Firestore trước khi tạo); không có unique constraint native trong Firestore.
 
 ---
 
@@ -245,3 +250,137 @@ service cloud.firestore {
 | `notifications` | `recipientId` ASC, `isRead` ASC                   | Unread badge / read filter            |
 | `conversations` | `participantIds` (array-contains), `lastMessageAt` DESC | Conversation list ordering     |
 | `messages`      | `conversationId` ASC, `createdAt` ASC             | Message history ordering              |
+
+---
+
+## 13. Firebase Operations
+
+### Prerequisites
+
+```bash
+npm install -g firebase-tools
+firebase login
+firebase use redshark-application   # xác nhận: firebase projects:list
+pip install firebase-admin           # cho seed script Python
+```
+
+Lấy service account key: **Firebase Console → Project Settings → Service Accounts → Generate new private key**.
+Lưu file tại `scripts/serviceAccountKey.json` (gitignored — không commit).
+
+---
+
+### Deploy Security Rules
+
+Rules nằm tại `firestore.rules` (project root), `firebase.json` wires tự động.
+
+```bash
+# Validate cục bộ (tuỳ chọn)
+firebase emulators:start --only firestore
+
+# Deploy production
+firebase deploy --only firestore:rules
+```
+
+Kiểm tra bằng Firestore Rules Playground trong Firebase Console trước khi deploy.
+
+---
+
+### Deploy Composite Indexes
+
+Indexes khai báo trong `firestore.indexes.json`. Thêm/xóa entry rồi deploy:
+
+```bash
+firebase deploy --only firestore:indexes
+```
+
+Index build bất đồng bộ — theo dõi tại **Firebase Console → Firestore → Indexes** (thường 1–5 phút cho dataset nhỏ).
+
+---
+
+### Thêm field mới vào collection
+
+Firestore schemaless — không cần migration DDL. Checklist 8 bước:
+
+1. **SCHEMA.md** — thêm dòng field mới vào bảng collection tương ứng.
+2. **DTO** — thêm field vào `data/remote/firestore/dto/<Collection>Dto.kt` (nullable với default).
+3. **Domain model** — thêm field vào `domain/model/<Model>.kt`.
+4. **Mapper** — cập nhật `data/mapper/<Collection>Mapper.kt` cả 2 chiều (DTO ↔ domain).
+5. **Write ops** — thêm field vào các lệnh `set()` / `update()` trong repository impl.
+6. **Index** — nếu field dùng trong `where()` / `orderBy()` compound, thêm vào `firestore.indexes.json` và deploy.
+7. **Security rules** — nếu field cần kiểm soát read/write riêng, cập nhật `firestore.rules` và deploy.
+8. **Backfill** — document cũ không có field mới sẽ trả `null`; app phải xử lý nullable. Nếu cần điền giá trị cho document cũ:
+
+```python
+# backfill_example.py
+import firebase_admin
+from firebase_admin import credentials, firestore
+
+firebase_admin.initialize_app(credentials.Certificate("scripts/serviceAccountKey.json"),
+                              {"projectId": "redshark-application"})
+db = firestore.client()
+
+docs = db.collection("conversations").stream()
+batch = db.batch()
+count = 0
+for doc in docs:
+    batch.update(doc.reference, {"newField": None})
+    count += 1
+    if count % 400 == 0:
+        batch.commit()
+        batch = db.batch()
+batch.commit()
+print(f"Backfilled {count} documents")
+```
+
+---
+
+### Seeding Test Data
+
+Script `scripts/seed_firestore.py` **xóa toàn bộ document** trong các collection target rồi ghi data mới. Chỉ chạy với dev/staging project.
+
+```bash
+python scripts/seed_firestore.py
+```
+
+Script tự detect credentials theo thứ tự: (1) `scripts/serviceAccountKey.json`, (2) `GOOGLE_APPLICATION_CREDENTIALS`.
+
+| Biến | Firestore UID | Tên hiển thị |
+|---|---|---|
+| `USER_SY` | `seed_user_sy` | Ngô Tiến Sỹ |
+| `USER_HAI` | `seed_user_hai` | Nguyễn Tiến Hải |
+| `USER_NAM` | `seed_user_nam` | — |
+| `USER_LAN` | `seed_user_lan` | — |
+| `USER_MINH` | `seed_user_minh` | — |
+
+> Seed UID không phải Firebase Auth UID thật. Để test với tài khoản thật: đăng nhập app → copy Auth UID từ **Firebase Console → Authentication → Users** → thay vào script.
+
+---
+
+### Xóa field
+
+1. Xóa khỏi DTO và domain model.
+2. Xóa khỏi mapper.
+3. Xóa khỏi write ops.
+4. Xóa composite index liên quan khỏi `firestore.indexes.json` → deploy.
+5. Cập nhật security rules nếu field được tham chiếu.
+6. Document cũ vẫn giữ field trong Firestore (vô hại — Firestore bỏ qua field không mapped). Chạy cleanup script nếu cần tiết kiệm storage.
+
+---
+
+### Đổi tên collection
+
+Firestore không hỗ trợ rename. Quy trình:
+1. Viết migration script đọc collection cũ → ghi collection mới.
+2. Deploy app version mới trỏ sang collection name mới.
+3. Sau khi xác nhận data integrity → xóa document collection cũ.
+
+---
+
+### Environment checklist trước khi deploy production
+
+- [ ] `firebase.json` trỏ đúng rules và indexes file
+- [ ] `firestore.rules` đã test trong Rules Playground
+- [ ] Composite indexes mới đã thêm vào `firestore.indexes.json`
+- [ ] `firebase deploy --only firestore:rules,firestore:indexes` chạy không lỗi
+- [ ] Status index là **Enabled** trong Firebase Console trước khi ship release
+- [ ] `serviceAccountKey.json` có trong `.gitignore` và **không** bị commit
