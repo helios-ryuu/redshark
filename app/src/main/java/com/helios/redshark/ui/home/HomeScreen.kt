@@ -1,9 +1,6 @@
 package com.helios.redshark.ui.home
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.automirrored.outlined.Chat
@@ -17,40 +14,20 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.LightbulbCircle
 import androidx.compose.material.icons.outlined.NotificationsNone
 import androidx.compose.material.icons.outlined.PersonOutline
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberDrawerState
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.helios.redshark.R
 import com.helios.redshark.ui.auth.AuthViewModel
 import com.helios.redshark.ui.message.ConversationListScreen
+import com.helios.redshark.ui.message.MessageViewModel
 import com.helios.redshark.ui.myideas.MyIdeasScreen
 import com.helios.redshark.ui.notification.NotificationListScreen
 import com.helios.redshark.ui.notification.NotificationViewModel
@@ -70,30 +47,59 @@ fun HomeScreen(
     onNavigateToIdeaDetail: (UUID) -> Unit,
     onCreateIdea: () -> Unit,
     onIssueClick: (UUID) -> Unit,
+    onStartConversation: (String) -> Unit,
     onOpenConversation: (UUID) -> Unit,
     authViewModel: AuthViewModel = hiltViewModel(),
     notificationViewModel: NotificationViewModel = hiltViewModel(),
+    messageViewModel: MessageViewModel = hiltViewModel(),
 ) {
     val notifState by notificationViewModel.uiState.collectAsStateWithLifecycle()
+    val messageState by messageViewModel.listState.collectAsStateWithLifecycle()
     var selectedTab by rememberSaveable { mutableStateOf(HomeTab.HOME) }
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var showNotifSheet by remember { mutableStateOf(false) }
     val notifSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+    val messageUnreadCount = remember(messageState.conversations, currentUserId) {
+        if (currentUserId == null) 0
+        else messageState.conversations.count { it.hasUnread && it.lastMessageSenderId != currentUserId }
+    }
+
     if (showNotifSheet) {
         ModalBottomSheet(
             onDismissRequest = { showNotifSheet = false },
             sheetState = notifSheetState,
         ) {
-            Text(
-                text = stringResource(R.string.home_title_notifications),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(start = Dimens.SpaceLg, bottom = Dimens.SpaceSm),
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimens.SpaceLg, vertical = Dimens.SpaceSm),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(R.string.home_title_notifications),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                TextButton(
+                    onClick = notificationViewModel::deleteAll,
+                    enabled = notifState.notifications.isNotEmpty(),
+                ) {
+                    Text(
+                        text = stringResource(R.string.notification_action_delete_all),
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            textDecoration = TextDecoration.Underline,
+                        ),
+                    )
+                }
+            }
             HorizontalDivider()
             Box(modifier = Modifier.fillMaxWidth().height(480.dp)) {
-                NotificationListScreen(viewModel = notificationViewModel)
+                NotificationListScreen(
+                    viewModel = notificationViewModel,
+                    onOpenIdea = onNavigateToIdeaDetail,
+                )
             }
         }
     }
@@ -136,7 +142,9 @@ fun HomeScreen(
                         IconButton(onClick = { showNotifSheet = true }) {
                             BadgedBox(
                                 badge = {
-                                    if (notifState.unreadCount > 0) Badge()
+                                    if (notifState.unreadCount > 0) {
+                                        Badge { Text(notifState.unreadCount.toString()) }
+                                    }
                                 },
                             ) {
                                 Icon(
@@ -179,10 +187,18 @@ fun HomeScreen(
                         selected = selectedTab == HomeTab.MESSAGES,
                         onClick = { selectedTab = HomeTab.MESSAGES },
                         icon = {
-                            Icon(
-                                if (selectedTab == HomeTab.MESSAGES) Icons.AutoMirrored.Filled.Chat else Icons.AutoMirrored.Outlined.Chat,
-                                contentDescription = null,
-                            )
+                            BadgedBox(
+                                badge = {
+                                    if (messageUnreadCount > 0) {
+                                        Badge { Text(messageUnreadCount.toString()) }
+                                    }
+                                },
+                            ) {
+                                Icon(
+                                    if (selectedTab == HomeTab.MESSAGES) Icons.AutoMirrored.Filled.Chat else Icons.AutoMirrored.Outlined.Chat,
+                                    contentDescription = null,
+                                )
+                            }
                         },
                         label = { Text(stringResource(R.string.home_tab_messages)) },
                     )
@@ -210,6 +226,7 @@ fun HomeScreen(
                 HomeTab.MESSAGES -> ConversationListScreen(
                     currentUserId = currentUserId,
                     onOpenConversation = onOpenConversation,
+                    onStartConversation = onStartConversation,
                     modifier = Modifier.padding(padding),
                 )
             }

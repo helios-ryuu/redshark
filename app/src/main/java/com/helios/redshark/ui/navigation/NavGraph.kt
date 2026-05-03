@@ -86,6 +86,9 @@ fun NavGraph(
                 onIssueClick = { issueId ->
                     navController.navigate(Routes.issueDetail(issueId.toString()))
                 },
+                onStartConversation = { peerId ->
+                    navController.navigate(Routes.conversationNew(peerId))
+                },
                 onOpenConversation = { convId ->
                     navController.navigate(Routes.conversation(convId.toString()))
                 },

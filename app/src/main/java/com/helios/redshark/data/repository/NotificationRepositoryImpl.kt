@@ -10,6 +10,7 @@ import com.helios.redshark.data.remote.firestore.dto.NotificationDto
 import com.helios.redshark.domain.model.CreateNotificationInput
 import com.helios.redshark.domain.model.Notification
 import com.helios.redshark.domain.repository.NotificationRepository
+import java.time.Instant
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -80,9 +81,17 @@ class NotificationRepositoryImpl @Inject constructor(
                 "createdAt" to FieldValue.serverTimestamp(),
             )
             notifications.document(newId).set(data).await()
-            val doc = notifications.document(newId).get().await()
-            doc.toObject(NotificationDto::class.java)?.copy(id = doc.id)?.toDomain()
-                ?: throw AppException.UnknownException()
+            Notification(
+                id = UUID.fromString(newId),
+                recipientId = input.recipientId,
+                actorId = input.actorId,
+                type = input.type,
+                targetType = input.targetType,
+                targetId = input.targetId,
+                message = input.message,
+                isRead = false,
+                createdAt = Instant.now(),
+            )
         } catch (e: AppException) {
             throw e
         } catch (e: Exception) {
@@ -92,7 +101,23 @@ class NotificationRepositoryImpl @Inject constructor(
 
     override suspend fun markAsRead(id: UUID) {
         try {
-            notifications.document(id.toString()).update("isRead", true).await()
+            notifications.document(id.toString()).delete().await()
+        } catch (e: Exception) {
+            throw AppException.NetworkException(e)
+        }
+    }
+
+    override suspend fun deleteAll() {
+        val uid = auth.currentUser?.uid ?: throw AppException.UnauthorizedException()
+        try {
+            val snapshot = notifications
+                .whereEqualTo("recipientId", uid)
+                .get()
+                .await()
+            if (snapshot.isEmpty) return
+            val batch = firestore.batch()
+            snapshot.documents.forEach { doc -> batch.delete(doc.reference) }
+            batch.commit().await()
         } catch (e: Exception) {
             throw AppException.NetworkException(e)
         }

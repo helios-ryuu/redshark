@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +39,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.helios.redshark.R
 import com.helios.redshark.domain.model.Notification
+import com.helios.redshark.domain.model.NotificationTargetType
 import com.helios.redshark.domain.model.NotificationType
 import com.helios.redshark.ui.common.EmptyContent
 import com.helios.redshark.ui.common.ErrorContent
@@ -51,8 +53,12 @@ import java.time.format.FormatStyle
 fun NotificationListScreen(
     modifier: Modifier = Modifier,
     viewModel: NotificationViewModel = hiltViewModel(),
+    onOpenIdea: (java.util.UUID) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val visibleNotifications = remember(uiState.notifications) {
+        uiState.notifications.filter { !it.isRead }
+    }
 
     Box(modifier = modifier.fillMaxSize()) {
         when {
@@ -61,7 +67,7 @@ fun NotificationListScreen(
                 message = uiState.errorMessage!!,
                 onRetry = viewModel::retry,
             )
-            uiState.notifications.isEmpty() -> EmptyContent(
+            visibleNotifications.isEmpty() -> EmptyContent(
                 message = stringResource(R.string.notification_empty),
                 subtitle = stringResource(R.string.notification_empty_subtitle),
                 icon = Icons.Outlined.NotificationsNone,
@@ -69,10 +75,20 @@ fun NotificationListScreen(
             else -> LazyColumn(
                 contentPadding = PaddingValues(vertical = Dimens.SpaceXs),
             ) {
-                items(uiState.notifications, key = { it.id.toString() }) { notification ->
+                items(visibleNotifications, key = { it.id.toString() }) { notification ->
                     NotificationItem(
                         notification = notification,
-                        onRead = { viewModel.markAsRead(notification) },
+                        onRead = {
+                            viewModel.markAsRead(notification)
+                            if (notification.targetType == NotificationTargetType.IDEA &&
+                                notification.type in setOf(
+                                    NotificationType.COLLAB_ACCEPTED,
+                                    NotificationType.COLLAB_REJECTED,
+                                )
+                            ) {
+                                onOpenIdea(notification.targetId)
+                            }
+                        },
                         onAccept = { viewModel.acceptCollab(notification) },
                         onReject = { viewModel.rejectCollab(notification) },
                     )

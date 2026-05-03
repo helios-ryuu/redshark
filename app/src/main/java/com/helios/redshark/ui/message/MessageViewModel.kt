@@ -5,10 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.helios.redshark.domain.model.Conversation
 import com.helios.redshark.domain.model.Message
 import com.helios.redshark.domain.model.SendMessageInput
+import com.helios.redshark.domain.model.User
 import com.helios.redshark.domain.usecase.message.FindOrCreateDirectConversationUseCase
 import com.helios.redshark.domain.usecase.message.GetConversationsUseCase
 import com.helios.redshark.domain.usecase.message.GetMessagesUseCase
 import com.helios.redshark.domain.usecase.message.SendMessageUseCase
+import com.helios.redshark.domain.usecase.message.MarkConversationReadUseCase
+import com.helios.redshark.domain.usecase.user.GetUsersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,6 +25,7 @@ import javax.inject.Inject
 
 data class ConversationListUiState(
     val conversations: List<Conversation> = emptyList(),
+    val usersById: Map<String, User> = emptyMap(),
     val isLoading: Boolean = true,
     val errorMessage: String? = null,
 )
@@ -40,6 +44,8 @@ class MessageViewModel @Inject constructor(
     private val getMessagesUseCase: GetMessagesUseCase,
     private val sendMessageUseCase: SendMessageUseCase,
     private val findOrCreateDirectConversationUseCase: FindOrCreateDirectConversationUseCase,
+    private val getUsersUseCase: GetUsersUseCase,
+    private val markConversationReadUseCase: MarkConversationReadUseCase,
 ) : ViewModel() {
 
     private val _listState = MutableStateFlow(ConversationListUiState())
@@ -50,6 +56,19 @@ class MessageViewModel @Inject constructor(
 
     init {
         observeConversations()
+        loadUsers()
+    }
+
+    private fun loadUsers() {
+        viewModelScope.launch {
+            when (val result = getUsersUseCase()) {
+                is com.helios.redshark.core.util.Result.Success -> {
+                    val map = result.data.associateBy { it.id }
+                    _listState.update { it.copy(usersById = map) }
+                }
+                else -> Unit
+            }
+        }
     }
 
     fun retryList() {
@@ -72,6 +91,7 @@ class MessageViewModel @Inject constructor(
     fun loadMessages(conversationId: UUID) {
         viewModelScope.launch {
             _convState.update { it.copy(isLoading = true, errorMessage = null) }
+            runCatching { markConversationReadUseCase(conversationId) }
             getMessagesUseCase(conversationId)
                 .catch { e ->
                     _convState.update { it.copy(isLoading = false, errorMessage = e.message ?: "Lỗi tải tin nhắn.") }

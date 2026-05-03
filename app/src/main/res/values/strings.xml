@@ -97,6 +97,7 @@
     <!-- Notifications -->
     <string name="notification_empty">All caught up!</string>
     <string name="notification_empty_subtitle">No new notifications.</string>
+    <string name="notification_action_delete_all">Delete All</string>
     <string name="notification_action_accept">Accept</string>
     <string name="notification_action_reject">Decline</string>
     <string name="notification_type_issue_created">New Issue</string>
@@ -112,6 +113,19 @@
     <string name="message_conversation_title">Conversation</string>
     <string name="message_list_empty">No conversations yet.</string>
     <string name="message_list_empty_subtitle">Start a new one.</string>
+    <string name="message_search_placeholder">Search conversations</string>
+    <string name="message_search_empty">No matches found.</string>
+    <string name="message_search_empty_subtitle">Try a different name or email.</string>
+    <string name="message_new_conversation_title">Create a new conversation</string>
+    <string name="message_action_new_conversation">Create new conversation</string>
+    <string name="message_action_start_conversation">Create</string>
+    <string name="message_email_label">Email</string>
+    <string name="message_email_placeholder">Enter email address</string>
+    <string name="message_error_email_required">Email is required.</string>
+    <string name="message_error_email_invalid">Enter a valid email.</string>
+    <string name="message_error_user_not_found">No user found with that email.</string>
+    <string name="message_error_self_conversation">You cannot message yourself.</string>
+    <string name="message_error_auth_required">Please sign in to start a conversation.</string>
     <string name="message_thread_empty">No messages yet. Say hello!</string>
     <string name="message_input_placeholder">Message…</string>
     <string name="message_unknown_user">Unknown user</string>
@@ -119,6 +133,7 @@
     <string name="message_error_load_thread">Failed to load messages.</string>
     <string name="message_date_today">Today</string>
     <string name="message_date_yesterday">Yesterday</string>
+    <string name="message_unread_prefix">• </string>
 
     <!-- Profile -->
     <string name="profile_title_fallback">Profile</string>

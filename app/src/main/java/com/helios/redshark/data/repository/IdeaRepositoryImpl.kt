@@ -54,7 +54,20 @@ class IdeaRepositoryImpl @Inject constructor(
             close(AppException.UnauthorizedException())
             return@callbackFlow
         }
-        val registration = ideas
+        val cache = linkedMapOf<String, Idea>()
+
+        fun emitSnapshot(snapshot: com.google.firebase.firestore.QuerySnapshot?) {
+            val list = snapshot?.documents
+                ?.mapNotNull { doc ->
+                    doc.toObject(IdeaDto::class.java)?.copy(id = doc.id)?.toDomain()
+                }
+                ?.filter { it.deletedAt == null }
+                ?: emptyList()
+            list.forEach { cache[it.id.toString()] = it }
+            trySend(cache.values.sortedByDescending { it.createdAt })
+        }
+
+        val authorRegistration = ideas
             .whereEqualTo("authorId", uid)
             .orderBy("createdAt", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
@@ -62,15 +75,24 @@ class IdeaRepositoryImpl @Inject constructor(
                     close(AppException.NetworkException(error))
                     return@addSnapshotListener
                 }
-                val list = snapshot?.documents
-                    ?.mapNotNull { doc ->
-                        doc.toObject(IdeaDto::class.java)?.copy(id = doc.id)?.toDomain()
-                    }
-                    ?.filter { it.deletedAt == null }
-                    ?: emptyList()
-                trySend(list)
+                emitSnapshot(snapshot)
             }
-        awaitClose { registration.remove() }
+
+        val collaboratorRegistration = ideas
+            .whereArrayContains("collaboratorIds", uid)
+            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(AppException.NetworkException(error))
+                    return@addSnapshotListener
+                }
+                emitSnapshot(snapshot)
+            }
+
+        awaitClose {
+            authorRegistration.remove()
+            collaboratorRegistration.remove()
+        }
     }
 
     override suspend fun getIdeaDetail(id: UUID): Idea {

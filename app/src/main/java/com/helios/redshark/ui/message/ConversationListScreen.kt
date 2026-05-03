@@ -2,12 +2,15 @@ package com.helios.redshark.ui.message
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -15,19 +18,33 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Chat
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import android.util.Patterns
 import com.helios.redshark.R
 import com.helios.redshark.domain.model.Conversation
 import com.helios.redshark.ui.common.AvatarImage
@@ -45,32 +62,180 @@ import java.util.UUID
 fun ConversationListScreen(
     currentUserId: String?,
     onOpenConversation: (UUID) -> Unit,
+    onStartConversation: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MessageViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.listState.collectAsStateWithLifecycle()
+    var searchQuery by remember { mutableStateOf("") }
+    var showCreateDialog by remember { mutableStateOf(false) }
+    var emailInput by remember { mutableStateOf("") }
+    var emailError by remember { mutableStateOf<String?>(null) }
+    val emailRequiredMessage = stringResource(R.string.message_error_email_required)
+    val emailInvalidMessage = stringResource(R.string.message_error_email_invalid)
+    val userNotFoundMessage = stringResource(R.string.message_error_user_not_found)
+    val selfConversationMessage = stringResource(R.string.message_error_self_conversation)
+    val authRequiredMessage = stringResource(R.string.message_error_auth_required)
 
-    Box(modifier = modifier.fillMaxSize()) {
-        when {
-            uiState.isLoading -> LoadingContent()
-            uiState.errorMessage != null -> ErrorContent(
-                message = uiState.errorMessage!!,
-                onRetry = viewModel::retryList,
-            )
-            uiState.conversations.isEmpty() -> EmptyContent(
-                message = stringResource(R.string.message_list_empty),
-                subtitle = stringResource(R.string.message_list_empty_subtitle),
-                icon = Icons.AutoMirrored.Outlined.Chat,
-            )
-            else -> LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(uiState.conversations, key = { it.id.toString() }) { conv ->
-                    ConversationItem(
-                        conversation = conv,
-                        currentUserId = currentUserId,
-                        onClick = { onOpenConversation(conv.id) },
+    val filteredConversations = remember(uiState.conversations, uiState.usersById, searchQuery, currentUserId) {
+        val query = searchQuery.trim().lowercase()
+        if (query.isEmpty()) {
+            uiState.conversations
+        } else {
+            uiState.conversations.filter { conv ->
+                val peerId = conv.participantIds.firstOrNull { it != currentUserId } ?: return@filter false
+                val peerUser = uiState.usersById[peerId]
+                val displayName = peerUser?.displayName ?: ""
+                val email = peerUser?.email ?: ""
+                displayName.lowercase().contains(query)
+                    || email.lowercase().contains(query)
+                    || peerId.lowercase().contains(query)
+            }
+        }
+    }
+
+    if (showCreateDialog) {
+        AlertDialog(
+            onDismissRequest = { showCreateDialog = false },
+            title = { Text(stringResource(R.string.message_new_conversation_title)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(Dimens.SpaceSm)) {
+                    TextField(
+                        value = emailInput,
+                        onValueChange = {
+                            emailInput = it
+                            emailError = null
+                        },
+                        singleLine = true,
+                        label = { Text(stringResource(R.string.message_email_label)) },
+                        placeholder = { Text(stringResource(R.string.message_email_placeholder)) },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Email,
+                            imeAction = ImeAction.Done,
+                        ),
+                        modifier = Modifier.fillMaxWidth(),
                     )
-                    HorizontalDivider(modifier = Modifier.padding(horizontal = Dimens.SpaceLg))
+                    emailError?.let { error ->
+                        Text(
+                            text = error,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                    }
                 }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val trimmed = emailInput.trim()
+                        when {
+                            trimmed.isEmpty() -> {
+                                emailError = emailRequiredMessage
+                            }
+                            !Patterns.EMAIL_ADDRESS.matcher(trimmed).matches() -> {
+                                emailError = emailInvalidMessage
+                            }
+                            currentUserId == null -> {
+                                emailError = authRequiredMessage
+                            }
+                            else -> {
+                                val match = uiState.usersById.values.firstOrNull {
+                                    it.email.equals(trimmed, ignoreCase = true)
+                                }
+                                when {
+                                    match == null -> emailError = userNotFoundMessage
+                                    match.id == currentUserId -> emailError = selfConversationMessage
+                                    else -> {
+                                        showCreateDialog = false
+                                        emailInput = ""
+                                        emailError = null
+                                        onStartConversation(match.id)
+                                    }
+                                }
+                            }
+                        }
+                    },
+                ) {
+                    Text(stringResource(R.string.message_action_start_conversation))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showCreateDialog = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            },
+        )
+    }
+
+    Column(modifier = modifier.fillMaxSize()) {
+        TextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            singleLine = true,
+            placeholder = { Text(stringResource(R.string.message_search_placeholder)) },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = null,
+                )
+            },
+            shape = RoundedCornerShape(20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 40.dp)
+                .padding(horizontal = Dimens.SpaceLg, vertical = Dimens.SpaceSm),
+        )
+
+        Box(modifier = Modifier.weight(1f)) {
+            when {
+                uiState.isLoading -> LoadingContent()
+                uiState.errorMessage != null -> ErrorContent(
+                    message = uiState.errorMessage!!,
+                    onRetry = viewModel::retryList,
+                )
+                uiState.conversations.isEmpty() -> EmptyContent(
+                    message = stringResource(R.string.message_list_empty),
+                    subtitle = stringResource(R.string.message_list_empty_subtitle),
+                    icon = Icons.AutoMirrored.Outlined.Chat,
+                )
+                filteredConversations.isEmpty() -> EmptyContent(
+                    message = stringResource(R.string.message_search_empty),
+                    subtitle = stringResource(R.string.message_search_empty_subtitle),
+                    icon = Icons.AutoMirrored.Outlined.Chat,
+                )
+                else -> LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = Dimens.ListBottomPaddingWithFab),
+                ) {
+                    items(filteredConversations, key = { it.id.toString() }) { conv ->
+                        val peerId = conv.participantIds.firstOrNull { it != currentUserId }
+                        val peerUser = peerId?.let { uiState.usersById[it] }
+                        ConversationItem(
+                            conversation = conv,
+                            currentUserId = currentUserId,
+                            displayName = peerUser?.displayName,
+                            avatarUrl = peerUser?.avatarUrl,
+                            onClick = { onOpenConversation(conv.id) },
+                        )
+                        HorizontalDivider(modifier = Modifier.padding(horizontal = Dimens.SpaceLg))
+                    }
+                }
+            }
+
+            FloatingActionButton(
+                onClick = {
+                    showCreateDialog = true
+                    emailInput = ""
+                    emailError = null
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(Dimens.SpaceLg),
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.message_action_new_conversation),
+                )
             }
         }
     }
@@ -80,10 +245,13 @@ fun ConversationListScreen(
 private fun ConversationItem(
     conversation: Conversation,
     currentUserId: String?,
+    displayName: String?,
+    avatarUrl: String?,
     onClick: () -> Unit,
 ) {
     val unknownLabel = stringResource(R.string.message_unknown_user)
     val peerId = conversation.participantIds.firstOrNull { it != currentUserId } ?: unknownLabel
+    val peerLabel = displayName ?: peerId
     val isSentByMe = conversation.lastMessageSenderId == currentUserId
     val showUnread = conversation.hasUnread && !isSentByMe
 
@@ -117,14 +285,14 @@ private fun ConversationItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AvatarImage(
-            avatarUrl = null,
-            displayName = peerId,
+            avatarUrl = avatarUrl,
+            displayName = peerLabel,
             size = Dimens.AvatarMd,
         )
         Spacer(modifier = Modifier.width(Dimens.SpaceMd))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = peerId.take(8),
+                text = peerLabel,
                 style = MaterialTheme.typography.titleSmall,
             )
             if (previewText.isNotEmpty()) {

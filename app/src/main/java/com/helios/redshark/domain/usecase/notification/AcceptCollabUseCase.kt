@@ -8,18 +8,21 @@ import com.helios.redshark.domain.model.NotificationTargetType
 import com.helios.redshark.domain.model.NotificationType
 import com.helios.redshark.domain.repository.IdeaRepository
 import com.helios.redshark.domain.repository.NotificationRepository
+import com.helios.redshark.domain.usecase.message.FindOrCreateDirectConversationUseCase
 import javax.inject.Inject
 
 class AcceptCollabUseCase @Inject constructor(
     private val ideaRepository: IdeaRepository,
     private val notificationRepository: NotificationRepository,
     private val auth: FirebaseAuth,
+    private val findOrCreateDirectConversationUseCase: FindOrCreateDirectConversationUseCase,
 ) {
     suspend operator fun invoke(notification: Notification) {
         val currentUserId = auth.currentUser?.uid ?: throw AppException.UnauthorizedException()
         val actorId = notification.actorId
             ?: throw AppException.ValidationException("Thiếu thông tin người gửi yêu cầu.")
         ideaRepository.addCollaborator(notification.targetId, actorId)
+        findOrCreateDirectConversationUseCase(actorId)
         notificationRepository.markAsRead(notification.id)
         notificationRepository.create(
             CreateNotificationInput(
