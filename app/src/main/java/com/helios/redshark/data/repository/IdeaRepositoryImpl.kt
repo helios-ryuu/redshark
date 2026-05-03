@@ -16,6 +16,7 @@ import com.helios.redshark.domain.repository.IdeaRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
 import javax.inject.Inject
@@ -30,28 +31,49 @@ class IdeaRepositoryImpl @Inject constructor(
 
     private val ideas = firestore.collection("ideas")
 
-    override fun getMyIdeas(): Flow<List<Idea>> = callbackFlow {
-        val uid = auth.currentUser?.uid ?: run {
+    override fun getMyIdeas(): Flow<List<Idea>> {
+        val uid = auth.currentUser?.uid ?: return callbackFlow {
             close(AppException.UnauthorizedException())
-            return@callbackFlow
         }
-        val registration = ideas
-            .whereEqualTo("authorId", uid)
-            .orderBy("createdAt", Query.Direction.DESCENDING)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    close(AppException.NetworkException(error))
-                    return@addSnapshotListener
-                }
-                val list = snapshot?.documents
-                    ?.mapNotNull { doc ->
-                        doc.toObject(IdeaDto::class.java)?.copy(id = doc.id)?.toDomain()
+
+        val authorFlow = callbackFlow<List<Idea>> {
+            val reg = ideas
+                .whereEqualTo("authorId", uid)
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        close(AppException.NetworkException(error))
+                        return@addSnapshotListener
                     }
-                    ?.filter { it.deletedAt == null }
-                    ?: emptyList()
-                trySend(list)
-            }
-        awaitClose { registration.remove() }
+                    trySend(snapshot?.documents
+                        ?.mapNotNull { doc -> doc.toObject(IdeaDto::class.java)?.copy(id = doc.id)?.toDomain() }
+                        ?.filter { it.deletedAt == null }
+                        ?: emptyList())
+                }
+            awaitClose { reg.remove() }
+        }
+
+        val collabFlow = callbackFlow<List<Idea>> {
+            val reg = ideas
+                .whereArrayContains("collaboratorIds", uid)
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        close(AppException.NetworkException(error))
+                        return@addSnapshotListener
+                    }
+                    trySend(snapshot?.documents
+                        ?.mapNotNull { doc -> doc.toObject(IdeaDto::class.java)?.copy(id = doc.id)?.toDomain() }
+                        ?.filter { it.deletedAt == null }
+                        ?: emptyList())
+                }
+            awaitClose { reg.remove() }
+        }
+
+        return authorFlow.combine(collabFlow) { authored, collaborated ->
+            (authored + collaborated).distinctBy { it.id }
+                .sortedByDescending { it.createdAt }
+        }
     }
 
     override suspend fun getIdeaDetail(id: UUID): Idea {
