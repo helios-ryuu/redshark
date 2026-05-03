@@ -66,8 +66,8 @@ class AcceptCollabUseCaseTest {
     fun `invoke throws UnauthorizedException when user not logged in`() = runTest {
         every { auth.currentUser } returns null
 
-        assertThrows(AppException.UnauthorizedException::class.java) {
-            runTest { useCase(testNotification) }
+        org.junit.Assert.assertThrows(AppException.UnauthorizedException::class.java) {
+            kotlinx.coroutines.runBlocking { useCase(testNotification) }
         }
     }
 
@@ -75,8 +75,8 @@ class AcceptCollabUseCaseTest {
     fun `invoke throws ValidationException when actorId is missing`() = runTest {
         val invalidNotification = testNotification.copy(actorId = null)
 
-        assertThrows(AppException.ValidationException::class.java) {
-            runTest { useCase(invalidNotification) }
+        org.junit.Assert.assertThrows(AppException.ValidationException::class.java) {
+            kotlinx.coroutines.runBlocking { useCase(invalidNotification) }
         }
     }
 

@@ -29,12 +29,11 @@ class SendMessageUseCaseTest {
     fun `invoke throws ValidationException when content is blank`() = runTest {
         val input = SendMessageInput(
             conversationId = UUID.randomUUID(),
-            senderId = "user1",
             content = "  "
         )
 
-        val exception = assertThrows(AppException.ValidationException::class.java) {
-            runTest { useCase(input) }
+        val exception = org.junit.Assert.assertThrows(AppException.ValidationException::class.java) {
+            kotlinx.coroutines.runBlocking { useCase(input) }
         }
         assertEquals("Nội dung tin nhắn không được để trống.", exception.message)
     }
@@ -44,12 +43,11 @@ class SendMessageUseCaseTest {
         val longContent = "a".repeat(2001)
         val input = SendMessageInput(
             conversationId = UUID.randomUUID(),
-            senderId = "user1",
             content = longContent
         )
 
-        val exception = assertThrows(AppException.ValidationException::class.java) {
-            runTest { useCase(input) }
+        val exception = org.junit.Assert.assertThrows(AppException.ValidationException::class.java) {
+            kotlinx.coroutines.runBlocking { useCase(input) }
         }
         assertEquals("Tin nhắn không vượt quá 2000 ký tự.", exception.message)
     }
@@ -58,13 +56,12 @@ class SendMessageUseCaseTest {
     fun `invoke calls repository when input is valid`() = runTest {
         val input = SendMessageInput(
             conversationId = UUID.randomUUID(),
-            senderId = "user1",
             content = "Hello world"
         )
         val expectedMessage = Message(
             id = UUID.randomUUID(),
             conversationId = input.conversationId,
-            senderId = input.senderId,
+            senderId = "user1",
             content = input.content,
             createdAt = Instant.now()
         )
