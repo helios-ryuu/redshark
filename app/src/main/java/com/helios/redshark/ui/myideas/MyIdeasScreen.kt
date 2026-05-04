@@ -2,6 +2,8 @@ package com.helios.redshark.ui.myideas
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -46,10 +48,14 @@ fun MyIdeasScreen(
     Column(modifier = modifier.fillMaxSize()) {
         val allTags = uiState.allIdeas.flatMap { it.tagIds }.distinct()
         if (allTags.size > 1) {
+            Surface(
+                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                modifier = Modifier.padding(vertical = Dimens.SpaceXxs),
+            ) {
             Row(
                 modifier = Modifier
                     .horizontalScroll(rememberScrollState())
-                    .padding(horizontal = Dimens.SpaceMd, vertical = Dimens.SpaceXs + Dimens.SpaceXxs),
+                    .padding(horizontal = Dimens.SpaceMd, vertical = Dimens.SpaceXs),
                 horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceXs + Dimens.SpaceXxs),
             ) {
                 FilterChip(
@@ -64,7 +70,8 @@ fun MyIdeasScreen(
                         label = { Text(tagId.toString().take(8)) },
                     )
                 }
-            }
+            } // end Row
+            } // end Surface
             HorizontalDivider()
         }
 

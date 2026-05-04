@@ -1,8 +1,12 @@
 package com.helios.redshark.ui.settings
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,6 +21,8 @@ import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -25,7 +31,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -166,30 +171,45 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(Dimens.SpaceLg))
 
             uiState.user?.let { user ->
-                Surface(
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                    shape = MaterialTheme.shapes.medium,
+                ElevatedCard(
+                    elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevationRaised),
+                    shape = MaterialTheme.shapes.large,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(Dimens.SpaceLg),
-                    ) {
-                        AvatarImage(
-                            avatarUrl = user.avatarUrl,
-                            displayName = user.displayName,
-                            size = Dimens.AvatarMd,
+                    Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
+                        Box(
+                            modifier = Modifier
+                                .width(Dimens.CardAccentBarWidth)
+                                .fillMaxHeight()
+                                .background(MaterialTheme.colorScheme.primary),
                         )
-                        Spacer(modifier = Modifier.width(Dimens.SpaceMd))
-                        Column {
-                            Text(text = user.displayName, style = MaterialTheme.typography.titleMedium)
-                            Text(
-                                text = user.email,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(Dimens.SpaceLg),
+                        ) {
+                            AvatarImage(
+                                avatarUrl = user.avatarUrl,
+                                displayName = user.displayName,
+                                size = Dimens.AvatarMd,
                             )
+                            Spacer(modifier = Modifier.width(Dimens.SpaceMd))
+                            Column {
+                                Text(text = user.displayName, style = MaterialTheme.typography.titleMedium)
+                                if (!user.username.isNullOrBlank()) {
+                                    Text(
+                                        text = "@${user.username}",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.primary,
+                                    )
+                                }
+                                Text(
+                                    text = user.email,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
                         }
                     }
                 }

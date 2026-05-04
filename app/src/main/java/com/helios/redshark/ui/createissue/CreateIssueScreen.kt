@@ -1,12 +1,16 @@
 package com.helios.redshark.ui.createissue
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -75,10 +79,17 @@ fun CreateIssueScreen(
             )
         },
     ) { padding ->
-        Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(Dimens.SpaceLg),
-            verticalArrangement = Arrangement.spacedBy(Dimens.SpaceLg),
-        ) {
+        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(Dimens.FormBrandStripHeight)
+                    .background(MaterialTheme.colorScheme.primary),
+            )
+            Column(
+                modifier = Modifier.fillMaxSize().padding(Dimens.SpaceLg),
+                verticalArrangement = Arrangement.spacedBy(Dimens.SpaceLg),
+            ) {
             val titleError = (uiState as? CreateIssueUiState.Failure.ValidationError)?.message
 
             OutlinedTextField(
@@ -131,8 +142,25 @@ fun CreateIssueScreen(
                     onDismissRequest = { priorityExpanded = false },
                 ) {
                     IssuePriority.entries.forEach { p ->
+                        val dotColor = when (p) {
+                            IssuePriority.HIGH   -> MaterialTheme.colorScheme.error
+                            IssuePriority.MEDIUM -> MaterialTheme.colorScheme.primary
+                            IssuePriority.LOW    -> MaterialTheme.colorScheme.secondary
+                        }
                         DropdownMenuItem(
-                            text = { Text(p.name) },
+                            text = {
+                                Row(
+                                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceSm),
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(10.dp)
+                                            .background(dotColor, CircleShape),
+                                    )
+                                    Text(p.name)
+                                }
+                            },
                             onClick = { priority = p; priorityExpanded = false },
                         )
                     }
@@ -167,7 +195,8 @@ fun CreateIssueScreen(
                 } else {
                     Text(stringResource(R.string.issue_action_create))
                 }
-            }
-        }
-    }
+            } // end inner Column
+        } // end outer Column
+    } // end Scaffold content
+} // end Scaffold lambda
 }

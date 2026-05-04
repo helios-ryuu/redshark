@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.profile
 
+import androidx.compose.foundation.background
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,15 +11,21 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,7 +33,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -112,16 +119,40 @@ fun ProfileViewScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(padding)
-                        .verticalScroll(rememberScrollState())
-                        .padding(horizontal = Dimens.SpaceXl, vertical = Dimens.SpaceLg),
+                        .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    AvatarImage(
-                        avatarUrl = user.avatarUrl,
-                        displayName = user.displayName,
-                        size = Dimens.AvatarLg,
-                    )
-                    Spacer(modifier = Modifier.height(Dimens.SpaceLg))
+                    // Hero banner with avatar overlapping its bottom edge
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(Dimens.ProfileHeroBannerHeight)
+                                .background(
+                                    Brush.linearGradient(
+                                        listOf(
+                                            MaterialTheme.colorScheme.primaryContainer,
+                                            MaterialTheme.colorScheme.secondaryContainer,
+                                        )
+                                    )
+                                ),
+                        )
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .offset(y = Dimens.ProfileAvatarOverlap)
+                                .background(MaterialTheme.colorScheme.surface, CircleShape)
+                                .padding(3.dp),
+                        ) {
+                            AvatarImage(
+                                avatarUrl = user.avatarUrl,
+                                displayName = user.displayName,
+                                size = Dimens.AvatarLg,
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(Dimens.ProfileAvatarOverlap + Dimens.SpaceLg))
 
                     Text(
                         text = user.displayName,
@@ -142,10 +173,12 @@ fun ProfileViewScreen(
 
                     if (!user.bio.isNullOrBlank() || user.skills.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(Dimens.SpaceLg))
-                        Surface(
-                            color = MaterialTheme.colorScheme.surfaceVariant,
-                            shape = MaterialTheme.shapes.medium,
-                            modifier = Modifier.fillMaxWidth(),
+                        ElevatedCard(
+                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                            shape = MaterialTheme.shapes.large,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = Dimens.SpaceXl),
                         ) {
                             Column(modifier = Modifier.padding(Dimens.SpaceLg)) {
                                 if (!user.bio.isNullOrBlank()) {
@@ -175,6 +208,7 @@ fun ProfileViewScreen(
                             }
                         }
                     }
+                    Spacer(modifier = Modifier.height(Dimens.SpaceLg))
                 }
             }
         }

@@ -84,6 +84,8 @@
     <string name="feed_empty">No activity from other users yet.</string>
     <string name="home_feed_empty">No ideas yet. Be the first to share.</string>
     <string name="home_feed_empty_subtitle">Check back soon.</string>
+    <string name="home_feed_section_title">What\'s happening</string>
+    <string name="home_feed_section_subtitle">Latest ideas from your community</string>
 
     <!-- My Ideas -->
     <string name="ideas_filter_all">All</string>

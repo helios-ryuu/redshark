@@ -16,7 +16,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.outlined.OpenInNew
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
@@ -136,13 +139,20 @@ fun IssueDetailScreen(
                         .padding(Dimens.SpaceLg),
                     verticalArrangement = Arrangement.spacedBy(Dimens.SpaceLg),
                 ) {
-                    // Status + Priority row
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceSm),
-                        verticalAlignment = Alignment.CenterVertically,
+                    // Status + Priority card
+                    Surface(
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
-                        IssueStatusPill(issue.status)
-                        IssuePriorityPill(issue.priority)
+                        Row(
+                            modifier = Modifier.padding(Dimens.SpaceMd),
+                            horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceSm),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            IssueStatusPill(issue.status)
+                            IssuePriorityPill(issue.priority)
+                        }
                     }
 
                     // Description card
@@ -170,50 +180,58 @@ fun IssueDetailScreen(
                     }
 
                     // View idea link
-                    Surface(
+                    AssistChip(
                         onClick = { onViewIdea(issue.ideaId) },
-                        shape = MaterialTheme.shapes.medium,
-                        color = MaterialTheme.colorScheme.surfaceVariant,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text(
-                            text = stringResource(R.string.issue_action_view_idea),
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(horizontal = Dimens.SpaceLg, vertical = Dimens.SpaceMd),
-                        )
-                    }
+                        label = { Text(stringResource(R.string.issue_action_view_idea)) },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Outlined.OpenInNew,
+                                contentDescription = null,
+                                modifier = Modifier.size(AssistChipDefaults.IconSize),
+                            )
+                        },
+                    )
 
                     // Status change section (owner only)
                     if (uiState.canEdit) {
                         val availableStatuses = ISSUE_STATE_MACHINE[issue.status] ?: emptySet()
                         if (availableStatuses.isNotEmpty()) {
-                            HorizontalDivider()
-                            Text(
-                                text = stringResource(R.string.issue_section_status_change),
-                                style = MaterialTheme.typography.titleSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceSm),
+                            Surface(
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                shape = MaterialTheme.shapes.medium,
                                 modifier = Modifier.fillMaxWidth(),
                             ) {
-                                availableStatuses.forEach { newStatus ->
-                                    FilterChip(
-                                        selected = false,
-                                        onClick = { viewModel.updateStatus(issueId, newStatus) },
-                                        enabled = uiState.statusUpdateState !is StatusUpdateState.Updating,
-                                        label = {
-                                            Text(
-                                                text = newStatus.name
-                                                    .lowercase()
-                                                    .replace('_', ' ')
-                                                    .split(' ')
-                                                    .joinToString(" ") { it.capitalize(Locale.current) },
-                                                style = MaterialTheme.typography.labelMedium,
-                                            )
-                                        },
+                                Column(
+                                    modifier = Modifier.padding(Dimens.SpaceMd),
+                                    verticalArrangement = Arrangement.spacedBy(Dimens.SpaceSm),
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.issue_section_status_change),
+                                        style = MaterialTheme.typography.titleSmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceSm),
+                                        modifier = Modifier.fillMaxWidth(),
+                                    ) {
+                                        availableStatuses.forEach { newStatus ->
+                                            FilterChip(
+                                                selected = false,
+                                                onClick = { viewModel.updateStatus(issueId, newStatus) },
+                                                enabled = uiState.statusUpdateState !is StatusUpdateState.Updating,
+                                                label = {
+                                                    Text(
+                                                        text = newStatus.name
+                                                            .lowercase()
+                                                            .replace('_', ' ')
+                                                            .split(' ')
+                                                            .joinToString(" ") { it.capitalize(Locale.current) },
+                                                        style = MaterialTheme.typography.labelMedium,
+                                                    )
+                                                },
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }

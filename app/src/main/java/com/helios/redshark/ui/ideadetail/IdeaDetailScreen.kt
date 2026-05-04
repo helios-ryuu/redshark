@@ -183,7 +183,15 @@ fun IdeaDetailScreen(
                     uiState.idea?.let { idea ->
                         // Author + status hero
                         item {
-                            IdeaAuthorRow(idea = idea)
+                            Surface(
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                shape = MaterialTheme.shapes.medium,
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Box(modifier = Modifier.padding(Dimens.SpaceMd)) {
+                                    IdeaAuthorRow(idea = idea)
+                                }
+                            }
                         }
 
                         // Description
@@ -416,7 +424,7 @@ private fun CommentInput(
     isSubmitting: Boolean,
     onSend: () -> Unit,
 ) {
-    Surface(shadowElevation = Dimens.CardElevationRaised) {
+    Surface(shadowElevation = 4.dp, tonalElevation = 2.dp) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()

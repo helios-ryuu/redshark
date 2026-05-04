@@ -36,6 +36,7 @@ object Dimens {
     val ButtonProgressIndicatorStroke = 2.dp
     val BrandIconContainer = 88.dp
     val BrandIconInner = 44.dp
+    val BrandLogoSize = 120.dp
     val NotificationSheetMaxHeight = 480.dp
 
     // Search
@@ -47,4 +48,12 @@ object Dimens {
     val MessageBubbleCornerTail = 0.dp
     val MessageMaxWidth = 280.dp
     val InputFieldCorner = 24.dp
+
+    // UI improvement tokens
+    val CardAccentBarWidth      = 4.dp
+    val ProfileHeroBannerHeight = 160.dp
+    val ProfileAvatarOverlap    = 48.dp
+    val EmptyStateIconSize      = 80.dp
+    val DrawerHeaderHeight      = 120.dp
+    val FormBrandStripHeight    = 4.dp
 }

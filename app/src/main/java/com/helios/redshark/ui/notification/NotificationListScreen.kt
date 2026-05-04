@@ -142,11 +142,29 @@ private fun NotificationItem(
                 verticalAlignment = Alignment.Top,
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = stringResource(notification.type.labelRes()),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
+                    val typeDotColor = when (notification.type) {
+                        NotificationType.COLLAB_REQUEST,
+                        NotificationType.COLLAB_ACCEPTED,
+                        NotificationType.COLLAB_REJECTED -> MaterialTheme.colorScheme.tertiary
+                        NotificationType.COMMENT          -> MaterialTheme.colorScheme.primary
+                        NotificationType.ISSUE_CREATED    -> MaterialTheme.colorScheme.secondary
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceXs),
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(Dimens.SpaceSm)
+                                .clip(CircleShape)
+                                .background(typeDotColor),
+                        )
+                        Text(
+                            text = stringResource(notification.type.labelRes()),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = typeDotColor,
+                        )
+                    }
                     Spacer(modifier = Modifier.height(Dimens.SpaceXxs))
                     Text(
                         text = notification.message,

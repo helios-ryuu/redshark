@@ -1,6 +1,8 @@
 package com.helios.redshark.ui.createidea
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -67,13 +69,19 @@ fun CreateIdeaScreen(
             )
         },
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(Dimens.SpaceLg),
-            verticalArrangement = Arrangement.spacedBy(Dimens.SpaceLg),
-        ) {
+        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(Dimens.FormBrandStripHeight)
+                    .background(MaterialTheme.colorScheme.primary),
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(Dimens.SpaceLg),
+                verticalArrangement = Arrangement.spacedBy(Dimens.SpaceLg),
+            ) {
             val titleError = (uiState as? CreateIdeaUiState.Failure.ValidationError)
                 ?.message?.takeIf { it.contains("title", ignoreCase = true) }
 
@@ -124,7 +132,8 @@ fun CreateIdeaScreen(
                 } else {
                     Text(stringResource(R.string.idea_action_create))
                 }
-            }
-        }
-    }
+            } // end inner Column
+        } // end outer Column
+    } // end Scaffold content
+} // end Scaffold lambda
 }

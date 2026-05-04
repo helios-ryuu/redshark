@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
@@ -283,8 +284,17 @@ private fun ConversationItem(
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
-        color = MaterialTheme.colorScheme.surface,
-        border = BorderStroke(Dimens.CardBorderWidth, MaterialTheme.colorScheme.outlineVariant),
+        color = if (showUnread)
+            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f)
+        else
+            MaterialTheme.colorScheme.surface,
+        border = BorderStroke(
+            width = if (showUnread) Dimens.CardBorderWidth else Dimens.CardBorderWidth,
+            color = if (showUnread)
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+            else
+                MaterialTheme.colorScheme.outlineVariant,
+        ),
     ) {
     Row(
         modifier = Modifier
@@ -330,7 +340,7 @@ private fun ConversationItem(
                     Spacer(modifier = Modifier.size(Dimens.SpaceXxs))
                     Box(
                         modifier = Modifier
-                            .size(Dimens.UnreadDotSize)
+                            .size(10.dp)
                             .background(unreadColor, CircleShape),
                     )
                 }
