@@ -1,6 +1,5 @@
 package com.helios.redshark.domain.usecase.auth
 
-import android.util.Patterns
 import com.helios.redshark.core.error.AppException
 import com.helios.redshark.core.util.Result
 import com.helios.redshark.domain.model.User
@@ -12,6 +11,7 @@ class SignUpEmailPasswordUseCase @Inject constructor(
     private val authRepository: AuthRepository,
     private val checkUsernameAvailability: CheckUsernameAvailabilityUseCase,
 ) {
+    private val emailRegex = Regex("^[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}$")
     private val passwordUppercase = Regex(".*[A-Z].*")
     private val passwordDigit = Regex(".*[0-9].*")
 
@@ -39,7 +39,7 @@ class SignUpEmailPasswordUseCase @Inject constructor(
         }
 
         val trimmedEmail = email.trim()
-        if (trimmedEmail.isBlank() || !Patterns.EMAIL_ADDRESS.matcher(trimmedEmail).matches()) {
+        if (trimmedEmail.isBlank() || !emailRegex.matches(trimmedEmail)) {
             return Result.Error(AppException.ValidationException("email", "Enter a valid email address"))
         }
 
