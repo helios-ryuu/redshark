@@ -1,5 +1,6 @@
 package com.helios.redshark.data.remote.firestore.dto
 
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.IgnoreExtraProperties
 
 @IgnoreExtraProperties
@@ -10,4 +11,7 @@ data class UserDto(
     val avatarUrl: String? = null,
     val bio: String? = null,
     val skills: List<String> = emptyList(),
+    val username: String? = null,
+    val dateOfBirth: Timestamp? = null,
+    val authProvider: String = "GOOGLE",
 )

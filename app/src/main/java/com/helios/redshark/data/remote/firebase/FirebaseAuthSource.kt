@@ -40,6 +40,32 @@ class FirebaseAuthSource @Inject constructor(
         }
     }
 
+    suspend fun signUpEmailPassword(email: String, password: String): Result<FirebaseUser> {
+        return try {
+            val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+            val user = result.user
+                ?: return Result.Error(AppException.AuthException("Sign-up succeeded but user is null"))
+            Timber.d("Firebase email sign-up success: uid=${user.uid}")
+            Result.Success(user)
+        } catch (e: Exception) {
+            Timber.e(e, "Firebase email sign-up failed")
+            Result.Error(ErrorMapper.map(e))
+        }
+    }
+
+    suspend fun signInEmailPassword(email: String, password: String): Result<FirebaseUser> {
+        return try {
+            val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
+            val user = result.user
+                ?: return Result.Error(AppException.AuthException("Sign-in succeeded but user is null"))
+            Timber.d("Firebase email sign-in success: uid=${user.uid}")
+            Result.Success(user)
+        } catch (e: Exception) {
+            Timber.e(e, "Firebase email sign-in failed")
+            Result.Error(ErrorMapper.map(e))
+        }
+    }
+
     suspend fun signOut(): Result<Unit> {
         return try {
             firebaseAuth.signOut()
