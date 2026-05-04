@@ -1,5 +1,6 @@
 package com.helios.redshark.ui.notification
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.NotificationsNone
 import androidx.compose.material3.Button
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Snackbar
@@ -73,7 +72,8 @@ fun NotificationListScreen(
                 icon = Icons.Outlined.NotificationsNone,
             )
             else -> LazyColumn(
-                contentPadding = PaddingValues(vertical = Dimens.SpaceXs),
+                contentPadding = PaddingValues(Dimens.SpaceSm),
+                verticalArrangement = Arrangement.spacedBy(Dimens.SpaceSm),
             ) {
                 items(visibleNotifications, key = { it.id.toString() }) { notification ->
                     NotificationItem(
@@ -92,7 +92,6 @@ fun NotificationListScreen(
                         onAccept = { viewModel.acceptCollab(notification) },
                         onReject = { viewModel.rejectCollab(notification) },
                     )
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 }
             }
         }
@@ -117,32 +116,25 @@ private fun NotificationItem(
 ) {
     val isUnread = !notification.isRead
 
-    Row(
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .background(
-                if (isUnread) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.18f)
-                else MaterialTheme.colorScheme.surface,
-            )
             .clickable { onRead() },
-        verticalAlignment = Alignment.Top,
+        shape = MaterialTheme.shapes.medium,
+        color = if (isUnread)
+            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.18f)
+        else
+            MaterialTheme.colorScheme.surface,
+        border = BorderStroke(
+            width = Dimens.CardBorderWidth,
+            color = if (isUnread)
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+            else
+                MaterialTheme.colorScheme.outlineVariant,
+        ),
     ) {
-        // Left accent bar for unread
-        Box(
-            modifier = Modifier
-                .width(Dimens.NotificationAccentBar)
-                .height(if (isUnread) Dimens.SpaceXxl else Dimens.SpaceXxl)
-                .fillMaxHeight()
-                .background(
-                    if (isUnread) MaterialTheme.colorScheme.primary
-                    else MaterialTheme.colorScheme.surface,
-                ),
-        )
-
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = Dimens.SpaceMd, vertical = Dimens.SpaceMd),
+            modifier = Modifier.padding(horizontal = Dimens.SpaceMd, vertical = Dimens.SpaceMd),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),

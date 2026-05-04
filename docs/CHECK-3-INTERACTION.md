@@ -39,7 +39,7 @@ WBS tham chiếu: [WBS.md](WBS.md) — kiểm thử cho nhóm công việc `5.0`
 | TC-M09 | Scroll load lịch sử             | Conversation dài → scroll lên               | Tất cả message cũ load từ Firestore (hiện chưa phân trang)                   | ✅          | Pass               |
 | TC-M10 | Back navigation                 | Trong conversation → Back                   | Về list Messages, lastMessagePreview cập nhật                                 | ✅          | Pass               |
 
-| **TỔNG PLAN-3** | | | | **18/18 ✅** | |
+| **TỔNG PLAN-3** | | | | **18/18 ✅** | UI Fluent Minimalist finalized 05/05/2026 — NotificationItem/ConversationItem Surface+BorderStroke pattern applied |
 
 **PLAN-4-FINALIZE — Cross-cutting NFR (do Sỹ):**
 
@@ -55,4 +55,4 @@ WBS tham chiếu: [WBS.md](WBS.md) — kiểm thử cho nhóm công việc `5.0`
 | TC-X06 | Thời gian khởi động nguội   | Tắt hẳn ứng dụng → mở lại                   | < 3 giây đến màn hình Home (người dùng đã đăng nhập)             | ⬜          |                    |
 | TC-X07 | Memory leak                 | Vào ra 10 màn hình                          | Leak Canary: 0 leak                                               | ⬜          |                    |
 
-| **TỔNG PLAN-4 (NFR)** | | | | **0/7 ✅** | |
+| **TỔNG PLAN-4 (NFR)** | | | | **0/7 ⬜** | Chờ implement PLAN-4 |

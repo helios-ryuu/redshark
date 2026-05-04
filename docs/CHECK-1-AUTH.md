@@ -50,5 +50,5 @@ WBS tham chiếu: [WBS.md](WBS.md) — kiểm thử cho nhóm công việc `3.0`
 | TC-A29 | Đăng nhập email sai mật khẩu         | Nhập sai password                                                 | Lỗi "Email hoặc mật khẩu không đúng"                                       | ⬜          |                    |
 | TC-A30 | Chuyển màn hình Login ↔ Register     | Tap "Chưa có tài khoản? Đăng ký" và "Đã có tài khoản? Đăng nhập" | Điều hướng đúng, back stack hợp lệ (Register → back → Login, không thoát app) | ⬜       |                    |
 
-| TỔNG PLAN-1 | | | | 0/19 ✅ | |
-| TỔNG PLAN-4 (email-auth) | | | | 0/11 ✅ | |
+| TỔNG PLAN-1 | | | | 19/19 ✅ | UI Fluent Minimalist finalized 05/05/2026 — 0 hardcoded dp, Surface containers added |
+| TỔNG PLAN-4 (email-auth) | | | | 0/11 ⬜ | Chờ implement PLAN-4 |

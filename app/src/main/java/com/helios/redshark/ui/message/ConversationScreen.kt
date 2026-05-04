@@ -184,7 +184,7 @@ fun ConversationScreen(
 
             // Input bar — flat Fluent style
             Surface(
-                shadowElevation = 0.dp,
+                shadowElevation = Dimens.CardElevation,
                 color = MaterialTheme.colorScheme.surface,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -201,7 +201,7 @@ fun ConversationScreen(
                             .weight(1f)
                             .background(
                                 color = MaterialTheme.colorScheme.surfaceVariant,
-                                shape = RoundedCornerShape(24.dp),
+                                shape = RoundedCornerShape(Dimens.InputFieldCorner),
                             )
                             .padding(horizontal = Dimens.SpaceMd, vertical = Dimens.SpaceSm),
                     ) {
@@ -309,8 +309,18 @@ private fun MessageBubble(
     avatarUrl: String? = null,
     displayName: String? = null,
 ) {
-    val sentShape = RoundedCornerShape(topStart = 12.dp, topEnd = 4.dp, bottomStart = 12.dp, bottomEnd = 0.dp)
-    val receivedShape = RoundedCornerShape(topStart = 4.dp, topEnd = 12.dp, bottomStart = 0.dp, bottomEnd = 12.dp)
+    val sentShape = RoundedCornerShape(
+        topStart = Dimens.MessageBubbleCornerLg,
+        topEnd = Dimens.MessageBubbleCornerSm,
+        bottomStart = Dimens.MessageBubbleCornerLg,
+        bottomEnd = Dimens.MessageBubbleCornerTail,
+    )
+    val receivedShape = RoundedCornerShape(
+        topStart = Dimens.MessageBubbleCornerSm,
+        topEnd = Dimens.MessageBubbleCornerLg,
+        bottomStart = Dimens.MessageBubbleCornerTail,
+        bottomEnd = Dimens.MessageBubbleCornerLg,
+    )
 
     val bubbleColor: Color
     val textColor: Color
@@ -351,7 +361,7 @@ private fun MessageBubble(
             Surface(
                 shape = if (isCurrentUser) sentShape else receivedShape,
                 color = bubbleColor,
-                modifier = Modifier.widthIn(max = 280.dp),
+                modifier = Modifier.widthIn(max = Dimens.MessageMaxWidth),
             ) {
                 Column(modifier = Modifier.padding(horizontal = Dimens.SpaceMd, vertical = Dimens.SpaceSm)) {
                     Text(

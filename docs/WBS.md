@@ -23,8 +23,8 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 
 ## 3. Mốc hiện tại (hiện trạng)
 
-- **Ngày cập nhật:** 30/04/2026.
-- **Trạng thái hiện tại:** WBS 3.0 (Auth) ✅, WBS 4.0 (Content) ✅, WBS 5.0 (Tương tác) ✅, WBS 4A.0 (UI Overhaul) ✅ hoàn thành. PLAN-3-INTERACTION đã hoàn tất (18/18 TC pass). Đang chuyển sang PLAN-4-FINALIZE (WBS 6.0/7.0).
+- **Ngày cập nhật:** 05/05/2026.
+- **Trạng thái hiện tại:** WBS 3.0 (Auth) ✅, WBS 4.0 (Content) ✅, WBS 5.0 (Tương tác) ✅, WBS 4A.0 (UI Overhaul) ✅, WBS 4B.0 (UI Fluent Finalize) ✅ hoàn thành. UI Fluent Minimalist đồng nhất toàn bộ màn hình. Đang chuyển sang PLAN-4-FINALIZE (WBS 6.0/7.0).
 - **Người thực hiện commit init:** **Sỹ**.
 - **Commit init chuẩn:** `chore(init): bootstrap Android project and project documents`.
 
@@ -355,6 +355,37 @@ Tuần 9 ─ 12/05 → 17/05 │ Kiểm thử hồi quy + phát hành v1.0.0
 - Thời gian: 27/04/2026.
 - Ghi chú: ✅ Hoàn thành. Mở rộng `Conversation` model + DTO với `lastMessageSenderId` và `hasUnread`; DTO `@IgnoreExtraProperties` đảm bảo tương thích ngược.
 
+## 4B.0 Hoàn thiện giao diện Fluent Minimalist — Auth/Profile và Interaction
+
+**Thực hiện:** 05/05/2026 — bổ sung sau 4A.0, trước PLAN-4.
+**Phụ trách chính:** Song song — Auth/Profile (Sỹ) + Interaction (Nam).
+
+### 4B.1 UI Fluent Auth/Profile
+#### 4B.1.1 Chuẩn hóa Dimens tokens + fix hardcoded dp
+- Sản phẩm bàn giao: `Dimens.kt` — thêm `ButtonHeight`, `BrandIconContainer`, `BrandIconInner`, `SearchBarMinHeight`, `MessageBubbleCorner*`, `MessageMaxWidth`, `InputFieldCorner`.
+- Ghi chú: ✅ Hoàn thành 05/05/2026.
+
+#### 4B.1.2 Auth screens
+- Sản phẩm bàn giao: `GoogleSignInScreen.kt`, `ProfileSetupScreen.kt` — 0 hardcoded dp, Dimens tokens nhất quán.
+- Ghi chú: ✅ Hoàn thành 05/05/2026.
+
+#### 4B.1.3 Profile/Settings screens
+- Sản phẩm bàn giao: `ProfileViewScreen.kt` — Surface container cho bio + skills; `ProfileEditScreen.kt` — 0 hardcoded dp; `SettingsScreen.kt` — Surface wrapper cho user card.
+- Ghi chú: ✅ Hoàn thành 05/05/2026.
+
+### 4B.2 UI Fluent Interaction
+#### 4B.2.1 NotificationItem → Surface + BorderStroke pattern
+- Sản phẩm bàn giao: `NotificationListScreen.kt` — thay thế bare Row + accent bar lỗi bằng `Surface` + `BorderStroke`; màu border đổi theo trạng thái unread/read.
+- Ghi chú: ✅ Hoàn thành 05/05/2026. Fix bug accent bar cùng chiều cao 2 nhánh.
+
+#### 4B.2.2 ConversationItem + search bar cleanup
+- Sản phẩm bàn giao: `ConversationListScreen.kt` — Surface border cho items, `MaterialTheme.shapes.extraLarge` cho search bar, `Box` thay Canvas unread dot.
+- Ghi chú: ✅ Hoàn thành 05/05/2026.
+
+#### 4B.2.3 MessageBubble + input field token cleanup
+- Sản phẩm bàn giao: `ConversationScreen.kt` — tất cả hardcoded dp bubble/input thay bằng Dimens tokens.
+- Ghi chú: ✅ Hoàn thành 05/05/2026.
+
 ## 6.0 Chất lượng, kiểm thử và tuân thủ NFR
 
 ### 6.1 Kế hoạch kiểm thử
@@ -438,6 +469,7 @@ Tuần 9 ─ 12/05 → 17/05 │ Kiểm thử hồi quy + phát hành v1.0.0
 | Giai đoạn 3 Nội dung              | 21/04 - 04/05 | 4.0           | Ý tưởng/Công việc/Bình luận + ràng buộc nghiệp vụ                                     |
 | Giai đoạn 4 Tương tác             | 05/05 - 11/05 | 5.0           | Thông báo/Nhắn tin trực tiếp 1-1                                                      |
 | Giai đoạn 4A UI Overhaul (bổ sung) | 27/04/2026   | 4A.0          | Fluent Minimal UI: 5-tab nav, Drawer, scroll animation, IdeaCard, Conversation tile   |
+| Giai đoạn 4B UI Fluent Finalize    | 05/05/2026   | 4B.0          | Hoàn thiện auth/profile + interaction screens: Dimens tokens, Surface+BorderStroke    |
 | Giai đoạn 5 Hoàn thiện            | 12/05 - 17/05 | 6.0, 7.0      | Kiểm thử, dọn dẹp, phát hành APK, bàn giao                                            |
 
 ## 7. Tiêu chí hoàn thành WBS

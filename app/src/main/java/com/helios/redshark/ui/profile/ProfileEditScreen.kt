@@ -47,11 +47,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.helios.redshark.R
 import com.helios.redshark.ui.common.AvatarImage
+import com.helios.redshark.ui.theme.Dimens
 
 private val PREDEFINED_SKILLS = listOf(
     "Android", "iOS", "Web", "Backend", "UI/UX", "ML/AI",
@@ -126,29 +126,29 @@ fun ProfileEditScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp, vertical = 16.dp),
+                .padding(horizontal = Dimens.SpaceXl, vertical = Dimens.SpaceLg),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // Avatar with upload trigger
             Box(
                 modifier = Modifier
-                    .size(96.dp)
+                    .size(Dimens.AvatarLg)
                     .clickable { imagePickerLauncher.launch("image/*") },
                 contentAlignment = Alignment.Center,
             ) {
                 if (uiState.isSaving) {
-                    CircularProgressIndicator(modifier = Modifier.size(96.dp))
+                    CircularProgressIndicator(modifier = Modifier.size(Dimens.AvatarLg))
                 } else {
                     AvatarImage(
                         avatarUrl = uiState.user?.avatarUrl,
                         displayName = displayName.ifBlank { uiState.user?.displayName ?: "" },
-                        size = 96.dp,
+                        size = Dimens.AvatarLg,
                     )
                     Icon(
                         imageVector = Icons.Default.AddCircle,
                         contentDescription = stringResource(R.string.profile_avatar_change_cd),
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(Dimens.IconMd)
                             .align(Alignment.BottomEnd),
                         tint = MaterialTheme.colorScheme.primary,
                     )
@@ -159,7 +159,7 @@ fun ProfileEditScreen(
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpaceXl))
 
             OutlinedTextField(
                 value = displayName,
@@ -183,7 +183,7 @@ fun ProfileEditScreen(
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
                 ),
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpaceMd))
 
             OutlinedTextField(
                 value = bio,
@@ -208,14 +208,14 @@ fun ProfileEditScreen(
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
                 ),
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpaceLg))
 
             Text(
                 text = stringResource(R.string.profile_field_skills),
                 style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier.fillMaxWidth(),
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpaceSm))
             FlowRow(modifier = Modifier.fillMaxWidth()) {
                 PREDEFINED_SKILLS.forEach { skill ->
                     FilterChip(
@@ -225,11 +225,11 @@ fun ProfileEditScreen(
                             else selectedSkills.add(skill)
                         },
                         label = { Text(skill) },
-                        modifier = Modifier.padding(end = 8.dp, bottom = 4.dp),
+                        modifier = Modifier.padding(end = Dimens.SpaceSm, bottom = Dimens.SpaceXxs),
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(Dimens.SpaceXl))
 
             if (uiState.isSaving) {
                 CircularProgressIndicator()

@@ -35,7 +35,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.helios.redshark.R
@@ -80,13 +79,13 @@ fun ProfileSetupScreen(
             Surface(
                 shape = CircleShape,
                 color = MaterialTheme.colorScheme.secondaryContainer,
-                modifier = Modifier.size(72.dp),
+                modifier = Modifier.size(Dimens.AvatarLg),
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = Icons.Outlined.PersonOutline,
                         contentDescription = null,
-                        modifier = Modifier.size(36.dp),
+                        modifier = Modifier.size(Dimens.IconXl),
                         tint = MaterialTheme.colorScheme.onSecondaryContainer,
                     )
                 }
@@ -139,7 +138,7 @@ fun ProfileSetupScreen(
                     enabled = isNameValid,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(52.dp),
+                        .height(Dimens.ButtonHeight),
                     shape = MaterialTheme.shapes.medium,
                 ) {
                     Text(

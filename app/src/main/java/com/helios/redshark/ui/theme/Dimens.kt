@@ -29,4 +29,19 @@ object Dimens {
     val ListBottomPaddingWithFab = 88.dp
     val InputFieldHeightMultiline = 160.dp
     val InputFieldHeightMultilineSm = 120.dp
+
+    // Buttons & brand
+    val ButtonHeight = 52.dp
+    val BrandIconContainer = 88.dp
+    val BrandIconInner = 44.dp
+
+    // Search
+    val SearchBarMinHeight = 40.dp
+
+    // Messages
+    val MessageBubbleCornerLg = 12.dp
+    val MessageBubbleCornerSm = 4.dp
+    val MessageBubbleCornerTail = 0.dp
+    val MessageMaxWidth = 280.dp
+    val InputFieldCorner = 24.dp
 }

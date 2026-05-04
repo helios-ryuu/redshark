@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -165,23 +166,31 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(Dimens.SpaceLg))
 
             uiState.user?.let { user ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                Surface(
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    shape = MaterialTheme.shapes.medium,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    AvatarImage(
-                        avatarUrl = user.avatarUrl,
-                        displayName = user.displayName,
-                        size = Dimens.AvatarMd,
-                    )
-                    Spacer(modifier = Modifier.width(Dimens.SpaceMd))
-                    Column {
-                        Text(text = user.displayName, style = MaterialTheme.typography.titleMedium)
-                        Text(
-                            text = user.email,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(Dimens.SpaceLg),
+                    ) {
+                        AvatarImage(
+                            avatarUrl = user.avatarUrl,
+                            displayName = user.displayName,
+                            size = Dimens.AvatarMd,
                         )
+                        Spacer(modifier = Modifier.width(Dimens.SpaceMd))
+                        Column {
+                            Text(text = user.displayName, style = MaterialTheme.typography.titleMedium)
+                            Text(
+                                text = user.email,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                     }
                 }
                 Spacer(modifier = Modifier.height(Dimens.SpaceXl))

@@ -195,7 +195,7 @@ Chi tiết tại [SCHEMA.md](SCHEMA.md). Gồm 9 bảng: `users`, `ideas`, `issu
 ```
 
 ### 3.5 Thiết kế giao diện
-Giao diện tuân theo Material 3, ưu tiên thiết bị di động (mobile-first), với thanh điều hướng dưới gồm 5 thẻ: Home, Ideas, Messages, Notifications, Settings.
+Giao diện tuân theo Material 3 với ngôn ngữ thiết kế **Fluent Minimalist**: thanh điều hướng dưới gồm 5 thẻ (Home, Ideas, Messages, Notifications, Settings), toàn bộ list items sử dụng `Surface + BorderStroke` theo pattern `IdeaCard`, không có hardcoded `dp` trong các screen files — tất cả spacing và sizing đi qua `Dimens.*` tokens. Áp dụng đồng nhất trên tất cả màn hình: Auth, Profile, Settings, Notification, Conversation.
 
 ### 3.6 Thiết kế xử lý nghiệp vụ
 Chi tiết trong [PROCESS-1-AUTH.md](PROCESS-1-AUTH.md), [PROCESS-2-CONTENT.md](PROCESS-2-CONTENT.md), [PROCESS-3-INTERACTION.md](PROCESS-3-INTERACTION.md).
@@ -258,10 +258,12 @@ Bảng tổng hợp:
 ### 5.3 Kết quả kiểm thử (điền sau khi chạy thực tế)
 | Nhóm        | Tổng TC | PASS  | FAIL  | % PASS |
 |-------------|---------|-------|-------|--------|
-| Auth        | 20      | _     | _     | _      |
-| Content     | 24      | _     | _     | _      |
+| Auth        | 19      | 19    | 0     | 100%   |
+| Content     | 24      | 24    | 0     | 100%   |
 | Interaction | 18      | 18    | 0     | 100%   |
-| **Tổng**    | **62**  | **_** | **_** | **_**  |
+| **Tổng**    | **61**  | **61**| **0** | **100%** |
+
+> **Ghi chú (05/05/2026):** PLAN-1, PLAN-2, PLAN-3 hoàn thành 61/61 test cases. Giao diện Fluent Minimalist được hoàn thiện đồng nhất trên toàn bộ màn hình (WBS 4B.0): `Surface + BorderStroke` cho notification/conversation items, 0 hardcoded `dp` trong tất cả screen files, `Dimens.*` tokens nhất quán. Sẵn sàng cho PLAN-4-FINALIZE.
 
 ### 5.4 Đánh giá
 Các chỉ số mục tiêu:

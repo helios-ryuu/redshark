@@ -1,6 +1,7 @@
 package com.helios.redshark.ui.message
 
-import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,19 +17,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.Text
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +42,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import android.util.Patterns
@@ -179,10 +179,10 @@ fun ConversationListScreen(
                     contentDescription = null,
                 )
             },
-            shape = RoundedCornerShape(20.dp),
+            shape = MaterialTheme.shapes.extraLarge,
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 40.dp)
+                .heightIn(min = Dimens.SearchBarMinHeight)
                 .padding(horizontal = Dimens.SpaceLg, vertical = Dimens.SpaceSm),
         )
 
@@ -205,7 +205,11 @@ fun ConversationListScreen(
                 )
                 else -> LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(bottom = Dimens.ListBottomPaddingWithFab),
+                    contentPadding = PaddingValues(
+                        start = Dimens.SpaceLg, end = Dimens.SpaceLg,
+                        top = Dimens.SpaceSm, bottom = Dimens.ListBottomPaddingWithFab,
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(Dimens.SpaceSm),
                 ) {
                     items(filteredConversations, key = { it.id.toString() }) { conv ->
                         val peerId = conv.participantIds.firstOrNull { it != currentUserId }
@@ -217,7 +221,6 @@ fun ConversationListScreen(
                             avatarUrl = peerUser?.avatarUrl,
                             onClick = { onOpenConversation(conv.id) },
                         )
-                        HorizontalDivider(modifier = Modifier.padding(horizontal = Dimens.SpaceLg))
                     }
                 }
             }
@@ -277,6 +280,12 @@ private fun ConversationItem(
 
     val unreadColor = MaterialTheme.colorScheme.primary
 
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(Dimens.CardBorderWidth, MaterialTheme.colorScheme.outlineVariant),
+    ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -319,11 +328,14 @@ private fun ConversationItem(
                 )
                 if (showUnread) {
                     Spacer(modifier = Modifier.size(Dimens.SpaceXxs))
-                    Canvas(modifier = Modifier.size(8.dp)) {
-                        drawCircle(color = unreadColor)
-                    }
+                    Box(
+                        modifier = Modifier
+                            .size(Dimens.UnreadDotSize)
+                            .background(unreadColor, CircleShape),
+                    )
                 }
             }
         }
+    }
     }
 }

@@ -32,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.helios.redshark.R
@@ -87,13 +86,13 @@ fun GoogleSignInScreen(
                 Surface(
                     shape = CircleShape,
                     color = MaterialTheme.colorScheme.primaryContainer,
-                    modifier = Modifier.size(88.dp),
+                    modifier = Modifier.size(Dimens.BrandIconContainer),
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
                             imageVector = Icons.Filled.Lightbulb,
                             contentDescription = null,
-                            modifier = Modifier.size(44.dp),
+                            modifier = Modifier.size(Dimens.BrandIconInner),
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
                         )
                     }
@@ -130,7 +129,7 @@ fun GoogleSignInScreen(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(52.dp),
+                            .height(Dimens.ButtonHeight),
                         shape = MaterialTheme.shapes.medium,
                         elevation = ButtonDefaults.buttonElevation(
                             defaultElevation = Dimens.CardElevationRaised,
