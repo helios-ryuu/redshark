@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.helios.redshark.domain.model.Notification
 import com.helios.redshark.domain.model.NotificationType
+import com.helios.redshark.domain.usecase.idea.AddSelfAsCollaboratorUseCase
 import com.helios.redshark.domain.usecase.notification.AcceptCollabUseCase
+import com.helios.redshark.domain.usecase.notification.DeleteAllNotificationsUseCase
 import com.helios.redshark.domain.usecase.notification.GetNotificationsUseCase
 import com.helios.redshark.domain.usecase.notification.GetUnreadCountUseCase
 import com.helios.redshark.domain.usecase.notification.MarkNotificationReadUseCase
@@ -31,8 +33,10 @@ class NotificationViewModel @Inject constructor(
     private val getNotificationsUseCase: GetNotificationsUseCase,
     private val markNotificationReadUseCase: MarkNotificationReadUseCase,
     private val getUnreadCountUseCase: GetUnreadCountUseCase,
+    private val addSelfAsCollaboratorUseCase: AddSelfAsCollaboratorUseCase,
     private val acceptCollabUseCase: AcceptCollabUseCase,
     private val rejectCollabUseCase: RejectCollabUseCase,
+    private val deleteAllNotificationsUseCase: DeleteAllNotificationsUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(NotificationUiState())
@@ -55,7 +59,14 @@ class NotificationViewModel @Inject constructor(
                     _uiState.update { it.copy(isLoading = false, errorMessage = e.message ?: "Lỗi tải thông báo.") }
                 }
                 .collect { list ->
-                    _uiState.update { it.copy(notifications = list, isLoading = false, errorMessage = null) }
+                    _uiState.update {
+                        it.copy(
+                            notifications = list,
+                            unreadCount = list.count { notification -> !notification.isRead },
+                            isLoading = false,
+                            errorMessage = null,
+                        )
+                    }
                 }
         }
     }
@@ -71,7 +82,26 @@ class NotificationViewModel @Inject constructor(
     fun markAsRead(notification: Notification) {
         if (notification.isRead) return
         viewModelScope.launch {
-            runCatching { markNotificationReadUseCase(notification.id) }
+            val markResult = if (notification.type == NotificationType.COLLAB_ACCEPTED) {
+                runCatching {
+                    addSelfAsCollaboratorUseCase(notification.targetId)
+                    markNotificationReadUseCase(notification.id)
+                }
+            } else {
+                runCatching { markNotificationReadUseCase(notification.id) }
+            }
+            markResult
+                .onSuccess {
+                    _uiState.update { state ->
+                        val updated = state.notifications.map {
+                            if (it.id == notification.id) it.copy(isRead = true) else it
+                        }
+                        state.copy(
+                            notifications = updated,
+                            unreadCount = updated.count { item -> !item.isRead },
+                        )
+                    }
+                }
                 .onFailure { e -> _uiState.update { it.copy(actionError = e.message) } }
         }
     }
@@ -80,6 +110,17 @@ class NotificationViewModel @Inject constructor(
         if (notification.type != NotificationType.COLLAB_REQUEST) return
         viewModelScope.launch {
             runCatching { acceptCollabUseCase(notification) }
+                .onSuccess {
+                    _uiState.update { state ->
+                        val updated = state.notifications.map {
+                            if (it.id == notification.id) it.copy(isRead = true) else it
+                        }
+                        state.copy(
+                            notifications = updated,
+                            unreadCount = updated.count { item -> !item.isRead },
+                        )
+                    }
+                }
                 .onFailure { e -> _uiState.update { it.copy(actionError = e.message) } }
         }
     }
@@ -88,6 +129,27 @@ class NotificationViewModel @Inject constructor(
         if (notification.type != NotificationType.COLLAB_REQUEST) return
         viewModelScope.launch {
             runCatching { rejectCollabUseCase(notification) }
+                .onSuccess {
+                    _uiState.update { state ->
+                        val updated = state.notifications.map {
+                            if (it.id == notification.id) it.copy(isRead = true) else it
+                        }
+                        state.copy(
+                            notifications = updated,
+                            unreadCount = updated.count { item -> !item.isRead },
+                        )
+                    }
+                }
+                .onFailure { e -> _uiState.update { it.copy(actionError = e.message) } }
+        }
+    }
+
+    fun deleteAll() {
+        viewModelScope.launch {
+            runCatching { deleteAllNotificationsUseCase() }
+                .onSuccess {
+                    _uiState.update { it.copy(notifications = emptyList(), unreadCount = 0) }
+                }
                 .onFailure { e -> _uiState.update { it.copy(actionError = e.message) } }
         }
     }

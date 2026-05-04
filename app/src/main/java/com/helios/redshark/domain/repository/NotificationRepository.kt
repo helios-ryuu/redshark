@@ -15,4 +15,6 @@ interface NotificationRepository {
     suspend fun create(input: CreateNotificationInput): Notification
 
     suspend fun markAsRead(id: UUID)
+
+    suspend fun deleteAll()
 }

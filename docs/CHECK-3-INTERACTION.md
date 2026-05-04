@@ -15,31 +15,31 @@ WBS tham chiếu: [WBS.md](WBS.md) — kiểm thử cho nhóm công việc `5.0`
 
 | ID     | Chức năng                       | Các bước                                    | Kết quả mong đợi                                                              | Trạng thái | Kết quả nghiệm thu |
 |--------|---------------------------------|---------------------------------------------|-------------------------------------------------------------------------------|------------|--------------------|
-| TC-N01 | Nhận notification ISSUE_CREATED | User A tạo issue trên idea của B → B mở app | B thấy notification mới, badge +1                                             | 🔲          |                    |
-| TC-N02 | Badge số chưa đọc               | Có 3 notification chưa đọc                  | BottomNav hiển thị "3"                                                        | 🔲          |                    |
-| TC-N03 | Mark as read                    | Tap vào notification                        | `isRead = true`, badge giảm 1                                                 | 🔲          |                    |
-| TC-N04 | Gửi Collab Request              | User A vào idea B → "Xin tham gia"          | B nhận notification COLLAB_REQUEST                                            | 🔲          |                    |
-| TC-N05 | Accept Collab                   | B → notification → Accept                   | A được thêm vào `collaboratorIds`, A nhận COLLAB_ACCEPTED                     | 🔲          |                    |
-| TC-N06 | Reject Collab                   | B → Reject                                  | A nhận COLLAB_REJECTED, A không vào collaboratorIds                           | 🔲          |                    |
-| TC-N07 | Notification refresh            | Snapshot listener tự cập nhật              | List cập nhật real-time khi có notification mới                               | 🔲          |                    |
-| TC-N08 | Notification empty              | Tài khoản mới                               | Hiển thị empty state "Không có thông báo nào."                                | 🔲          |                    |
+| TC-N01 | Nhận notification ISSUE_CREATED | User A tạo issue trên idea của B → B mở app | B thấy notification mới, badge +1                                             | ✅          | Pass               |
+| TC-N02 | Badge số chưa đọc               | Có 3 notification chưa đọc                  | BottomNav hiển thị "3"                                                        | ✅          | Pass               |
+| TC-N03 | Mark as read                    | Tap vào notification                        | `isRead = true`, badge giảm 1                                                 | ✅          | Pass               |
+| TC-N04 | Gửi Collab Request              | User A vào idea B → "Xin tham gia"          | B nhận notification COLLAB_REQUEST                                            | ✅          | Pass               |
+| TC-N05 | Accept Collab                   | B → notification → Accept                   | A được thêm vào `collaboratorIds`, A nhận COLLAB_ACCEPTED                     | ✅          | Pass               |
+| TC-N06 | Reject Collab                   | B → Reject                                  | A nhận COLLAB_REJECTED, A không vào collaboratorIds                           | ✅          | Pass               |
+| TC-N07 | Notification refresh            | Snapshot listener tự cập nhật              | List cập nhật real-time khi có notification mới                               | ✅          | Pass               |
+| TC-N08 | Notification empty              | Tài khoản mới                               | Hiển thị empty state "Không có thông báo nào."                                | ✅          | Pass               |
 
 **PLAN-3-INTERACTION — Message (do Nam):**
 
 | ID     | Chức năng                       | Các bước                                    | Kết quả mong đợi                                                              | Trạng thái | Kết quả nghiệm thu |
 |--------|---------------------------------|---------------------------------------------|-------------------------------------------------------------------------------|------------|--------------------|
-| TC-M01 | Mở tab Messages                 | Tab Messages                                | Hiện danh sách conversation sort theo lastMessageAt DESC                      | 🔲          |                    |
-| TC-M02 | Tạo direct conversation         | `conversation/new?peerId=` → redirect       | Nếu chưa có → tạo mới và vào conversation; nếu có → vào conversation hiện tại | 🔲          |                    |
-| TC-M03 | Không tạo hội thoại trùng lặp   | Lặp lại TC-M02                              | Vẫn dùng hội thoại cũ, không tạo mới                                          | 🔲          |                    |
-| TC-M04 | Gửi message hợp lệ              | Nhập text → Send                            | Hiện ngay trong list (optimistic), `SendMessage` OK                           | 🔲          |                    |
-| TC-M05 | Gửi message rỗng                | Text trống                                  | Nút Send disabled                                                             | 🔲          |                    |
-| TC-M06 | Gửi message > 2000 ký tự        | 2001 ký tự                                  | `SendMessageUseCase` ném ValidationException, hiển thị lỗi                   | 🔲          |                    |
-| TC-M07 | Nhận message realtime           | User A gửi → B mở conversation              | Message xuất hiện ở B ngay (Firestore snapshot listener)                      | 🔲          |                    |
-| TC-M08 | Mất mạng khi gửi                | Airplane → Send                             | Optimistic item hiện, khi có mạng lại → listener đồng bộ                     | 🔲          |                    |
-| TC-M09 | Scroll load lịch sử             | Conversation dài → scroll lên               | Tất cả message cũ load từ Firestore (hiện chưa phân trang)                   | 🔲          |                    |
-| TC-M10 | Back navigation                 | Trong conversation → Back                   | Về list Messages, lastMessagePreview cập nhật                                 | 🔲          |                    |
+| TC-M01 | Mở tab Messages                 | Tab Messages                                | Hiện danh sách conversation sort theo lastMessageAt DESC                      | ✅          | Pass               |
+| TC-M02 | Tạo direct conversation         | `conversation/new?peerId=` → redirect       | Nếu chưa có → tạo mới và vào conversation; nếu có → vào conversation hiện tại | ✅          | Pass               |
+| TC-M03 | Không tạo hội thoại trùng lặp   | Lặp lại TC-M02                              | Vẫn dùng hội thoại cũ, không tạo mới                                          | ✅          | Pass               |
+| TC-M04 | Gửi message hợp lệ              | Nhập text → Send                            | Hiện ngay trong list (optimistic), `SendMessage` OK                           | ✅          | Pass               |
+| TC-M05 | Gửi message rỗng                | Text trống                                  | Nút Send disabled                                                             | ✅          | Pass               |
+| TC-M06 | Gửi message > 2000 ký tự        | 2001 ký tự                                  | `SendMessageUseCase` ném ValidationException, hiển thị lỗi                   | ✅          | Pass               |
+| TC-M07 | Nhận message realtime           | User A gửi → B mở conversation              | Message xuất hiện ở B ngay (Firestore snapshot listener)                      | ✅          | Pass               |
+| TC-M08 | Mất mạng khi gửi                | Airplane → Send                             | Optimistic item hiện, khi có mạng lại → listener đồng bộ                     | ✅          | Pass               |
+| TC-M09 | Scroll load lịch sử             | Conversation dài → scroll lên               | Tất cả message cũ load từ Firestore (hiện chưa phân trang)                   | ✅          | Pass               |
+| TC-M10 | Back navigation                 | Trong conversation → Back                   | Về list Messages, lastMessagePreview cập nhật                                 | ✅          | Pass               |
 
-| **TỔNG PLAN-3** | | | | **0/18 ✅** | |
+| **TỔNG PLAN-3** | | | | **18/18 ✅** | |
 
 **PLAN-4-FINALIZE — Cross-cutting NFR (do Sỹ):**
 

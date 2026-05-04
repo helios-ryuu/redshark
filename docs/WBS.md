@@ -24,7 +24,7 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 ## 3. Mốc hiện tại (hiện trạng)
 
 - **Ngày cập nhật:** 30/04/2026.
-- **Trạng thái hiện tại:** WBS 3.0 (Auth) ✅, WBS 4.0 (Content) ✅, WBS 5.0 (Tương tác) ✅, WBS 4A.0 (UI Overhaul) ✅ hoàn thành. Đang trong giai đoạn dọn dẹp docs + chuẩn bị thực thi PLAN-1..4 để vào WBS 6.0 (Kiểm thử/NFR) và WBS 7.0 (Phát hành).
+- **Trạng thái hiện tại:** WBS 3.0 (Auth) ✅, WBS 4.0 (Content) ✅, WBS 5.0 (Tương tác) ✅, WBS 4A.0 (UI Overhaul) ✅ hoàn thành. PLAN-3-INTERACTION đã hoàn tất (18/18 TC pass). Đang chuyển sang PLAN-4-FINALIZE (WBS 6.0/7.0).
 - **Người thực hiện commit init:** **Sỹ**.
 - **Commit init chuẩn:** `chore(init): bootstrap Android project and project documents`.
 

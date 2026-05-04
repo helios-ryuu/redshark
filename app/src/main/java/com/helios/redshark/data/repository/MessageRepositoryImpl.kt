@@ -83,6 +83,8 @@ class MessageRepositoryImpl @Inject constructor(
                 mapOf(
                     "lastMessageAt" to serverTs,
                     "lastMessagePreview" to input.content.take(80),
+                    "lastMessageSenderId" to uid,
+                    "hasUnread" to true,
                 )
             ).await()
             val doc = messages.document(newId).get().await()
@@ -123,6 +125,8 @@ class MessageRepositoryImpl @Inject constructor(
                 "type" to "DIRECT",
                 "lastMessageAt" to null,
                 "lastMessagePreview" to null,
+                "lastMessageSenderId" to null,
+                "hasUnread" to false,
             )
             conversations.document(newId).set(data).await()
             val doc = conversations.document(newId).get().await()
@@ -130,6 +134,16 @@ class MessageRepositoryImpl @Inject constructor(
                 ?: throw AppException.UnknownException()
         } catch (e: AppException) {
             throw e
+        } catch (e: Exception) {
+            throw AppException.NetworkException(e)
+        }
+    }
+
+    override suspend fun markConversationRead(conversationId: UUID) {
+        try {
+            conversations.document(conversationId.toString())
+                .update("hasUnread", false)
+                .await()
         } catch (e: Exception) {
             throw AppException.NetworkException(e)
         }

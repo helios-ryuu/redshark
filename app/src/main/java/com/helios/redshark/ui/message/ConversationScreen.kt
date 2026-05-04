@@ -33,6 +33,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -81,12 +83,15 @@ fun ConversationScreen(
     var inputText by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
 
-    val peerDisplayName = remember(listUiState.conversations, conversationId, currentUserId) {
+    val peerUser = remember(listUiState.conversations, conversationId, currentUserId, listUiState.usersById) {
         listUiState.conversations
             .firstOrNull { it.id == conversationId }
             ?.participantIds?.firstOrNull { it != currentUserId }
-            ?.take(12)
+            ?.let { peerId -> listUiState.usersById[peerId] }
     }
+
+    val peerDisplayName = peerUser?.displayName
+        ?: stringResource(R.string.message_conversation_title)
 
     val listItems by remember(uiState.messages) {
         derivedStateOf {
@@ -105,10 +110,21 @@ fun ConversationScreen(
     }
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0),
         topBar = {
             TopAppBar(
                 title = {
-                    Text(peerDisplayName ?: stringResource(R.string.message_conversation_title))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        peerUser?.let { user ->
+                            AvatarImage(
+                                avatarUrl = user.avatarUrl,
+                                displayName = user.displayName,
+                                size = Dimens.AvatarSm,
+                            )
+                            Spacer(modifier = Modifier.width(Dimens.SpaceSm))
+                        }
+                        Text(peerDisplayName)
+                    }
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
@@ -121,7 +137,11 @@ fun ConversationScreen(
             )
         },
     ) { padding ->
-        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
             Box(modifier = Modifier.weight(1f)) {
                 when {
                     uiState.isLoading -> LoadingContent()
@@ -146,6 +166,8 @@ fun ConversationScreen(
                                     message = item.message,
                                     isCurrentUser = item.message.senderId == currentUserId,
                                     showAvatar = item.showAvatar,
+                                    avatarUrl = listUiState.usersById[item.message.senderId]?.avatarUrl,
+                                    displayName = listUiState.usersById[item.message.senderId]?.displayName,
                                 )
                             }
                         }
@@ -162,8 +184,11 @@ fun ConversationScreen(
 
             // Input bar — flat Fluent style
             Surface(
-                shadowElevation = Dimens.CardElevationRaised,
+                shadowElevation = 0.dp,
                 color = MaterialTheme.colorScheme.surface,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .imePadding(),
             ) {
                 Row(
                     modifier = Modifier
@@ -277,9 +302,15 @@ private fun DateSeparatorRow(date: LocalDate) {
 }
 
 @Composable
-private fun MessageBubble(message: Message, isCurrentUser: Boolean, showAvatar: Boolean = false) {
-    val sentShape = RoundedCornerShape(topStart = 12.dp, topEnd = 4.dp, bottomStart = 12.dp, bottomEnd = 12.dp)
-    val receivedShape = RoundedCornerShape(topStart = 4.dp, topEnd = 12.dp, bottomStart = 12.dp, bottomEnd = 12.dp)
+private fun MessageBubble(
+    message: Message,
+    isCurrentUser: Boolean,
+    showAvatar: Boolean = false,
+    avatarUrl: String? = null,
+    displayName: String? = null,
+) {
+    val sentShape = RoundedCornerShape(topStart = 12.dp, topEnd = 4.dp, bottomStart = 12.dp, bottomEnd = 0.dp)
+    val receivedShape = RoundedCornerShape(topStart = 4.dp, topEnd = 12.dp, bottomStart = 0.dp, bottomEnd = 12.dp)
 
     val bubbleColor: Color
     val textColor: Color
@@ -292,7 +323,7 @@ private fun MessageBubble(message: Message, isCurrentUser: Boolean, showAvatar: 
         timestampColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
         alignment = Alignment.End
     } else {
-        bubbleColor = MaterialTheme.colorScheme.surfaceVariant
+        bubbleColor = MaterialTheme.colorScheme.surface
         textColor = MaterialTheme.colorScheme.onSurface
         timestampColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
         alignment = Alignment.Start
@@ -306,8 +337,8 @@ private fun MessageBubble(message: Message, isCurrentUser: Boolean, showAvatar: 
         if (!isCurrentUser) {
             if (showAvatar) {
                 AvatarImage(
-                    avatarUrl = null,
-                    displayName = message.senderId,
+                    avatarUrl = avatarUrl,
+                    displayName = displayName ?: message.senderId,
                     size = Dimens.AvatarSm,
                 )
             } else {

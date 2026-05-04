@@ -19,4 +19,7 @@ interface MessageRepository {
     suspend fun findDirectConversation(peerId: String): Conversation?
 
     suspend fun createDirectConversation(peerId: String): Conversation
+
+    /** Marks the conversation as read for the current user. */
+    suspend fun markConversationRead(conversationId: UUID)
 }
