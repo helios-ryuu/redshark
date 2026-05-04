@@ -47,12 +47,12 @@ WBS tham chiếu: [WBS.md](WBS.md) — kiểm thử cho nhóm công việc `5.0`
 
 | ID     | Chức năng                   | Các bước                                    | Kết quả mong đợi                                                  | Trạng thái | Kết quả nghiệm thu |
 |--------|-----------------------------|---------------------------------------------|-------------------------------------------------------------------|------------|--------------------|
-| TC-X01 | Dark mode                   | Đổi theme hệ thống → Dark                   | UI tự động đổi, không có text trắng trên nền trắng; kiểm tra cả Login/Register | ⬜ |               |
-| TC-X02 | Rotate màn hình             | Xoay thiết bị                               | State giữ nguyên, không reload                                    | ⬜          |                    |
-| TC-X03 | Back button system          | Android Back trong sub-screen               | Pop đúng stack; Register → Back → Login (không thoát app)         | ⬜          |                    |
-| TC-X04 | Deep link idea              | Mở `redshark://idea/{id}`                   | Navigate vào IdeaDetail                                           | ⬜          |                    |
-| TC-X05 | R2 download/hiển thị avatar | Avatar có URL R2                            | Coil load thành công, cache lần 2                                 | ⬜          |                    |
-| TC-X06 | Thời gian khởi động nguội   | Tắt hẳn ứng dụng → mở lại                   | < 3 giây đến màn hình Home (người dùng đã đăng nhập)             | ⬜          |                    |
-| TC-X07 | Memory leak                 | Vào ra 10 màn hình                          | Leak Canary: 0 leak                                               | ⬜          |                    |
+| TC-X01 | Dark mode                   | Đổi theme hệ thống → Dark                   | UI tự động đổi, không có text trắng trên nền trắng; kiểm tra cả Login/Register | 🔲 |               |
+| TC-X02 | Rotate màn hình             | Xoay thiết bị                               | State giữ nguyên, không reload (`rememberSaveable` trên RegisterScreen) | 🔲          |                    |
+| TC-X03 | Back button system          | Android Back trong sub-screen               | Pop đúng stack; Register → Back → Login (không thoát app)         | 🔲          |                    |
+| TC-X04 | Deep link idea              | Mở `redshark://idea/{id}`                   | Navigate vào IdeaDetail                                           | 🔲          |                    |
+| TC-X05 | R2 download/hiển thị avatar | Avatar có URL R2                            | Coil load thành công, cache lần 2                                 | 🔲          |                    |
+| TC-X06 | Thời gian khởi động nguội   | Tắt hẳn ứng dụng → mở lại                   | < 3 giây đến màn hình Home (người dùng đã đăng nhập)             | 🔲          |                    |
+| TC-X07 | Memory leak                 | Vào ra 10 màn hình                          | Leak Canary: 0 leak                                               | 🔲          |                    |
 
-| **TỔNG PLAN-4 (NFR)** | | | | **0/7 ⬜** | Chờ implement PLAN-4 |
+| **TỔNG PLAN-4 (NFR)** | | | | **0/7 🔲** | Infrastructure ready (commit 225d3d4): LeakCanary added, R8 enabled, deep link intent-filter in manifest. Chờ test thủ công. |

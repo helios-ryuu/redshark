@@ -24,7 +24,7 @@ WBS được xây dựng dựa trên các nhóm tài liệu sau:
 ## 3. Mốc hiện tại (hiện trạng)
 
 - **Ngày cập nhật:** 05/05/2026.
-- **Trạng thái hiện tại:** WBS 3.0 (Auth) ✅, WBS 4.0 (Content) ✅, WBS 5.0 (Tương tác) ✅, WBS 4A.0 (UI Overhaul) ✅, WBS 4B.0 (UI Fluent Finalize) ✅ hoàn thành. UI Fluent Minimalist đồng nhất toàn bộ màn hình. Đang chuyển sang PLAN-4-FINALIZE (WBS 6.0/7.0).
+- **Trạng thái hiện tại:** WBS 3.0 (Auth) ✅, WBS 4.0 (Content) ✅, WBS 5.0 (Tương tác) ✅, WBS 4A.0 (UI Overhaul) ✅, WBS 4B.0 (UI Fluent Finalize) ✅, PLAN-4-FINALIZE implementation ✅ hoàn thành. Email/Password Auth (TC-A20..A30) + NFR infrastructure (TC-X01..X07) + UI polish 95% đã implement và commit. Đang chờ kiểm thử hồi quy thủ công (WBS 6.1.2 — Tuần 9).
 - **Người thực hiện commit init:** **Sỹ**.
 - **Commit init chuẩn:** `chore(init): bootstrap Android project and project documents`.
 
@@ -397,7 +397,7 @@ Tuần 9 ─ 12/05 → 17/05 │ Kiểm thử hồi quy + phát hành v1.0.0
 - Thời gian: xuyên suốt theo từng giai đoạn.
 
 #### 6.1.2 Thực thi kiểm thử hồi quy toàn bộ
-- Sản phẩm bàn giao: kết quả kiểm thử tổng hợp 61 trường hợp kiểm thử, tỷ lệ đạt >= 95%.
+- Sản phẩm bàn giao: kết quả kiểm thử tổng hợp 79 trường hợp kiểm thử (61 PLAN-1..3 + 11 TC-A20..A30 email-auth + 7 TC-X01..X07 NFR), tỷ lệ đạt >= 95%.
 - Phụ trách chính: Sỹ.
 - Thành viên phối hợp: cả nhóm.
 - Phụ thuộc: 3.0 - 5.0 hoàn thành.

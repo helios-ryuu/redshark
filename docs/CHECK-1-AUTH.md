@@ -38,17 +38,17 @@ WBS tham chiếu: [WBS.md](WBS.md) — kiểm thử cho nhóm công việc `3.0`
 
 | ID     | Chức năng                            | Các bước                                                          | Kết quả mong đợi                                                           | Trạng thái | Kết quả nghiệm thu |
 |--------|--------------------------------------|-------------------------------------------------------------------|----------------------------------------------------------------------------|------------|--------------------|
-| TC-A20 | Đăng ký email thành công             | Register → username chưa dùng, email mới, password đủ mạnh, DOB hợp lệ → Đăng ký | Tài khoản Firebase Auth tạo, Firestore user doc upsert, điều hướng Home | ⬜          |                    |
-| TC-A21 | Đăng ký username đã tồn tại          | Username trùng user khác                                          | Lỗi inline "Username đã được sử dụng"                                      | ⬜          |                    |
-| TC-A22 | Đăng ký username format sai          | Username chứa ký tự đặc biệt ngoài `[a-z0-9._-]`                 | Lỗi inline "Username chỉ gồm a-z, 0-9, dấu chấm, gạch dưới, gạch ngang"  | ⬜          |                    |
-| TC-A23 | Đăng ký username quá ngắn/dài        | Username < 3 hoặc > 30 ký tự                                      | Bị chặn, lỗi validate                                                      | ⬜          |                    |
-| TC-A24 | Đăng ký password yếu                 | Password < 8 ký tự hoặc thiếu chữ hoa hoặc thiếu số              | Lỗi inline mô tả yêu cầu password                                          | ⬜          |                    |
-| TC-A25 | Đăng ký confirm password không khớp | Password ≠ Confirm Password                                       | Lỗi inline "Mật khẩu không khớp", nút Đăng ký disabled                    | ⬜          |                    |
-| TC-A26 | Đăng ký tuổi < 13                    | Chọn DOB < 13 năm trước hôm nay                                   | Bị chặn "Bạn phải đủ 13 tuổi để đăng ký"                                  | ⬜          |                    |
-| TC-A27 | Đăng ký DOB tương lai                | Chọn ngày sinh > hôm nay                                          | Bị chặn, lỗi validate                                                      | ⬜          |                    |
-| TC-A28 | Đăng nhập email/password thành công  | Login → nhập email + password đúng → Đăng nhập                   | Vào Home, phiên được duy trì                                               | ⬜          |                    |
-| TC-A29 | Đăng nhập email sai mật khẩu         | Nhập sai password                                                 | Lỗi "Email hoặc mật khẩu không đúng"                                       | ⬜          |                    |
-| TC-A30 | Chuyển màn hình Login ↔ Register     | Tap "Chưa có tài khoản? Đăng ký" và "Đã có tài khoản? Đăng nhập" | Điều hướng đúng, back stack hợp lệ (Register → back → Login, không thoát app) | ⬜       |                    |
+| TC-A20 | Đăng ký email thành công             | Register → username chưa dùng, email mới, password đủ mạnh, DOB hợp lệ → Đăng ký | Tài khoản Firebase Auth tạo, Firestore user doc upsert, điều hướng Home | 🔲          |                    |
+| TC-A21 | Đăng ký username đã tồn tại          | Username trùng user khác                                          | Lỗi inline "Username đã được sử dụng"                                      | 🔲          |                    |
+| TC-A22 | Đăng ký username format sai          | Username chứa ký tự đặc biệt ngoài `[a-z0-9._-]`                 | Lỗi inline "Username chỉ gồm a-z, 0-9, dấu chấm, gạch dưới, gạch ngang"  | 🔲          |                    |
+| TC-A23 | Đăng ký username quá ngắn/dài        | Username < 3 hoặc > 30 ký tự                                      | Bị chặn, lỗi validate                                                      | 🔲          |                    |
+| TC-A24 | Đăng ký password yếu                 | Password < 8 ký tự hoặc thiếu chữ hoa hoặc thiếu số              | Lỗi inline mô tả yêu cầu password                                          | 🔲          |                    |
+| TC-A25 | Đăng ký confirm password không khớp | Password ≠ Confirm Password                                       | Lỗi inline "Mật khẩu không khớp", nút Đăng ký disabled                    | 🔲          |                    |
+| TC-A26 | Đăng ký tuổi < 13                    | Chọn DOB < 13 năm trước hôm nay                                   | Bị chặn "Bạn phải đủ 13 tuổi để đăng ký"                                  | 🔲          |                    |
+| TC-A27 | Đăng ký DOB tương lai                | Chọn ngày sinh > hôm nay                                          | Bị chặn, lỗi validate                                                      | 🔲          |                    |
+| TC-A28 | Đăng nhập email/password thành công  | Login → nhập email + password đúng → Đăng nhập                   | Vào Home, phiên được duy trì                                               | 🔲          |                    |
+| TC-A29 | Đăng nhập email sai mật khẩu         | Nhập sai password                                                 | Lỗi "Email hoặc mật khẩu không đúng"                                       | 🔲          |                    |
+| TC-A30 | Chuyển màn hình Login ↔ Register     | Tap "Chưa có tài khoản? Đăng ký" và "Đã có tài khoản? Đăng nhập" | Điều hướng đúng, back stack hợp lệ (Register → back → Login, không thoát app) | 🔲       |                    |
 
 | TỔNG PLAN-1 | | | | 19/19 ✅ | UI Fluent Minimalist finalized 05/05/2026 — 0 hardcoded dp, Surface containers added |
-| TỔNG PLAN-4 (email-auth) | | | | 0/11 ⬜ | Chờ implement PLAN-4 |
+| TỔNG PLAN-4 (email-auth) | | | | 0/11 🔲 | Code implemented (commit 225d3d4), unit tests 27/27 pass. Chờ test thủ công trên thiết bị. |
