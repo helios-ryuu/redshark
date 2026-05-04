@@ -60,10 +60,12 @@ fun IdeaCard(
     val createdDate = remember(idea.createdAt) {
         idea.createdAt.atZone(ZoneId.systemDefault()).toLocalDate()
     }
+    val todayLabel = stringResource(R.string.message_date_today)
+    val yesterdayLabel = stringResource(R.string.message_date_yesterday)
     val dateLabel = remember(createdDate, today) {
         when (createdDate) {
-            today -> "Today"
-            today.minusDays(1) -> "Yesterday"
+            today -> todayLabel
+            today.minusDays(1) -> yesterdayLabel
             else -> createdDate.format(DateTimeFormatter.ofPattern("MMM d", Locale.getDefault()))
         }
     }

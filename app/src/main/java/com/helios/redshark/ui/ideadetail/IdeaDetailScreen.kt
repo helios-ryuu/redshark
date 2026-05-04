@@ -428,7 +428,7 @@ private fun CommentInput(
                     .weight(1f)
                     .background(
                         color = MaterialTheme.colorScheme.surfaceVariant,
-                        shape = RoundedCornerShape(24.dp),
+                        shape = RoundedCornerShape(Dimens.InputFieldCorner),
                     )
                     .padding(horizontal = Dimens.SpaceMd, vertical = Dimens.SpaceSm),
             ) {

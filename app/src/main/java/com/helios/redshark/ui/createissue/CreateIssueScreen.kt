@@ -163,7 +163,7 @@ fun CreateIssueScreen(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 if (uiState is CreateIssueUiState.Loading) {
-                    CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
+                    CircularProgressIndicator(modifier = Modifier.size(Dimens.ButtonProgressIndicatorSize), strokeWidth = Dimens.ButtonProgressIndicatorStroke)
                 } else {
                     Text(stringResource(R.string.issue_action_create))
                 }

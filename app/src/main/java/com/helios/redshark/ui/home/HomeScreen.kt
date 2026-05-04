@@ -95,7 +95,7 @@ fun HomeScreen(
                 }
             }
             HorizontalDivider()
-            Box(modifier = Modifier.fillMaxWidth().height(480.dp)) {
+            Box(modifier = Modifier.fillMaxWidth().height(Dimens.NotificationSheetMaxHeight)) {
                 NotificationListScreen(
                     viewModel = notificationViewModel,
                     onOpenIdea = onNavigateToIdeaDetail,

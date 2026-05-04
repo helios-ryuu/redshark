@@ -120,7 +120,7 @@ fun CreateIdeaScreen(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 if (uiState is CreateIdeaUiState.Loading) {
-                    CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
+                    CircularProgressIndicator(modifier = Modifier.size(Dimens.ButtonProgressIndicatorSize), strokeWidth = Dimens.ButtonProgressIndicatorStroke)
                 } else {
                     Text(stringResource(R.string.idea_action_create))
                 }

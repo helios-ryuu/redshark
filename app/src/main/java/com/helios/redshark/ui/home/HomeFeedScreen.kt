@@ -39,7 +39,7 @@ fun HomeFeedScreen(
             )
             uiState.ideas.isEmpty() -> EmptyContent(
                 message = stringResource(R.string.home_feed_empty),
-                subtitle = "Check back soon.",
+                subtitle = stringResource(R.string.home_feed_empty_subtitle),
                 icon = Icons.Outlined.Lightbulb,
             )
             else -> LazyColumn(
