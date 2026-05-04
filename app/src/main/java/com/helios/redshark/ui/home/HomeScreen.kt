@@ -19,9 +19,15 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import com.helios.redshark.ui.common.AvatarImage
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.helios.redshark.R
@@ -53,6 +59,7 @@ fun HomeScreen(
     notificationViewModel: NotificationViewModel = hiltViewModel(),
     messageViewModel: MessageViewModel = hiltViewModel(),
 ) {
+    val authState by authViewModel.uiState.collectAsStateWithLifecycle()
     val notifState by notificationViewModel.uiState.collectAsStateWithLifecycle()
     val messageState by messageViewModel.listState.collectAsStateWithLifecycle()
     var selectedTab by rememberSaveable { mutableStateOf(HomeTab.HOME) }
@@ -95,7 +102,7 @@ fun HomeScreen(
                 }
             }
             HorizontalDivider()
-            Box(modifier = Modifier.fillMaxWidth().height(480.dp)) {
+            Box(modifier = Modifier.fillMaxWidth().height(Dimens.NotificationSheetMaxHeight)) {
                 NotificationListScreen(
                     viewModel = notificationViewModel,
                     onOpenIdea = onNavigateToIdeaDetail,
@@ -108,11 +115,45 @@ fun HomeScreen(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
-                Text(
-                    text = stringResource(R.string.app_name),
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(Dimens.SpaceLg),
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(Dimens.DrawerHeaderHeight)
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(
+                                    MaterialTheme.colorScheme.primaryContainer,
+                                    MaterialTheme.colorScheme.surface,
+                                )
+                            )
+                        )
+                        .padding(horizontal = Dimens.SpaceLg, vertical = Dimens.SpaceMd),
+                    contentAlignment = Alignment.BottomStart,
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceMd),
+                    ) {
+                        AvatarImage(
+                            avatarUrl = authState.user?.avatarUrl,
+                            displayName = authState.user?.displayName ?: stringResource(R.string.app_name),
+                            size = Dimens.AvatarMd,
+                        )
+                        Column {
+                            Text(
+                                text = authState.user?.displayName ?: stringResource(R.string.app_name),
+                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                            )
+                            authState.user?.email?.let {
+                                Text(
+                                    text = it,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
+                    }
+                }
                 HorizontalDivider()
                 NavigationDrawerItem(
                     label = { Text(stringResource(R.string.home_drawer_settings)) },
@@ -129,7 +170,19 @@ fun HomeScreen(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(stringResource(R.string.home_title_app)) },
+                    title = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(Dimens.SpaceSm),
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.logo_redshark_no_text_large),
+                                contentDescription = null,
+                                modifier = Modifier.size(Dimens.IconLg),
+                            )
+                            Text(stringResource(R.string.home_title_app))
+                        }
+                    },
                     navigationIcon = {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
                             Icon(

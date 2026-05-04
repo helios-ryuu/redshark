@@ -15,11 +15,52 @@
 
     <!-- Auth -->
     <string name="auth_tagline">Collaborate on ideas that matter</string>
-    <string name="auth_sign_in_google">Sign in with Google</string>
+    <string name="auth_sign_in_google">Continue with Google</string>
     <string name="auth_complete_profile">Complete Your Profile</string>
     <string name="auth_choose_display_name">Choose a display name to get started</string>
     <string name="auth_display_name_label">Display name</string>
     <string name="auth_display_name_helper">%1$d / 50  (min 3)</string>
+    <!-- Email/password login -->
+    <string name="auth_email_label">Email</string>
+    <string name="auth_password_label">Password</string>
+    <string name="auth_sign_in_email">Sign In</string>
+    <string name="auth_no_account">Don\'t have an account?</string>
+    <string name="auth_navigate_register">Register</string>
+    <string name="auth_or_divider">or</string>
+    <string name="auth_show_password">Show password</string>
+    <string name="auth_hide_password">Hide password</string>
+    <!-- Register screen -->
+    <string name="auth_register_title">Create Account</string>
+    <string name="auth_register_subtitle">Join RedShark and start collaborating</string>
+    <string name="auth_username_label">Username</string>
+    <string name="auth_username_helper">3–30 characters. Letters, numbers, . _ - only</string>
+    <string name="auth_username_available">Available</string>
+    <string name="auth_username_taken">Username already taken</string>
+    <string name="auth_username_checking">Checking…</string>
+    <string name="auth_dob_label">Date of Birth</string>
+    <string name="auth_dob_placeholder">Select date</string>
+    <string name="auth_confirm_password_label">Confirm Password</string>
+    <string name="auth_password_strength_label">Password strength:</string>
+    <string name="auth_password_strength_weak">Weak</string>
+    <string name="auth_password_strength_fair">Fair</string>
+    <string name="auth_password_strength_good">Good</string>
+    <string name="auth_password_strength_strong">Strong</string>
+    <string name="auth_action_create_account">Create Account</string>
+    <string name="auth_already_account">Already have an account?</string>
+    <string name="auth_navigate_sign_in">Sign In</string>
+    <!-- Auth validation errors -->
+    <string name="auth_error_email_blank">Email is required</string>
+    <string name="auth_error_email_invalid">Enter a valid email address</string>
+    <string name="auth_error_password_blank">Password is required</string>
+    <string name="auth_error_password_short">Password must be at least 8 characters</string>
+    <string name="auth_error_password_weak">Must include uppercase letter and digit</string>
+    <string name="auth_error_confirm_mismatch">Passwords do not match</string>
+    <string name="auth_error_username_blank">Username is required</string>
+    <string name="auth_error_username_format">Only lowercase letters, numbers, . _ - allowed</string>
+    <string name="auth_error_username_short">Username must be 3–30 characters</string>
+    <string name="auth_error_dob_blank">Date of birth is required</string>
+    <string name="auth_error_dob_underage">You must be at least 13 years old</string>
+    <string name="auth_error_username_taken">This username is already taken</string>
 
     <!-- Home tabs -->
     <string name="home_tab_feed">Feed</string>
@@ -42,6 +83,9 @@
     <!-- Feed -->
     <string name="feed_empty">No activity from other users yet.</string>
     <string name="home_feed_empty">No ideas yet. Be the first to share.</string>
+    <string name="home_feed_empty_subtitle">Check back soon.</string>
+    <string name="home_feed_section_title">What\'s happening</string>
+    <string name="home_feed_section_subtitle">Latest ideas from your community</string>
 
     <!-- My Ideas -->
     <string name="ideas_filter_all">All</string>
@@ -148,6 +192,7 @@
     <string name="profile_bio_helper">%1$d / 280</string>
     <string name="profile_avatar_read_failed">Could not read image.</string>
     <string name="profile_avatar_upload_failed">Image upload failed.</string>
+    <string name="profile_action_message">Message</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>

@@ -25,6 +25,7 @@ import com.helios.redshark.ui.editissue.EditIssueScreen
 import com.helios.redshark.ui.auth.AuthViewModel
 import com.helios.redshark.ui.auth.GoogleSignInScreen
 import com.helios.redshark.ui.auth.ProfileSetupScreen
+import com.helios.redshark.ui.auth.RegisterScreen
 import com.helios.redshark.ui.home.HomeScreen
 import com.helios.redshark.ui.profile.ProfileEditScreen
 import com.helios.redshark.ui.profile.ProfileViewScreen
@@ -55,6 +56,20 @@ fun NavGraph(
                 },
                 onNavigateToProfileSetup = {
                     navController.navigate(Routes.PROFILE_SETUP)
+                },
+                onNavigateToRegister = {
+                    navController.navigate(Routes.REGISTER)
+                },
+            )
+        }
+
+        composable(Routes.REGISTER) {
+            RegisterScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onRegistrationSuccess = {
+                    navController.navigate(Routes.HOME) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 },
             )
         }

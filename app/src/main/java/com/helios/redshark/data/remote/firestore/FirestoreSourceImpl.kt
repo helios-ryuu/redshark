@@ -1,5 +1,6 @@
 package com.helios.redshark.data.remote.firestore
 
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -35,6 +36,32 @@ class FirestoreSourceImpl @Inject constructor(
             getUser(userId)
         } catch (e: Exception) {
             Timber.w(e, "Firestore: upsertUser failed uid=$userId")
+            Result.Error(AppException.UnknownException(e.message ?: "Firestore upsert failed", e))
+        }
+    }
+
+    override suspend fun upsertEmailUser(
+        userId: String,
+        email: String,
+        displayName: String,
+        username: String,
+        dateOfBirth: Timestamp,
+    ): Result<UserDto> {
+        return try {
+            val data = mapOf(
+                "id" to userId,
+                "email" to email,
+                "displayName" to displayName,
+                "username" to username,
+                "dateOfBirth" to dateOfBirth,
+                "authProvider" to "EMAIL",
+                "updatedAt" to FieldValue.serverTimestamp(),
+            )
+            users.document(userId).set(data, SetOptions.merge()).await()
+            Timber.d("Firestore: upsertEmailUser uid=$userId")
+            getUser(userId)
+        } catch (e: Exception) {
+            Timber.w(e, "Firestore: upsertEmailUser failed uid=$userId")
             Result.Error(AppException.UnknownException(e.message ?: "Firestore upsert failed", e))
         }
     }
@@ -103,6 +130,16 @@ class FirestoreSourceImpl @Inject constructor(
         } catch (e: Exception) {
             Timber.w(e, "Firestore: updateAvatarUrl failed uid=$userId")
             Result.Error(AppException.UnknownException(e.message ?: "Firestore update failed", e))
+        }
+    }
+
+    override suspend fun isUsernameAvailable(username: String): Boolean {
+        return try {
+            val snapshot = users.whereEqualTo("username", username).limit(1).get().await()
+            snapshot.isEmpty
+        } catch (e: Exception) {
+            Timber.w(e, "Firestore: isUsernameAvailable failed username=$username")
+            false
         }
     }
 }

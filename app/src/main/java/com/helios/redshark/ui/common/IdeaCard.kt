@@ -1,6 +1,5 @@
 package com.helios.redshark.ui.common
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,6 +19,7 @@ import androidx.compose.material.icons.outlined.ThumbDown
 import androidx.compose.material.icons.outlined.ThumbUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -60,10 +60,12 @@ fun IdeaCard(
     val createdDate = remember(idea.createdAt) {
         idea.createdAt.atZone(ZoneId.systemDefault()).toLocalDate()
     }
+    val todayLabel = stringResource(R.string.message_date_today)
+    val yesterdayLabel = stringResource(R.string.message_date_yesterday)
     val dateLabel = remember(createdDate, today) {
         when (createdDate) {
-            today -> "Today"
-            today.minusDays(1) -> "Yesterday"
+            today -> todayLabel
+            today.minusDays(1) -> yesterdayLabel
             else -> createdDate.format(DateTimeFormatter.ofPattern("MMM d", Locale.getDefault()))
         }
     }
@@ -71,10 +73,13 @@ fun IdeaCard(
     Card(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.CardElevation),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = Dimens.CardElevationRaised,
+            pressedElevation = 6.dp,
+            hoveredElevation = 4.dp,
+        ),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        border = BorderStroke(Dimens.CardBorderWidth, MaterialTheme.colorScheme.outlineVariant),
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             // Header: Avatar + author + title | status pill
@@ -164,6 +169,10 @@ fun IdeaCard(
             }
 
             // Footer: action buttons
+            HorizontalDivider(
+                thickness = 0.5.dp,
+                color = MaterialTheme.colorScheme.outlineVariant,
+            )
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -179,9 +188,14 @@ fun IdeaCard(
                         imageVector = Icons.Outlined.ThumbUp,
                         contentDescription = stringResource(R.string.idea_action_upvote),
                         modifier = Modifier.size(Dimens.IconSm),
+                        tint = MaterialTheme.colorScheme.primary,
                     )
                     Spacer(modifier = Modifier.width(Dimens.SpaceXxs))
-                    Text(text = upvoteCount.toString(), style = MaterialTheme.typography.labelMedium)
+                    Text(
+                        text = upvoteCount.toString(),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
                 }
                 IconButton(onClick = onDownvote) {
                     Icon(

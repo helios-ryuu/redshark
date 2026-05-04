@@ -1,5 +1,6 @@
 package com.helios.redshark.ui.common
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CloudOff
 import androidx.compose.material.icons.outlined.Inbox
@@ -28,7 +30,17 @@ import com.helios.redshark.ui.theme.Dimens
 @Composable
 fun LoadingContent(modifier: Modifier = Modifier) {
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+        Box(
+            modifier = Modifier
+                .size(Dimens.EmptyStateIconSize)
+                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f), CircleShape),
+            contentAlignment = Alignment.Center,
+        ) {
+            CircularProgressIndicator(
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(Dimens.IconXl),
+            )
+        }
     }
 }
 
@@ -44,12 +56,19 @@ fun ErrorContent(
         contentAlignment = Alignment.Center,
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Icon(
-                imageVector = Icons.Outlined.CloudOff,
-                contentDescription = null,
-                modifier = Modifier.size(Dimens.IconXl),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-            )
+            Box(
+                modifier = Modifier
+                    .size(Dimens.EmptyStateIconSize)
+                    .background(MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f), CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.CloudOff,
+                    contentDescription = null,
+                    modifier = Modifier.size(Dimens.IconXl),
+                    tint = MaterialTheme.colorScheme.error.copy(alpha = 0.8f),
+                )
+            }
             Spacer(modifier = Modifier.height(Dimens.SpaceMd))
             Text(
                 text = message,
@@ -77,12 +96,19 @@ fun EmptyContent(
         contentAlignment = Alignment.Center,
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                modifier = Modifier.size(Dimens.IconXl),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
-            )
+            Box(
+                modifier = Modifier
+                    .size(Dimens.EmptyStateIconSize)
+                    .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f), CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(Dimens.IconXl),
+                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                )
+            }
             Spacer(modifier = Modifier.height(Dimens.SpaceMd))
             Text(
                 text = message,

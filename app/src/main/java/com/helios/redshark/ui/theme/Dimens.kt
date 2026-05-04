@@ -29,4 +29,31 @@ object Dimens {
     val ListBottomPaddingWithFab = 88.dp
     val InputFieldHeightMultiline = 160.dp
     val InputFieldHeightMultilineSm = 120.dp
+
+    // Buttons & brand
+    val ButtonHeight = 52.dp
+    val ButtonProgressIndicatorSize = 18.dp
+    val ButtonProgressIndicatorStroke = 2.dp
+    val BrandIconContainer = 88.dp
+    val BrandIconInner = 44.dp
+    val BrandLogoSize = 120.dp
+    val NotificationSheetMaxHeight = 480.dp
+
+    // Search
+    val SearchBarMinHeight = 40.dp
+
+    // Messages
+    val MessageBubbleCornerLg = 12.dp
+    val MessageBubbleCornerSm = 4.dp
+    val MessageBubbleCornerTail = 0.dp
+    val MessageMaxWidth = 280.dp
+    val InputFieldCorner = 24.dp
+
+    // UI improvement tokens
+    val CardAccentBarWidth      = 4.dp
+    val ProfileHeroBannerHeight = 160.dp
+    val ProfileAvatarOverlap    = 48.dp
+    val EmptyStateIconSize      = 80.dp
+    val DrawerHeaderHeight      = 120.dp
+    val FormBrandStripHeight    = 4.dp
 }

@@ -5,6 +5,13 @@ import com.helios.redshark.data.remote.firestore.dto.UserDto
 
 interface FirestoreSource {
     suspend fun upsertUser(userId: String, email: String, displayName: String): Result<UserDto>
+    suspend fun upsertEmailUser(
+        userId: String,
+        email: String,
+        displayName: String,
+        username: String,
+        dateOfBirth: com.google.firebase.Timestamp,
+    ): Result<UserDto>
     suspend fun getUser(userId: String): Result<UserDto>
     suspend fun getUsers(): Result<List<UserDto>>
     suspend fun updateProfile(
@@ -15,4 +22,5 @@ interface FirestoreSource {
         avatarUrl: String?,
     ): Result<UserDto>
     suspend fun updateAvatarUrl(userId: String, avatarUrl: String): Result<UserDto>
+    suspend fun isUsernameAvailable(username: String): Boolean
 }

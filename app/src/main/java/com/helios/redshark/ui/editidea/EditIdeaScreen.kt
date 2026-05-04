@@ -1,6 +1,8 @@
 package com.helios.redshark.ui.editidea
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -75,19 +77,26 @@ fun EditIdeaScreen(
             )
         },
     ) { padding ->
+        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(Dimens.FormBrandStripHeight)
+                    .background(MaterialTheme.colorScheme.primary),
+            )
         when (uiState) {
             is EditIdeaUiState.Loading, EditIdeaUiState.Idle ->
-                LoadingContent(modifier = Modifier.fillMaxSize().padding(padding))
+                LoadingContent(modifier = Modifier.fillMaxSize())
 
             is EditIdeaUiState.Error ->
                 ErrorContent(
                     message = (uiState as EditIdeaUiState.Error).message,
                     onRetry = { viewModel.loadIdea(ideaId) },
-                    modifier = Modifier.fillMaxSize().padding(padding),
+                    modifier = Modifier.fillMaxSize(),
                 )
 
             else -> Column(
-                modifier = Modifier.fillMaxSize().padding(padding).padding(Dimens.SpaceLg),
+                modifier = Modifier.fillMaxSize().padding(Dimens.SpaceLg),
                 verticalArrangement = Arrangement.spacedBy(Dimens.SpaceLg),
             ) {
                 val validationError = (uiState as? EditIdeaUiState.ValidationError)?.message
@@ -137,6 +146,7 @@ fun EditIdeaScreen(
                     Text(stringResource(R.string.action_save_changes))
                 }
             }
-        }
+        } // end when
+        } // end outer Column
     }
 }
