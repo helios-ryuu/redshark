@@ -32,8 +32,11 @@ object Dimens {
 
     // Buttons & brand
     val ButtonHeight = 52.dp
+    val ButtonProgressIndicatorSize = 18.dp
+    val ButtonProgressIndicatorStroke = 2.dp
     val BrandIconContainer = 88.dp
     val BrandIconInner = 44.dp
+    val NotificationSheetMaxHeight = 480.dp
 
     // Search
     val SearchBarMinHeight = 40.dp
