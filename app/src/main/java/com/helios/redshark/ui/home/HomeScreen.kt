@@ -31,9 +31,13 @@ import com.helios.redshark.ui.common.AvatarImage
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.helios.redshark.R
+import com.helios.redshark.domain.model.Idea
 import com.helios.redshark.ui.auth.AuthViewModel
+import com.helios.redshark.ui.comment.CommentSheetContent
 import com.helios.redshark.ui.message.ConversationListScreen
 import com.helios.redshark.ui.message.MessageViewModel
+import com.helios.redshark.ui.message.ShareConversationSheetContent
+import com.helios.redshark.ui.navigation.Routes
 import com.helios.redshark.ui.myideas.MyIdeasScreen
 import com.helios.redshark.ui.notification.NotificationListScreen
 import com.helios.redshark.ui.notification.NotificationViewModel
@@ -67,6 +71,12 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
     var showNotifSheet by remember { mutableStateOf(false) }
     val notifSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showCommentSheet by remember { mutableStateOf(false) }
+    var commentIdeaId by remember { mutableStateOf<UUID?>(null) }
+    val commentSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showShareSheet by remember { mutableStateOf(false) }
+    var shareIdea by remember { mutableStateOf<Idea?>(null) }
+    val shareSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val messageUnreadCount = remember(messageState.conversations, currentUserId) {
         if (currentUserId == null) 0
@@ -106,6 +116,77 @@ fun HomeScreen(
                 NotificationListScreen(
                     viewModel = notificationViewModel,
                     onOpenIdea = onNavigateToIdeaDetail,
+                )
+            }
+        }
+    }
+
+    if (showCommentSheet && commentIdeaId != null) {
+        ModalBottomSheet(
+            onDismissRequest = { showCommentSheet = false },
+            sheetState = commentSheetState,
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimens.SpaceLg, vertical = Dimens.SpaceSm),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(R.string.comment_title),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                TextButton(onClick = { showCommentSheet = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
+            HorizontalDivider()
+            Box(modifier = Modifier.fillMaxWidth().height(Dimens.NotificationSheetMaxHeight)) {
+                CommentSheetContent(
+                    ideaId = commentIdeaId!!,
+                    currentUserId = currentUserId ?: "",
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
+        }
+    }
+
+    if (showShareSheet && shareIdea != null) {
+        val idea = shareIdea!!
+        ModalBottomSheet(
+            onDismissRequest = { showShareSheet = false },
+            sheetState = shareSheetState,
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimens.SpaceLg, vertical = Dimens.SpaceSm),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(R.string.message_share_title),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                TextButton(onClick = { showShareSheet = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
+            HorizontalDivider()
+            val description = idea.description?.trim().orEmpty()
+            val shareLink = Routes.ideaDeepLink(idea.id.toString())
+            val shareMessage = if (description.isNotEmpty()) {
+                stringResource(R.string.message_share_idea_template, idea.title, description, shareLink)
+            } else {
+                stringResource(R.string.message_share_idea_template_title_only, idea.title, shareLink)
+            }
+            Box(modifier = Modifier.fillMaxWidth().height(Dimens.NotificationSheetMaxHeight)) {
+                ShareConversationSheetContent(
+                    currentUserId = currentUserId,
+                    messageText = shareMessage,
+                    onSent = { showShareSheet = false },
+                    modifier = Modifier.fillMaxSize(),
                 )
             }
         }
@@ -269,11 +350,27 @@ fun HomeScreen(
             when (selectedTab) {
                 HomeTab.HOME -> HomeFeedScreen(
                     onIdeaClick = onNavigateToIdeaDetail,
+                    onCommentClick = { ideaId ->
+                        commentIdeaId = ideaId
+                        showCommentSheet = true
+                    },
+                    onShareClick = { idea ->
+                        shareIdea = idea
+                        showShareSheet = true
+                    },
                     modifier = Modifier.padding(padding),
                 )
                 HomeTab.IDEAS -> MyIdeasScreen(
                     onIdeaClick = onNavigateToIdeaDetail,
                     onCreateIdea = onCreateIdea,
+                    onCommentClick = { ideaId ->
+                        commentIdeaId = ideaId
+                        showCommentSheet = true
+                    },
+                    onShareClick = { idea ->
+                        shareIdea = idea
+                        showShareSheet = true
+                    },
                     modifier = Modifier.padding(padding),
                 )
                 HomeTab.MESSAGES -> ConversationListScreen(

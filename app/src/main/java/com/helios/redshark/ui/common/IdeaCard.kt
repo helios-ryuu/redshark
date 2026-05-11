@@ -54,6 +54,8 @@ fun IdeaCard(
     imageUrl: String? = null,
     upvoteCount: Int = 0,
     commentCount: Int = 0,
+    isUpvoted: Boolean = false,
+    isDownvoted: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     val today = remember { LocalDate.now() }
@@ -180,6 +182,10 @@ fun IdeaCard(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                val upvoteTint = if (isUpvoted) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.onSurfaceVariant
+                val downvoteTint = if (isDownvoted) MaterialTheme.colorScheme.error
+                else MaterialTheme.colorScheme.onSurfaceVariant
                 TextButton(
                     onClick = onUpvote,
                     contentPadding = PaddingValues(horizontal = Dimens.SpaceSm),
@@ -188,13 +194,13 @@ fun IdeaCard(
                         imageVector = Icons.Outlined.ThumbUp,
                         contentDescription = stringResource(R.string.idea_action_upvote),
                         modifier = Modifier.size(Dimens.IconSm),
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = upvoteTint,
                     )
                     Spacer(modifier = Modifier.width(Dimens.SpaceXxs))
                     Text(
                         text = upvoteCount.toString(),
                         style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.primary,
+                        color = upvoteTint,
                     )
                 }
                 IconButton(onClick = onDownvote) {
@@ -202,7 +208,7 @@ fun IdeaCard(
                         imageVector = Icons.Outlined.ThumbDown,
                         contentDescription = stringResource(R.string.idea_action_downvote),
                         modifier = Modifier.size(Dimens.IconSm),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = downvoteTint,
                     )
                 }
                 TextButton(

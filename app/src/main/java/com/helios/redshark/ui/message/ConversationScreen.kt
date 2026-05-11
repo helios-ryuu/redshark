@@ -35,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -46,7 +47,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -70,18 +78,36 @@ private sealed interface ConvListItem {
     data class MessageItem(val message: Message, val showAvatar: Boolean) : ConvListItem
 }
 
+private val IdeaLinkRegex = Regex("redshark://idea/[0-9a-fA-F-]{36}")
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConversationScreen(
     conversationId: UUID,
     currentUserId: String,
     onNavigateBack: () -> Unit,
+    onOpenIdea: (UUID) -> Unit,
     viewModel: MessageViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.convState.collectAsStateWithLifecycle()
     val listUiState by viewModel.listState.collectAsStateWithLifecycle()
     var inputText by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
+    val defaultUriHandler = LocalUriHandler.current
+    val internalUriHandler = remember(defaultUriHandler, onOpenIdea) {
+        object : UriHandler {
+            override fun openUri(uri: String) {
+                if (uri.startsWith("redshark://idea/")) {
+                    val ideaId = uri.substringAfter("redshark://idea/")
+                    runCatching { UUID.fromString(ideaId) }
+                        .onSuccess(onOpenIdea)
+                        .onFailure { defaultUriHandler.openUri(uri) }
+                } else {
+                    defaultUriHandler.openUri(uri)
+                }
+            }
+        }
+    }
 
     val peerUser = remember(listUiState.conversations, conversationId, currentUserId, listUiState.usersById) {
         listUiState.conversations
@@ -148,27 +174,29 @@ fun ConversationScreen(
                     uiState.messages.isEmpty() -> EmptyContent(
                         message = stringResource(R.string.message_thread_empty),
                     )
-                    else -> LazyColumn(
-                        state = listState,
-                        contentPadding = PaddingValues(horizontal = Dimens.SpaceMd, vertical = Dimens.SpaceSm),
-                        verticalArrangement = Arrangement.spacedBy(Dimens.SpaceXs),
-                        modifier = Modifier.fillMaxSize(),
-                    ) {
-                        itemsIndexed(listItems, key = { _, item ->
-                            when (item) {
-                                is ConvListItem.DateSeparator -> "sep_${item.date}"
-                                is ConvListItem.MessageItem -> item.message.id.toString()
-                            }
-                        }) { _, item ->
-                            when (item) {
-                                is ConvListItem.DateSeparator -> DateSeparatorRow(item.date)
-                                is ConvListItem.MessageItem -> MessageBubble(
-                                    message = item.message,
-                                    isCurrentUser = item.message.senderId == currentUserId,
-                                    showAvatar = item.showAvatar,
-                                    avatarUrl = listUiState.usersById[item.message.senderId]?.avatarUrl,
-                                    displayName = listUiState.usersById[item.message.senderId]?.displayName,
-                                )
+                    else -> CompositionLocalProvider(LocalUriHandler provides internalUriHandler) {
+                        LazyColumn(
+                            state = listState,
+                            contentPadding = PaddingValues(horizontal = Dimens.SpaceMd, vertical = Dimens.SpaceSm),
+                            verticalArrangement = Arrangement.spacedBy(Dimens.SpaceXs),
+                            modifier = Modifier.fillMaxSize(),
+                        ) {
+                            itemsIndexed(listItems, key = { _, item ->
+                                when (item) {
+                                    is ConvListItem.DateSeparator -> "sep_${item.date}"
+                                    is ConvListItem.MessageItem -> item.message.id.toString()
+                                }
+                            }) { _, item ->
+                                when (item) {
+                                    is ConvListItem.DateSeparator -> DateSeparatorRow(item.date)
+                                    is ConvListItem.MessageItem -> MessageBubble(
+                                        message = item.message,
+                                        isCurrentUser = item.message.senderId == currentUserId,
+                                        showAvatar = item.showAvatar,
+                                        avatarUrl = listUiState.usersById[item.message.senderId]?.avatarUrl,
+                                        displayName = listUiState.usersById[item.message.senderId]?.displayName,
+                                    )
+                                }
                             }
                         }
                     }
@@ -339,6 +367,15 @@ private fun MessageBubble(
         alignment = Alignment.Start
     }
 
+    val linkColor = if (isCurrentUser) {
+        MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f)
+    } else {
+        MaterialTheme.colorScheme.primary
+    }
+    val annotatedMessage = remember(message.content, linkColor) {
+        buildMessageAnnotatedString(message.content, linkColor)
+    }
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = if (isCurrentUser) Arrangement.End else Arrangement.Start,
@@ -365,9 +402,8 @@ private fun MessageBubble(
             ) {
                 Column(modifier = Modifier.padding(horizontal = Dimens.SpaceMd, vertical = Dimens.SpaceSm)) {
                     Text(
-                        text = message.content,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = textColor,
+                        text = annotatedMessage,
+                        style = MaterialTheme.typography.bodyMedium.copy(color = textColor),
                     )
                     Text(
                         text = message.createdAt.atZone(ZoneId.systemDefault())
@@ -380,3 +416,38 @@ private fun MessageBubble(
         }
     }
 }
+
+private fun buildMessageAnnotatedString(message: String, linkColor: Color): AnnotatedString {
+    if (!IdeaLinkRegex.containsMatchIn(message)) {
+        return AnnotatedString(message)
+    }
+
+    return buildAnnotatedString {
+        var lastIndex = 0
+        for (match in IdeaLinkRegex.findAll(message)) {
+            val start = match.range.first
+            val end = match.range.last + 1
+            if (start > lastIndex) {
+                append(message.substring(lastIndex, start))
+            }
+            val url = match.value
+            val linkStart = length
+            append(url)
+            val linkEnd = length
+            addLink(LinkAnnotation.Url(url), linkStart, linkEnd)
+            addStyle(
+                SpanStyle(
+                    color = linkColor,
+                    textDecoration = TextDecoration.Underline,
+                ),
+                linkStart,
+                linkEnd,
+            )
+            lastIndex = end
+        }
+        if (lastIndex < message.length) {
+            append(message.substring(lastIndex))
+        }
+    }
+}
+

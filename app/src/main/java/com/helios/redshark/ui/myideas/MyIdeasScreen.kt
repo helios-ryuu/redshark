@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -27,7 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.compose.material.icons.outlined.Lightbulb
+import com.helios.redshark.domain.model.Idea
+import com.helios.redshark.domain.model.IdeaReaction
 import com.helios.redshark.R
 import com.helios.redshark.ui.common.EmptyContent
 import com.helios.redshark.ui.common.ErrorContent
@@ -40,6 +42,8 @@ import java.util.UUID
 fun MyIdeasScreen(
     onIdeaClick: (UUID) -> Unit,
     onCreateIdea: () -> Unit,
+    onCommentClick: (UUID) -> Unit,
+    onShareClick: (Idea) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MyIdeasViewModel = hiltViewModel(),
 ) {
@@ -96,7 +100,22 @@ fun MyIdeasScreen(
                     verticalArrangement = Arrangement.spacedBy(Dimens.SpaceSm),
                 ) {
                     items(uiState.displayedIdeas, key = { it.id.toString() }) { idea ->
-                        IdeaCard(idea = idea, onClick = { onIdeaClick(idea.id) })
+                        val reaction = uiState.reactionStates[idea.id] ?: IdeaReaction.NONE
+                        val upvoteDelta = uiState.upvoteDeltas[idea.id] ?: 0
+                        val upvoteCount = (idea.upvoteCount + upvoteDelta).coerceAtLeast(0)
+                        val commentCount = uiState.commentCounts[idea.id] ?: idea.commentCount
+                        IdeaCard(
+                            idea = idea,
+                            onClick = { onIdeaClick(idea.id) },
+                            onUpvote = { viewModel.toggleUpvote(idea.id) },
+                            onDownvote = { viewModel.toggleDownvote(idea.id) },
+                            onComment = { onCommentClick(idea.id) },
+                            onShare = { onShareClick(idea) },
+                            upvoteCount = upvoteCount,
+                            commentCount = commentCount,
+                            isUpvoted = reaction == IdeaReaction.UPVOTED,
+                            isDownvoted = reaction == IdeaReaction.DOWNVOTED,
+                        )
                     }
                 }
             }

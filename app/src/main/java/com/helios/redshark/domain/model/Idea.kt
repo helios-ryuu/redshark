@@ -13,6 +13,8 @@ data class Idea(
     val status: IdeaStatus,
     val tagIds: List<UUID>,
     val collaboratorIds: List<String>,
+    val upvoteCount: Int = 0,
+    val commentCount: Int = 0,
     val createdAt: Instant,
     val updatedAt: Instant,
     val deletedAt: Instant?              // null = not soft-deleted

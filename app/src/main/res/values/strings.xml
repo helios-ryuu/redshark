@@ -112,12 +112,18 @@
     <string name="idea_action_request_collab">Request to Join</string>
     <string name="idea_action_collab_sending">Sending…</string>
     <string name="idea_action_collab_sent">Request Sent</string>
-    <string name="idea_share_link_cd">Copy link</string>
+    <string name="idea_share_link_cd">Share link</string>
+    <string name="idea_share_link_title">Share idea</string>
     <string name="idea_section_issues">Issues (%1$d)</string>
     <string name="idea_section_issues_add_cd">Add Issue</string>
     <string name="idea_issues_empty">No issues yet.</string>
     <string name="idea_section_comments">Comments (%1$d)</string>
     <string name="idea_comment_placeholder">Write a comment…</string>
+
+    <!-- Comments -->
+    <string name="comment_title">Comments</string>
+    <string name="comment_empty">No comments yet.</string>
+    <string name="comment_empty_subtitle">Start the discussion.</string>
 
     <!-- Issue form -->
     <string name="issue_create_title">New Issue</string>
@@ -178,6 +184,11 @@
     <string name="message_date_today">Today</string>
     <string name="message_date_yesterday">Yesterday</string>
     <string name="message_unread_prefix">• </string>
+    <string name="message_share_title">Share idea</string>
+    <string name="message_share_empty">No conversations yet.</string>
+    <string name="message_share_empty_subtitle">Start a conversation in Messages first.</string>
+    <string name="message_share_idea_template">Idea: %1$s\n%2$s\n%3$s</string>
+    <string name="message_share_idea_template_title_only">Idea: %1$s\n%2$s</string>
 
     <!-- Profile -->
     <string name="profile_title_fallback">Profile</string>

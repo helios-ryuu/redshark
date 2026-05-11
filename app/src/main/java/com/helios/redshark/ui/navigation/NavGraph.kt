@@ -18,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import com.helios.redshark.ui.comment.CommentListScreen
 import com.helios.redshark.ui.createidea.CreateIdeaScreen
 import com.helios.redshark.ui.createissue.CreateIssueScreen
 import com.helios.redshark.ui.editidea.EditIdeaScreen
@@ -124,17 +125,37 @@ fun NavGraph(
         composable(
             route = Routes.IDEA_DETAIL,
             arguments = listOf(navArgument("ideaId") { type = NavType.StringType }),
-            deepLinks = listOf(navDeepLink { uriPattern = "redshark://idea/{ideaId}" }),
+            deepLinks = listOf(navDeepLink { uriPattern = Routes.IDEA_DEEP_LINK }),
         ) { backStackEntry ->
             val ideaId = backStackEntry.arguments?.getString("ideaId")
                 ?.let { UUID.fromString(it) } ?: return@composable
             IdeaDetailScreen(
                 ideaId = ideaId,
                 currentUserId = currentUserId ?: "",
-                onNavigateBack = { navController.popBackStack() },
+                onNavigateBack = {
+                    val popped = navController.popBackStack()
+                    if (!popped) {
+                        navController.navigate(Routes.HOME) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                },
                 onEditIdea = { navController.navigate(Routes.ideaEdit(it.toString())) },
                 onCreateIssue = { navController.navigate(Routes.issueCreate(it.toString())) },
                 onIssueClick = { navController.navigate(Routes.issueDetail(it.toString())) },
+            )
+        }
+
+        composable(
+            route = Routes.IDEA_COMMENTS,
+            arguments = listOf(navArgument("ideaId") { type = NavType.StringType }),
+        ) { backStackEntry ->
+            val ideaId = backStackEntry.arguments?.getString("ideaId")
+                ?.let { UUID.fromString(it) } ?: return@composable
+            CommentListScreen(
+                ideaId = ideaId,
+                currentUserId = currentUserId ?: "",
+                onNavigateBack = { navController.popBackStack() },
             )
         }
 
@@ -243,6 +264,7 @@ fun NavGraph(
                 conversationId = conversationId,
                 currentUserId = currentUserId ?: "",
                 onNavigateBack = { navController.popBackStack() },
+                onOpenIdea = { ideaId -> navController.navigate(Routes.ideaDetail(ideaId.toString())) },
             )
         }
 

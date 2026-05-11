@@ -75,7 +75,6 @@ class IdeaDetailViewModel @Inject constructor(
             _uiState.update { it.copy(isLoadingIdea = true, errorMessage = null) }
             try {
                 val idea = getIdeaDetailUseCase(ideaId)
-                // TC-C06: derive edit permission once so every Composable recompose is O(1)
                 _uiState.update {
                     it.copy(
                         idea = idea,
