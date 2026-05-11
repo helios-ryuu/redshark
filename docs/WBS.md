@@ -308,6 +308,7 @@ Tuần 9 ─ 12/05 → 17/05 │ Kiểm thử hồi quy + phát hành v1.0.0
 - Phụ thuộc: 5.2.1.
 - Thời gian: 07/05 - 11/05.
 - Ghi chú: ✅ Hoàn thành 25/04/2026. Sản phẩm: `ConversationScretaen`, `SendMessageUseCase`, `GetMessagesUseCase`; optimistic send + real-time Firestore listener; chống trùng qua `findDirectConversation` trước `createDirectConversation`.
+- Bổ sung: Share idea kèm deep link `redshark://idea/{id}` trong hội thoại; tap link mở `IdeaDetail`, back quay lại conversation nếu mở trong app.
 
 ## 4A.0 Nâng cấp giao diện người dùng (UI Overhaul — Fluent Minimal)
 
