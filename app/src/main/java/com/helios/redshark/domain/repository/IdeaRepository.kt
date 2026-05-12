@@ -2,6 +2,7 @@ package com.helios.redshark.domain.repository
 
 import com.helios.redshark.domain.model.CreateIdeaInput
 import com.helios.redshark.domain.model.Idea
+import com.helios.redshark.domain.model.IdeaReaction
 import com.helios.redshark.domain.model.IdeaStatus
 import com.helios.redshark.domain.model.UpdateIdeaInput
 import kotlinx.coroutines.flow.Flow
@@ -29,4 +30,10 @@ interface IdeaRepository {
 
     /** Appends [userId] to collaboratorIds using arrayUnion (idempotent). */
     suspend fun addCollaborator(ideaId: UUID, userId: String): Idea
+
+    /** Emits the current user's reaction for the idea (UPVOTED/DOWNVOTED/NONE). */
+    fun getReaction(ideaId: UUID): Flow<IdeaReaction>
+
+    /** Updates current user's reaction for the idea (upvote/downvote/none). */
+    suspend fun setReaction(ideaId: UUID, reaction: IdeaReaction)
 }

@@ -23,6 +23,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.helios.redshark.domain.model.Idea
+import com.helios.redshark.domain.model.IdeaReaction
 import com.helios.redshark.R
 import com.helios.redshark.ui.common.EmptyContent
 import com.helios.redshark.ui.common.ErrorContent
@@ -34,6 +36,8 @@ import java.util.UUID
 @Composable
 fun HomeFeedScreen(
     onIdeaClick: (UUID) -> Unit,
+    onCommentClick: (UUID) -> Unit,
+    onShareClick: (Idea) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -82,9 +86,21 @@ fun HomeFeedScreen(
                     }
                 }
                 items(uiState.ideas, key = { it.id.toString() }) { idea ->
+                    val reaction = uiState.reactionStates[idea.id] ?: IdeaReaction.NONE
+                    val upvoteDelta = uiState.upvoteDeltas[idea.id] ?: 0
+                    val upvoteCount = (idea.upvoteCount + upvoteDelta).coerceAtLeast(0)
+                    val commentCount = uiState.commentCounts[idea.id] ?: idea.commentCount
                     IdeaCard(
                         idea = idea,
                         onClick = { onIdeaClick(idea.id) },
+                        onUpvote = { viewModel.toggleUpvote(idea.id) },
+                        onDownvote = { viewModel.toggleDownvote(idea.id) },
+                        onComment = { onCommentClick(idea.id) },
+                        onShare = { onShareClick(idea) },
+                        upvoteCount = upvoteCount,
+                        commentCount = commentCount,
+                        isUpvoted = reaction == IdeaReaction.UPVOTED,
+                        isDownvoted = reaction == IdeaReaction.DOWNVOTED,
                         modifier = Modifier.padding(horizontal = Dimens.SpaceLg),
                     )
                 }

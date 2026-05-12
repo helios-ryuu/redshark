@@ -1,8 +1,6 @@
 package com.helios.redshark.ui.ideadetail
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -68,6 +66,7 @@ import com.helios.redshark.ui.common.IdeaStatusPill
 import com.helios.redshark.ui.common.InlineErrorText
 import com.helios.redshark.ui.common.IssueCard
 import com.helios.redshark.ui.common.LoadingContent
+import com.helios.redshark.ui.navigation.Routes
 import com.helios.redshark.ui.theme.Dimens
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -89,6 +88,14 @@ fun IdeaDetailScreen(
     val context = LocalContext.current
     var commentText by remember { mutableStateOf("") }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    val shareLink = remember(ideaId) { Routes.ideaDeepLink(ideaId.toString()) }
+    val ideaTitle = uiState.idea?.title ?: stringResource(R.string.idea_detail_title_fallback)
+    val shareText = stringResource(
+        R.string.message_share_idea_template_title_only,
+        ideaTitle,
+        shareLink,
+    )
+    val shareChooserTitle = stringResource(R.string.idea_share_link_title)
 
     LaunchedEffect(ideaId) {
         viewModel.loadIdea(ideaId, currentUserId)
@@ -141,9 +148,16 @@ fun IdeaDetailScreen(
                 },
                 actions = {
                     IconButton(onClick = {
-                        val link = "redshark://idea/$ideaId"
-                        val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                        cm.setPrimaryClip(ClipData.newPlainText("idea_link", link))
+                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TEXT, shareText)
+                        }
+                        context.startActivity(
+                            Intent.createChooser(
+                                shareIntent,
+                                shareChooserTitle,
+                            ),
+                        )
                     }) {
                         Icon(Icons.Default.Share, contentDescription = stringResource(R.string.idea_share_link_cd))
                     }

@@ -35,9 +35,18 @@ Mọi collection đều dùng document ID Firestore (tự sinh UUID hoặc bằn
 | status          | String (Enum)   | {ACTIVE, CLOSED, CANCELLED}, default ACTIVE      | Strong   |
 | tags            | Array\<String\> | Mảng tên tag                                     | Medium   |
 | collaboratorIds | Array\<String\> | Mảng UID → `users`                               | Medium   |
+| upvoteCount     | Number          | default 0                                       | Medium   |
+| commentCount    | Number          | default 0                                       | Medium   |
 | createdAt       | Timestamp       | Server timestamp khi tạo                         | Strong   |
 | updatedAt       | Timestamp       | Server timestamp khi cập nhật                    | Strong   |
 | deletedAt       | Timestamp?      | NULL → chưa xóa; soft delete                     | Strong   |
+
+> Subcollection `ideas/{ideaId}/reactions` (per-user reaction doc id = Firebase UID):
+>
+> | Thuộc tính | Kiểu Firestore | Ràng buộc | Toàn vẹn |
+> |------------|----------------|-----------|----------|
+> | reaction   | String (Enum)  | {UPVOTED, DOWNVOTED}, NOT NULL | Medium |
+> | updatedAt  | Timestamp      | Server timestamp khi cập nhật | Medium |
 
 ---
 

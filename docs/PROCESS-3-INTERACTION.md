@@ -88,3 +88,13 @@ WBS tham chiếu: [WBS.md](WBS.md) — nhóm công việc `5.0`.
 | 3    | `NotificationListScreen` mở | Theo dõi realtime list + unread count               | Đọc `notifications`   |
 
 > Ghi chú: Nếu cần tối ưu pin/network ở giai đoạn sau, có thể bổ sung cơ chế polling hoặc throttling theo lifecycle.
+
+## 8. Chia sẻ idea qua tin nhắn (deep link)
+
+| Bước | Giao diện                                        | Dịch vụ | Bảng |
+|------|--------------------------------------------------|---------|------|
+| 1    | `IdeaDetailScreen` / danh sách idea → Share      | —       | —    |
+| 2    | Nội dung share kèm `redshark://idea/{ideaId}`     | —       | —    |
+| 3    | `ConversationScreen` render link dạng clickable  | —       | —    |
+| 4    | Tap link → điều hướng nội bộ vào `IdeaDetail`    | —       | —    |
+| 5    | Back → quay lại `ConversationScreen` nếu mở in-app | —     | —    |

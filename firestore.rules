@@ -23,6 +23,13 @@ service cloud.firestore {
         && request.resource.data.collaboratorIds.hasAll(resource.data.collaboratorIds);
     }
 
+    function isReactionCountUpdate() {
+      return isSignedIn()
+        && request.resource.data.diff(resource.data)
+          .changedKeys().hasOnly(["upvoteCount", "updatedAt"])
+        && request.resource.data.upvoteCount >= 0;
+    }
+
     match /users/{userId} {
       allow read: if isSignedIn();
       allow write: if isOwner(userId);
@@ -31,8 +38,14 @@ service cloud.firestore {
     match /ideas/{ideaId} {
       allow read: if isSignedIn();
       allow create: if isSignedIn();
-      allow update: if isOwner(resource.data.authorId) || isAddingSelfAsCollaborator();
-      allow delete: if isOwner(resource.data.authorId);
+      allow update, delete: if isOwner(resource.data.authorId)
+                            || isAddingSelfAsCollaborator()
+                            || isReactionCountUpdate();
+
+      match /reactions/{reactionId} {
+        allow read: if isSignedIn();
+        allow create, update, delete: if isSignedIn() && request.auth.uid == reactionId;
+      }
     }
 
     match /issues/{issueId} {

@@ -230,6 +230,7 @@ Chi tiết tại [STRUCTURE.md](STRUCTURE.md). Mã nguồn được tổ chức 
 **Nhóm chức năng Thông báo/Nhắn tin:**
 - Cập nhật theo chu kỳ bằng `viewModelScope.launch { while (isActive) { delay(...); refresh() } }` — vòng lặp gắn với vòng đời ViewModel, tự hủy khi ViewModel bị clear.
 - Cập nhật lạc quan: thêm dữ liệu cục bộ trước, hoàn tác nếu thất bại.
+- Chia sẻ idea qua tin nhắn bằng deep link `redshark://idea/{id}`; nội dung hiển thị dạng link và mở `IdeaDetail`, Back quay lại `ConversationScreen` nếu mở trong app.
 
 ### 4.4 Tích hợp dịch vụ bên ngoài
 - **Firebase:** `google-services.json` + init trong `RedSharkApp`.

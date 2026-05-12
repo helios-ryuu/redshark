@@ -10,6 +10,7 @@ import com.helios.redshark.data.mapper.toDomain
 import com.helios.redshark.data.remote.firestore.dto.IdeaDto
 import com.helios.redshark.domain.model.CreateIdeaInput
 import com.helios.redshark.domain.model.Idea
+import com.helios.redshark.domain.model.IdeaReaction
 import com.helios.redshark.domain.model.IdeaStatus
 import com.helios.redshark.domain.model.UpdateIdeaInput
 import com.helios.redshark.domain.repository.IdeaRepository
@@ -123,6 +124,8 @@ class IdeaRepositoryImpl @Inject constructor(
                 "status" to IdeaStatus.ACTIVE.name,
                 "tagIds" to input.tagIds.map { it.toString() },
                 "collaboratorIds" to emptyList<String>(),
+                "upvoteCount" to 0,
+                "commentCount" to 0,
                 "createdAt" to FieldValue.serverTimestamp(),
                 "updatedAt" to FieldValue.serverTimestamp(),
                 "deletedAt" to null,
@@ -209,4 +212,88 @@ class IdeaRepositoryImpl @Inject constructor(
             throw AppException.NetworkException(e)
         }
     }
+
+    override suspend fun setReaction(ideaId: UUID, reaction: IdeaReaction) {
+        if (!networkChecker.isOnline()) throw AppException.NetworkException()
+        val uid = auth.currentUser?.uid ?: throw AppException.UnauthorizedException()
+        val ideaRef = ideas.document(ideaId.toString())
+        val reactionRef = ideaRef.collection("reactions").document(uid)
+
+        try {
+            firestore.runTransaction { transaction ->
+                val ideaSnapshot = transaction.get(ideaRef)
+                if (!ideaSnapshot.exists()) throw AppException.NotFoundException("Idea")
+
+                val currentCount = (ideaSnapshot.getLong("upvoteCount") ?: 0L).toInt()
+                val currentReaction = reactionFromString(
+                    transaction.get(reactionRef).getString("reaction")
+                )
+
+                val targetReaction = if (currentReaction == reaction) IdeaReaction.NONE else reaction
+                val nextCount = computeNextUpvoteCount(currentCount, currentReaction, targetReaction)
+
+                transaction.update(
+                    ideaRef,
+                    mapOf(
+                        "upvoteCount" to nextCount,
+                        "updatedAt" to FieldValue.serverTimestamp(),
+                    )
+                )
+
+                if (targetReaction == IdeaReaction.NONE) {
+                    transaction.delete(reactionRef)
+                } else {
+                    transaction.set(
+                        reactionRef,
+                        mapOf(
+                            "reaction" to targetReaction.name,
+                            "updatedAt" to FieldValue.serverTimestamp(),
+                        )
+                    )
+                }
+            }.await()
+        } catch (e: AppException) {
+            throw e
+        } catch (e: Exception) {
+            throw AppException.NetworkException(e)
+        }
+    }
+
+    override fun getReaction(ideaId: UUID): Flow<IdeaReaction> = callbackFlow {
+        val uid = auth.currentUser?.uid ?: run {
+            close(AppException.UnauthorizedException())
+            return@callbackFlow
+        }
+        val reactionRef = ideas.document(ideaId.toString())
+            .collection("reactions")
+            .document(uid)
+
+        val registration = reactionRef.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                close(AppException.NetworkException(error))
+                return@addSnapshotListener
+            }
+            val reaction = reactionFromString(snapshot?.getString("reaction"))
+            trySend(reaction)
+        }
+        awaitClose { registration.remove() }
+    }
+}
+
+private fun reactionFromString(value: String?): IdeaReaction =
+    runCatching { value?.let(IdeaReaction::valueOf) }.getOrNull() ?: IdeaReaction.NONE
+
+private fun computeNextUpvoteCount(
+    currentCount: Int,
+    currentReaction: IdeaReaction,
+    targetReaction: IdeaReaction,
+): Int {
+    var nextCount = currentCount
+    if (currentReaction == IdeaReaction.UPVOTED && targetReaction != IdeaReaction.UPVOTED) {
+        nextCount -= 1
+    }
+    if (currentReaction != IdeaReaction.UPVOTED && targetReaction == IdeaReaction.UPVOTED) {
+        nextCount += 1
+    }
+    return nextCount.coerceAtLeast(0)
 }

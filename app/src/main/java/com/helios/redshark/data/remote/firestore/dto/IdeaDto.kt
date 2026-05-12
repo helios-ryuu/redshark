@@ -12,6 +12,8 @@ data class IdeaDto(
     val status: String = "ACTIVE",
     val tagIds: List<String> = emptyList(),
     val collaboratorIds: List<String> = emptyList(),
+    val upvoteCount: Long = 0,
+    val commentCount: Long = 0,
     val createdAt: Timestamp? = null,
     val updatedAt: Timestamp? = null,
     val deletedAt: Timestamp? = null,

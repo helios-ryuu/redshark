@@ -39,6 +39,8 @@ WBS tham chiếu: [WBS.md](WBS.md) — kiểm thử cho nhóm công việc `5.0`
 | TC-M09 | Scroll load lịch sử             | Conversation dài → scroll lên               | Tất cả message cũ load từ Firestore (hiện chưa phân trang)                   | ✅          | Pass               |
 | TC-M10 | Back navigation                 | Trong conversation → Back                   | Về list Messages, lastMessagePreview cập nhật                                 | ✅          | Pass               |
 
+> Ghi chú (Message): Nội dung có `redshark://idea/{id}` hiển thị như link, tap sẽ mở `IdeaDetail`; nếu mở từ trong app thì Back quay lại `ConversationScreen`.
+
 | **TỔNG PLAN-3** | | | | **18/18 ✅** | UI Fluent Minimalist finalized 05/05/2026 — NotificationItem/ConversationItem Surface+BorderStroke pattern applied |
 
 **PLAN-4-FINALIZE — Cross-cutting NFR (do Sỹ):**
