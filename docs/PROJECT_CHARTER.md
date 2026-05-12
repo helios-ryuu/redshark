@@ -34,9 +34,9 @@
 
 | Vai trò | Tên | Trách nhiệm |
 |---------|-----|-------------|
-| Quản lý dự án | Sỹ | Lập kế hoạch, quản lý tiến độ, báo cáo, kiểm thử cuối kỳ; phụ trách nhóm chức năng **Xác thực & Hồ sơ** (WBS 3.0) |
-| Lập trình viên Android | Hải | Phụ trách nhóm chức năng **Nội dung** (WBS 4.0): Ý tưởng, Công việc, Bình luận, Collab Request |
-| Lập trình viên Android | Nam | Phụ trách nhóm chức năng **Tương tác** (WBS 5.0): Thông báo, Nhắn tin 1-1; phối hợp UI/ViewModel trong giai đoạn Nội dung |
+| Quản lý dự án | Sỹ | Lập kế hoạch, quản lý tiến độ, báo cáo, kiểm thử cuối kỳ; phụ trách **Xác thực & Hồ sơ** |
+| Lập trình viên Android | Hải | Phụ trách **Nội dung**: Ý tưởng, Media, Công việc, Bình luận, Collab Request |
+| Lập trình viên Android | Nam | Phụ trách **Tương tác**: Thông báo, Nhắn tin 1-1; phối hợp UI/ViewModel |
 | Đại diện nghiệp vụ | Giảng viên môn NT118.Q22 | Phê duyệt yêu cầu, đánh giá kết quả |
 | Người dùng cuối | Sinh viên / nhóm dự án nhỏ | Sử dụng ứng dụng để theo dõi ý tưởng/công việc |
 
@@ -58,7 +58,7 @@
 - [ ] Kiểm thử thủ công đạt ≥ 95% trường hợp đạt
 - [ ] Sản phẩm bàn giao: APK + mã nguồn + tài liệu trong `/docs` + báo cáo
 
-WBS tham chiếu: [WBS.md](WBS.md) (truy vết công việc, phụ thuộc và trách nhiệm).
+Tài liệu tham chiếu: [PROCESS.md](PROCESS.md) cho quy trình tính năng và [TESTING.md](TESTING.md) cho kiểm thử/nghiệm thu.
 
 ## 7. Ngân sách & Tài nguyên
 - **Nhân lực:** 3 người × 9 tuần (16/03/2026 – 17/05/2026)

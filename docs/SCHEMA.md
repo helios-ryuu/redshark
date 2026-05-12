@@ -33,8 +33,9 @@ Mọi collection đều dùng document ID Firestore (tự sinh UUID hoặc bằn
 | title           | String          | NOT NULL, length 3..120                          | Strong   |
 | description     | String?         | NULL, max 5000                                   | Medium   |
 | status          | String (Enum)   | {ACTIVE, CLOSED, CANCELLED}, default ACTIVE      | Strong   |
-| tags            | Array\<String\> | Mảng tên tag                                     | Medium   |
+| tagIds          | Array\<String\> | Mảng UUID tag                                    | Medium   |
 | collaboratorIds | Array\<String\> | Mảng UID → `users`                               | Medium   |
+| mediaAttachments | Array\<Map\> | Metadata ảnh/video; binary lưu trong Cloudflare R2 | Medium |
 | upvoteCount     | Number          | default 0                                       | Medium   |
 | commentCount    | Number          | default 0                                       | Medium   |
 | createdAt       | Timestamp       | Server timestamp khi tạo                         | Strong   |
@@ -47,6 +48,8 @@ Mọi collection đều dùng document ID Firestore (tự sinh UUID hoặc bằn
 > |------------|----------------|-----------|----------|
 > | reaction   | String (Enum)  | {UPVOTED, DOWNVOTED}, NOT NULL | Medium |
 > | updatedAt  | Timestamp      | Server timestamp khi cập nhật | Medium |
+
+> `mediaAttachments[]` gồm `id`, `url`, `type` (`IMAGE`/`VIDEO`), `mimeType`, `fileName`, `sizeBytes`, `createdBy`, `createdAt`. Author có thể sửa toàn bộ idea; collaborator chỉ được cập nhật `mediaAttachments` và `updatedAt`.
 
 ---
 
@@ -192,6 +195,13 @@ service cloud.firestore {
       return request.auth.uid in participantIds;
     }
 
+    function isCollaboratorMediaUpdate() {
+      return isSignedIn()
+        && request.auth.uid in resource.data.collaboratorIds
+        && request.resource.data.diff(resource.data)
+          .changedKeys().hasOnly(["mediaAttachments", "updatedAt"]);
+    }
+
     match /users/{uid} {
       allow read: if isSignedIn();
       allow write: if isOwner(uid);
@@ -199,7 +209,8 @@ service cloud.firestore {
     match /ideas/{ideaId} {
       allow read: if isSignedIn();
       allow create: if isSignedIn();
-      allow update, delete: if isOwner(resource.data.authorId);
+      allow update, delete: if isOwner(resource.data.authorId)
+                            || isCollaboratorMediaUpdate();
     }
     match /issues/{issueId} {
       allow read: if isSignedIn();
@@ -303,6 +314,37 @@ firebase deploy --only firestore:indexes
 ```
 
 Index build bất đồng bộ — theo dõi tại **Firebase Console → Firestore → Indexes** (thường 1–5 phút cho dataset nhỏ).
+
+---
+
+### Chuẩn bị production trắng dữ liệu
+
+Production dùng Firebase project `redshark-application` và Cloudflare R2 bucket khai báo trong `local.properties` hoặc biến môi trường. Sau khi deploy rules/indexes, môi trường production phải kết thúc ở trạng thái:
+
+- Firestore: không còn document trong root collections và subcollections.
+- Firebase Authentication: không còn user.
+- Cloudflare R2: không còn object trong bucket ứng dụng.
+- Rules, indexes, Firebase project, R2 bucket và public domain vẫn giữ nguyên để sẵn sàng nhận dữ liệu thật.
+
+Chạy kiểm tra không phá hủy:
+
+```bash
+python scripts/reset_production.py dry-run --project redshark-application
+```
+
+Reset có xác nhận bắt buộc:
+
+```bash
+python scripts/reset_production.py reset --project redshark-application --confirm REDSHARK_PRODUCTION_RESET
+```
+
+Xác minh sau reset:
+
+```bash
+python scripts/reset_production.py verify --project redshark-application
+```
+
+> Không chạy `scripts/seed_firestore.py` trên production. Script seed chỉ dùng cho dev/staging vì nó ghi dữ liệu mẫu.
 
 ---
 

@@ -68,13 +68,13 @@ Bảng dưới đây chốt rõ mọi trường hợp thường gặp: commit th
 
 | Trường hợp | Mẫu commit message | Ví dụ | Tạo từ nhánh | Commit tại nhánh | Hợp nhất đến | Ghi chú |
 |---|---|---|---|---|---|---|
-| Chỉnh sửa tài liệu nhỏ, cần hiệu lực ngay (không cần review) | `docs(<scope>): <message>` | `docs(wbs): update owner for WBS 2.2.2` | Không cần tạo nhánh mới | `develop` | Không bắt buộc PR | Không push trực tiếp vào `main` |
+| Chỉnh sửa tài liệu nhỏ, cần hiệu lực ngay (không cần review) | `docs(<scope>): <message>` | `docs(testing): update regression checklist` | Không cần tạo nhánh mới | `develop` | Không bắt buộc PR | Không push trực tiếp vào `main` |
 | Chỉnh sửa tài liệu đi kèm tính năng | `docs(<scope>): <message>` | `docs(auth): document Google Sign-In flow` | `develop` | `feature/<name>` | `develop` | Đi cùng PR của tính năng |
-| Khởi tạo/cấu hình nền tảng, build, tooling | `chore(<scope>): <message>` | `chore(build): align gradle plugin versions` | `develop` | `feature/<name>` | `develop` | Dùng cho Foundation (`WBS 2.0`) |
+| Khởi tạo/cấu hình nền tảng, build, tooling | `chore(<scope>): <message>` | `chore(build): align gradle plugin versions` | `develop` | `feature/<name>` | `develop` | Dùng cho thay đổi nền tảng/build |
 | Thêm tính năng mới | `feat(<scope>): <message>` | `feat(auth): add Google Sign-In flow` | `develop` | `feature/<name>` | `develop` | Nhóm scope: `auth`, `profile`, `idea`, `issue`, `comment`, `notification`, `message` |
 | Sửa lỗi trong quá trình phát triển thường | `fix(<scope>): <message>` | `fix(profile): trim displayName before validation` | `develop` | `feature/<name>` | `develop` | Nếu lỗi nằm trong nhánh feature đang làm, sửa trực tiếp trên nhánh đó |
 | Cải tổ code, không đổi hành vi | `refactor(<scope>): <message>` | `refactor(data): extract auth mapper` | `develop` | `feature/<name>` | `develop` | Khuyến nghị đi kèm test |
-| Bổ sung/chỉnh test | `test(<scope>): <message>` | `test(auth): add sign-in failure unit tests` | `develop` | `feature/<name>` | `develop` | Ưu tiên gắn WBS liên quan trong mô tả PR |
+| Bổ sung/chỉnh test | `test(<scope>): <message>` | `test(auth): add sign-in failure unit tests` | `develop` | `feature/<name>` | `develop` | Ưu tiên gắn module liên quan trong mô tả PR |
 | Tối ưu hiệu năng | `perf(<scope>): <message>` | `perf(message): reduce conversation polling allocations` | `develop` | `feature/<name>` | `develop` | Nếu chưa ở pha release |
 | Sửa lỗi ở pha ổn định phát hành | `fix(<scope>): <message>` | `fix(release): prevent crash on empty notification list` | `develop` (tạo `release/*`) | `release/<version>` | `main` và merge ngược `develop` | Chỉ nhận `fix`, `docs`, `chore` trong nhánh `release/*` |
 | Chỉnh docs/chore phục vụ phát hành | `docs(release): <message>` / `chore(release): <message>` | `docs(release): add known issues for v1.0.0` | `develop` (tạo `release/*`) | `release/<version>` | `main` và merge ngược `develop` | Không thêm `feat` mới trên `release/*` |
@@ -90,9 +90,9 @@ Bảng dưới đây chốt rõ mọi trường hợp thường gặp: commit th
 ## 4) Quy tắc commit theo tiến độ
 
 Dựa theo `docs/TIMELINE.md`, chỉ chốt commit mốc chính ở đúng cửa sổ thời gian:
-Để truy vết theo kế hoạch, mô tả PR/commit nên nêu mã WBS liên quan (ví dụ: `WBS 3.2.1`), đối chiếu tại [WBS.md](WBS.md).
+Để truy vết theo kế hoạch, mô tả PR/commit nên nêu module liên quan (`auth`, `profile`, `idea`, `media`, `issue`, `comment`, `notification`, `message`, `docs`) và checklist kiểm thử trong [TESTING.md](TESTING.md).
 
-Quy ước phụ trách theo WBS:
+Quy ước phụ trách theo module:
 - Nhóm `3.0` (Auth/Profile): **Sỹ** chịu trách nhiệm commit chính.
 - Nhóm `4.0` (Content): **Hải** chịu trách nhiệm commit chính.
 - Nhóm `5.0` (Interaction): **Nam** chịu trách nhiệm commit chính.
