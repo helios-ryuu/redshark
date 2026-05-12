@@ -1,3 +1,222 @@
 <resources>
     <string name="app_name">RedShark</string>
+
+    <!-- Thao tác chung -->
+    <string name="action_retry">Thử lại</string>
+    <string name="action_save">Lưu</string>
+    <string name="action_save_changes">Lưu thay đổi</string>
+    <string name="action_cancel">Hủy</string>
+    <string name="action_delete">Xóa</string>
+    <string name="action_edit">Sửa</string>
+    <string name="action_back">Quay lại</string>
+    <string name="action_ok">Đồng ý</string>
+    <string name="action_send">Gửi</string>
+    <string name="action_continue">Tiếp tục</string>
+
+    <!-- Xác thực -->
+    <string name="auth_tagline">Cộng tác trên những ý tưởng đáng làm</string>
+    <string name="auth_sign_in_google">Tiếp tục với Google</string>
+    <string name="auth_complete_profile">Hoàn thiện hồ sơ</string>
+    <string name="auth_choose_display_name">Chọn tên hiển thị để bắt đầu</string>
+    <string name="auth_display_name_label">Tên hiển thị</string>
+    <string name="auth_display_name_helper">%1$d / 50  (tối thiểu 3)</string>
+    <string name="auth_email_label">Email</string>
+    <string name="auth_password_label">Mật khẩu</string>
+    <string name="auth_sign_in_email">Đăng nhập</string>
+    <string name="auth_no_account">Chưa có tài khoản?</string>
+    <string name="auth_navigate_register">Đăng ký</string>
+    <string name="auth_or_divider">hoặc</string>
+    <string name="auth_show_password">Hiện mật khẩu</string>
+    <string name="auth_hide_password">Ẩn mật khẩu</string>
+    <string name="auth_register_title">Tạo tài khoản</string>
+    <string name="auth_register_subtitle">Tham gia RedShark và bắt đầu cộng tác</string>
+    <string name="auth_username_label">Tên người dùng</string>
+    <string name="auth_username_helper">3-30 ký tự. Chỉ gồm chữ, số, dấu chấm, gạch dưới, gạch nối</string>
+    <string name="auth_username_available">Có thể sử dụng</string>
+    <string name="auth_username_taken">Tên người dùng đã tồn tại</string>
+    <string name="auth_username_checking">Đang kiểm tra...</string>
+    <string name="auth_dob_label">Ngày sinh</string>
+    <string name="auth_dob_placeholder">Chọn ngày</string>
+    <string name="auth_confirm_password_label">Xác nhận mật khẩu</string>
+    <string name="auth_password_strength_label">Độ mạnh mật khẩu:</string>
+    <string name="auth_password_strength_weak">Yếu</string>
+    <string name="auth_password_strength_fair">Trung bình</string>
+    <string name="auth_password_strength_good">Tốt</string>
+    <string name="auth_password_strength_strong">Mạnh</string>
+    <string name="auth_action_create_account">Tạo tài khoản</string>
+    <string name="auth_already_account">Đã có tài khoản?</string>
+    <string name="auth_navigate_sign_in">Đăng nhập</string>
+    <string name="auth_error_email_blank">Vui lòng nhập email</string>
+    <string name="auth_error_email_invalid">Email không hợp lệ</string>
+    <string name="auth_error_password_blank">Vui lòng nhập mật khẩu</string>
+    <string name="auth_error_password_short">Mật khẩu phải có ít nhất 8 ký tự</string>
+    <string name="auth_error_password_weak">Cần có chữ hoa và chữ số</string>
+    <string name="auth_error_confirm_mismatch">Mật khẩu xác nhận không khớp</string>
+    <string name="auth_error_username_blank">Vui lòng nhập tên người dùng</string>
+    <string name="auth_error_username_format">Chỉ dùng chữ thường, số, dấu chấm, gạch dưới, gạch nối</string>
+    <string name="auth_error_username_short">Tên người dùng phải có 3-30 ký tự</string>
+    <string name="auth_error_dob_blank">Vui lòng chọn ngày sinh</string>
+    <string name="auth_error_dob_underage">Bạn phải từ 13 tuổi trở lên</string>
+    <string name="auth_error_username_taken">Tên người dùng này đã được sử dụng</string>
+
+    <!-- Trang chính -->
+    <string name="home_tab_feed">Bảng tin</string>
+    <string name="home_tab_home">Trang chủ</string>
+    <string name="home_tab_ideas">Ý tưởng</string>
+    <string name="home_tab_notifications">Thông báo</string>
+    <string name="home_tab_messages">Tin nhắn</string>
+    <string name="home_tab_profile">Hồ sơ</string>
+    <string name="home_title_feed">Bảng tin</string>
+    <string name="home_title_app">RedShark</string>
+    <string name="home_title_ideas">Ý tưởng của tôi</string>
+    <string name="home_title_notifications">Thông báo</string>
+    <string name="home_title_messages">Tin nhắn</string>
+    <string name="home_title_profile">Hồ sơ</string>
+    <string name="home_action_profile">Hồ sơ</string>
+    <string name="home_action_settings">Cài đặt</string>
+    <string name="home_action_open_menu">Mở menu</string>
+    <string name="home_drawer_settings">Cài đặt</string>
+
+    <!-- Bảng tin -->
+    <string name="feed_empty">Chưa có hoạt động từ người dùng khác.</string>
+    <string name="home_feed_empty">Chưa có ý tưởng. Hãy là người đầu tiên chia sẻ.</string>
+    <string name="home_feed_empty_subtitle">Quay lại sau để xem cập nhật mới.</string>
+    <string name="home_feed_section_title">Hoạt động mới</string>
+    <string name="home_feed_section_subtitle">Các ý tưởng mới nhất từ cộng đồng</string>
+
+    <!-- Ý tưởng của tôi -->
+    <string name="ideas_filter_all">Tất cả</string>
+    <string name="ideas_empty">Chưa có ý tưởng. Nhấn + để tạo mới.</string>
+    <string name="ideas_fab_create_cd">Tạo ý tưởng</string>
+
+    <!-- Biểu mẫu ý tưởng -->
+    <string name="idea_create_title">Ý tưởng mới</string>
+    <string name="idea_edit_title">Sửa ý tưởng</string>
+    <string name="idea_field_title">Tiêu đề *</string>
+    <string name="idea_field_description">Mô tả</string>
+    <string name="idea_action_create">Tạo ý tưởng</string>
+    <string name="idea_action_upvote">Ủng hộ</string>
+    <string name="idea_action_downvote">Không ủng hộ</string>
+    <string name="idea_action_comment">Bình luận</string>
+    <string name="idea_action_share">Chia sẻ</string>
+
+    <!-- Chi tiết ý tưởng -->
+    <string name="idea_detail_title_fallback">Chi tiết ý tưởng</string>
+    <string name="idea_delete_dialog_title">Xóa ý tưởng</string>
+    <string name="idea_delete_dialog_text">Bạn có chắc muốn xóa ý tưởng này?</string>
+    <string name="idea_action_close">Đóng ý tưởng</string>
+    <string name="idea_action_cancel">Hủy ý tưởng</string>
+    <string name="idea_action_request_collab">Xin tham gia</string>
+    <string name="idea_action_collab_sending">Đang gửi...</string>
+    <string name="idea_action_collab_sent">Đã gửi yêu cầu</string>
+    <string name="idea_action_upload_media">Tải lên</string>
+    <string name="idea_share_link_cd">Chia sẻ liên kết</string>
+    <string name="idea_share_link_title">Chia sẻ ý tưởng</string>
+    <string name="idea_section_media">Media (%1$d)</string>
+    <string name="idea_section_issues">Công việc (%1$d)</string>
+    <string name="idea_section_issues_add_cd">Thêm công việc</string>
+    <string name="idea_issues_empty">Chưa có công việc.</string>
+    <string name="idea_section_comments">Bình luận (%1$d)</string>
+    <string name="idea_comment_placeholder">Viết bình luận...</string>
+    <string name="idea_video_attachment">Tệp video đính kèm</string>
+
+    <!-- Bình luận -->
+    <string name="comment_title">Bình luận</string>
+    <string name="comment_empty">Chưa có bình luận.</string>
+    <string name="comment_empty_subtitle">Hãy bắt đầu cuộc thảo luận.</string>
+
+    <!-- Công việc -->
+    <string name="issue_create_title">Công việc mới</string>
+    <string name="issue_edit_title">Sửa công việc</string>
+    <string name="issue_field_title">Tiêu đề *</string>
+    <string name="issue_field_description">Mô tả</string>
+    <string name="issue_field_priority">Độ ưu tiên</string>
+    <string name="issue_field_assignee">Người được giao</string>
+    <string name="issue_assignee_none">Chưa giao</string>
+    <string name="issue_action_create">Tạo công việc</string>
+    <string name="issue_error_limit_exceeded">Đã đạt giới hạn 20 công việc đang hoạt động.</string>
+    <string name="issue_error_idea_not_active">Ý tưởng đã đóng hoặc đã hủy nên không thể thêm công việc mới.</string>
+    <string name="issue_detail_title_fallback">Chi tiết công việc</string>
+    <string name="issue_delete_dialog_title">Xóa công việc</string>
+    <string name="issue_delete_dialog_text">Bạn có chắc muốn xóa công việc này?</string>
+    <string name="issue_action_view_idea">Xem ý tưởng</string>
+    <string name="issue_section_status_change">Đổi trạng thái:</string>
+
+    <!-- Thông báo -->
+    <string name="notification_empty">Bạn đã xử lý hết thông báo.</string>
+    <string name="notification_empty_subtitle">Không có thông báo mới.</string>
+    <string name="notification_action_delete_all">Xóa tất cả</string>
+    <string name="notification_action_accept">Chấp nhận</string>
+    <string name="notification_action_reject">Từ chối</string>
+    <string name="notification_type_issue_created">Công việc mới</string>
+    <string name="notification_type_collab_request">Yêu cầu cộng tác</string>
+    <string name="notification_type_collab_accepted">Đã chấp nhận cộng tác</string>
+    <string name="notification_type_collab_rejected">Đã từ chối cộng tác</string>
+    <string name="notification_type_comment">Bình luận mới</string>
+    <string name="notification_error_mark_read">Không thể đánh dấu đã đọc.</string>
+    <string name="notification_error_load">Không thể tải thông báo.</string>
+
+    <!-- Tin nhắn -->
+    <string name="message_preview_you_prefix">Bạn: %1$s</string>
+    <string name="message_conversation_title">Cuộc trò chuyện</string>
+    <string name="message_list_empty">Chưa có cuộc trò chuyện.</string>
+    <string name="message_list_empty_subtitle">Hãy bắt đầu một cuộc trò chuyện mới.</string>
+    <string name="message_search_placeholder">Tìm cuộc trò chuyện</string>
+    <string name="message_search_empty">Không tìm thấy kết quả.</string>
+    <string name="message_search_empty_subtitle">Thử tên hoặc email khác.</string>
+    <string name="message_new_conversation_title">Tạo cuộc trò chuyện mới</string>
+    <string name="message_action_new_conversation">Tạo cuộc trò chuyện mới</string>
+    <string name="message_action_start_conversation">Tạo</string>
+    <string name="message_email_label">Email</string>
+    <string name="message_email_placeholder">Nhập địa chỉ email</string>
+    <string name="message_error_email_required">Vui lòng nhập email.</string>
+    <string name="message_error_email_invalid">Email không hợp lệ.</string>
+    <string name="message_error_user_not_found">Không tìm thấy người dùng với email này.</string>
+    <string name="message_error_self_conversation">Bạn không thể nhắn tin cho chính mình.</string>
+    <string name="message_error_auth_required">Vui lòng đăng nhập để bắt đầu trò chuyện.</string>
+    <string name="message_thread_empty">Chưa có tin nhắn. Hãy gửi lời chào.</string>
+    <string name="message_input_placeholder">Tin nhắn...</string>
+    <string name="message_unknown_user">Người dùng không xác định</string>
+    <string name="message_error_load_list">Không thể tải danh sách cuộc trò chuyện.</string>
+    <string name="message_error_load_thread">Không thể tải tin nhắn.</string>
+    <string name="message_date_today">Hôm nay</string>
+    <string name="message_date_yesterday">Hôm qua</string>
+    <string name="message_unread_prefix">• </string>
+    <string name="message_share_title">Chia sẻ ý tưởng</string>
+    <string name="message_share_empty">Chưa có cuộc trò chuyện.</string>
+    <string name="message_share_empty_subtitle">Hãy tạo cuộc trò chuyện trong mục Tin nhắn trước.</string>
+    <string name="message_share_idea_template">Ý tưởng: %1$s\n%2$s\n%3$s</string>
+    <string name="message_share_idea_template_title_only">Ý tưởng: %1$s\n%2$s</string>
+
+    <!-- Hồ sơ -->
+    <string name="profile_title_fallback">Hồ sơ</string>
+    <string name="profile_edit_title">Sửa hồ sơ</string>
+    <string name="profile_not_found">Không tìm thấy hồ sơ</string>
+    <string name="profile_field_display_name">Tên hiển thị</string>
+    <string name="profile_field_bio">Giới thiệu</string>
+    <string name="profile_field_skills">Kỹ năng</string>
+    <string name="profile_skill_add">Thêm kỹ năng</string>
+    <string name="profile_avatar_change_hint">Nhấn để đổi ảnh</string>
+    <string name="profile_avatar_change_cd">Đổi ảnh đại diện</string>
+    <string name="profile_bio_helper">%1$d / 280</string>
+    <string name="profile_avatar_read_failed">Không thể đọc ảnh.</string>
+    <string name="profile_avatar_upload_failed">Tải ảnh lên thất bại.</string>
+    <string name="profile_action_message">Nhắn tin</string>
+
+    <!-- Cài đặt -->
+    <string name="settings_title">Cài đặt</string>
+    <string name="settings_open_deleted_idea">Mở ý tưởng đã xóa</string>
+    <string name="settings_idea_uuid_label">UUID ý tưởng</string>
+    <string name="settings_invalid_uuid">UUID không hợp lệ</string>
+    <string name="settings_open">Mở</string>
+    <string name="settings_sign_out">Đăng xuất</string>
+    <string name="settings_sign_out_dialog_title">Đăng xuất</string>
+    <string name="settings_sign_out_dialog_text">Bạn có chắc muốn đăng xuất?</string>
+    <string name="settings_delete_account">Xóa tài khoản</string>
+    <string name="settings_delete_account_dialog_text">Thao tác này sẽ xóa vĩnh viễn tài khoản và toàn bộ dữ liệu liên quan. Không thể hoàn tác.</string>
+
+    <!-- Lỗi chung -->
+    <string name="error_offline">Không có kết nối. Kiểm tra mạng và thử lại.</string>
+    <string name="error_load_list">Không thể tải danh sách.</string>
+    <string name="error_load_data">Không thể tải dữ liệu.</string>
 </resources>

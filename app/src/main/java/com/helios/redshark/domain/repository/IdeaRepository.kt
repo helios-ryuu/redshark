@@ -1,0 +1,42 @@
+package com.helios.redshark.domain.repository
+
+import com.helios.redshark.domain.model.CreateIdeaInput
+import com.helios.redshark.domain.model.Idea
+import com.helios.redshark.domain.model.IdeaReaction
+import com.helios.redshark.domain.model.IdeaStatus
+import com.helios.redshark.domain.model.MediaAttachment
+import com.helios.redshark.domain.model.UpdateIdeaInput
+import kotlinx.coroutines.flow.Flow
+import java.util.UUID
+
+interface IdeaRepository {
+    /** Emits a live list of ideas authored by the current user (deletedAt IS NULL). */
+    fun getMyIdeas(): Flow<List<Idea>>
+
+    /** Emits a live list of all non-deleted ideas ordered by createdAt desc, for the home feed. */
+    fun getAllIdeas(): Flow<List<Idea>>
+
+    suspend fun getIdeaDetail(id: UUID): Idea
+
+    /** Inserts a new idea with status=ACTIVE. Validation occurs in the use-case layer. */
+    suspend fun create(input: CreateIdeaInput): Idea
+
+    suspend fun update(id: UUID, input: UpdateIdeaInput): Idea
+
+    suspend fun updateMediaAttachments(id: UUID, mediaAttachments: List<MediaAttachment>): Idea
+
+    /** TC-C08: changes status (ACTIVE → CLOSED / CANCELLED). */
+    suspend fun updateStatus(id: UUID, newStatus: IdeaStatus): Idea
+
+    /** Sets deletedAt on the server; the record is NOT physically removed. */
+    suspend fun softDelete(id: UUID)
+
+    /** Appends [userId] to collaboratorIds using arrayUnion (idempotent). */
+    suspend fun addCollaborator(ideaId: UUID, userId: String): Idea
+
+    /** Emits the current user's reaction for the idea (UPVOTED/DOWNVOTED/NONE). */
+    fun getReaction(ideaId: UUID): Flow<IdeaReaction>
+
+    /** Updates current user's reaction for the idea (upvote/downvote/none). */
+    suspend fun setReaction(ideaId: UUID, reaction: IdeaReaction)
+}

@@ -7,6 +7,9 @@
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+/.idea/copilotDiffState.xml
+/.idea/deviceManager.xml
+/.idea/
 .DS_Store
 /build
 /captures
@@ -14,3 +17,8 @@
 .cxx
 local.properties
 .obsidian
+deviceManager.xml
+*.log
+serviceAccountKey.json
+google-services.json
+.claude

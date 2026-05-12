@@ -7,7 +7,7 @@
 | #  | Mục tiêu                                                              | Chỉ số đo lường                                         |
 |----|-----------------------------------------------------------------------|---------------------------------------------------------|
 | O1 | Hoàn thiện ứng dụng Android Native bằng Kotlin + Jetpack Compose      | 100% màn hình trong phạm vi đề tài được triển khai      |
-| O2 | Giữ nguyên backend Firebase Data Connect (PostgreSQL) + Firebase Auth | 0 breaking change trên schema                           |
+| O2 | Sử dụng Cloud Firestore + Firebase Auth làm backend chính             | 0 breaking change trên collection schema                |
 | O3 | Tích hợp Cloudflare R2 (S3-compatible) cho media/avatar               | Upload/Download < 3s trên 4G                            |
 | O4 | Áp dụng Clean Architecture + MVVM                                     | Code coverage unit test ≥ 60%                           |
 | O5 | Bảo đảm không lộ thông tin nhạy cảm trong mã nguồn/nhật ký            | 0 thông tin nhạy cảm lộ trên lịch sử Git và nhật ký phát hành |
@@ -24,7 +24,7 @@
 - Tag/Skill lookup + filtering
 
 ### Ngoài phạm vi
-- Backend server riêng (giữ FDC)
+- Backend server riêng (giữ Firebase)
 - iOS / Web
 - Push notification FCM (giai đoạn sau)
 - Group conversation (> 2 members)
@@ -34,9 +34,9 @@
 
 | Vai trò | Tên | Trách nhiệm |
 |---------|-----|-------------|
-| Quản lý dự án | Sỹ | Lập kế hoạch, quản lý tiến độ, báo cáo, kiểm thử cuối kỳ; phụ trách nhóm chức năng **Xác thực & Hồ sơ** (WBS 3.0) |
-| Lập trình viên Android | Hải | Phụ trách nhóm chức năng **Nội dung** (WBS 4.0): Ý tưởng, Công việc, Bình luận, Collab Request |
-| Lập trình viên Android | Nam | Phụ trách nhóm chức năng **Tương tác** (WBS 5.0): Thông báo, Nhắn tin 1-1; phối hợp UI/ViewModel trong giai đoạn Nội dung |
+| Quản lý dự án | Sỹ | Lập kế hoạch, quản lý tiến độ, báo cáo, kiểm thử cuối kỳ; phụ trách **Xác thực & Hồ sơ** |
+| Lập trình viên Android | Hải | Phụ trách **Nội dung**: Ý tưởng, Media, Công việc, Bình luận, Collab Request |
+| Lập trình viên Android | Nam | Phụ trách **Tương tác**: Thông báo, Nhắn tin 1-1; phối hợp UI/ViewModel |
 | Đại diện nghiệp vụ | Giảng viên môn NT118.Q22 | Phê duyệt yêu cầu, đánh giá kết quả |
 | Người dùng cuối | Sinh viên / nhóm dự án nhỏ | Sử dụng ứng dụng để theo dõi ý tưởng/công việc |
 
@@ -44,7 +44,7 @@
 
 | ID | Rủi ro                                                  | Mức độ     | Hướng xử lý                                                         |
 |----|---------------------------------------------------------|------------|---------------------------------------------------------------------|
-| R1 | Firebase Data Connect Android SDK chưa ổn định          | Cao        | Theo dõi ghi chú phát hành, chuyển phương án sang Apollo GraphQL client nếu cần |
+| R1 | Firestore security rules cấu hình sai dẫn đến lỗi quyền truy cập     | Trung bình | Kiểm tra rules kỹ trước khi deploy; dùng Firestore emulator để test local |
 | R2 | Cloudflare R2 chi phí vượt plan miễn phí                | Thấp       | Giới hạn avatar ≤ 1MB, nén client-side                              |
 | R3 | Cấu hình SHA-1 cho Google Sign-In sai khi biên dịch debug/phát hành | Trung bình | Danh sách kiểm tra cấu hình SHA-1 trước khi kiểm thử/phát hành |
 | R4 | Tiến độ 9 tuần tương đối gấp cho nhóm 3 người           | Cao        | Ưu tiên có ít nhất 1 commit tính năng xác thực trước 21/04          |
@@ -58,7 +58,7 @@
 - [ ] Kiểm thử thủ công đạt ≥ 95% trường hợp đạt
 - [ ] Sản phẩm bàn giao: APK + mã nguồn + tài liệu trong `/docs` + báo cáo
 
-WBS tham chiếu: [WBS.md](WBS.md) (truy vết công việc, phụ thuộc và trách nhiệm).
+Tài liệu tham chiếu: [PROCESS.md](PROCESS.md) cho quy trình tính năng và [TESTING.md](TESTING.md) cho kiểm thử/nghiệm thu.
 
 ## 7. Ngân sách & Tài nguyên
 - **Nhân lực:** 3 người × 9 tuần (16/03/2026 – 17/05/2026)
