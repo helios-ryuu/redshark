@@ -124,11 +124,13 @@ fun IssueDetailScreen(
                 LoadingContent(modifier = Modifier.fillMaxSize().padding(padding))
 
             uiState.errorMessage != null && uiState.issue == null ->
+                uiState.errorMessage?.let { message ->
                 ErrorContent(
-                    message = uiState.errorMessage!!,
+                    message = message,
                     onRetry = { viewModel.loadIssue(issueId, currentUserId) },
                     modifier = Modifier.fillMaxSize().padding(padding),
                 )
+            }
 
             else -> uiState.issue?.let { issue ->
                 Column(

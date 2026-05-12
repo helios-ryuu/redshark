@@ -113,8 +113,7 @@ fun ProfileViewScreen(
                     Text(stringResource(R.string.profile_not_found), style = MaterialTheme.typography.bodyLarge)
                 }
             }
-            else -> {
-                val user = uiState.user!!
+            else -> uiState.user?.let { user ->
                 Column(
                     modifier = Modifier
                         .fillMaxSize()

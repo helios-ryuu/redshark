@@ -48,6 +48,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.helios.redshark.R
 import com.helios.redshark.domain.model.Comment
+import com.helios.redshark.domain.model.User
 import com.helios.redshark.ui.common.AvatarImage
 import com.helios.redshark.ui.common.EmptyContent
 import com.helios.redshark.ui.common.ErrorContent
@@ -168,7 +169,7 @@ private fun CommentBody(
                     verticalArrangement = Arrangement.spacedBy(Dimens.SpaceSm),
                 ) {
                     items(uiState.comments, key = { it.id.toString() }) { comment ->
-                        CommentItem(comment)
+                        CommentItem(comment, uiState.usersById[comment.authorId])
                     }
                 }
             }
@@ -189,12 +190,13 @@ private fun CommentBody(
 }
 
 @Composable
-private fun CommentItem(comment: Comment) {
+private fun CommentItem(comment: Comment, user: User?) {
     val timeLabel = remember(comment.createdAt) {
         comment.createdAt
             .atZone(ZoneId.systemDefault())
             .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT))
     }
+    val authorLabel = user?.displayName?.takeIf { it.isNotBlank() } ?: comment.authorId.take(8)
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -210,8 +212,8 @@ private fun CommentItem(comment: Comment) {
             verticalAlignment = Alignment.Top,
         ) {
             AvatarImage(
-                avatarUrl = null,
-                displayName = comment.authorId,
+                avatarUrl = user?.avatarUrl,
+                displayName = authorLabel,
                 size = Dimens.AvatarSm,
             )
             Spacer(modifier = Modifier.width(Dimens.SpaceSm))
@@ -221,7 +223,7 @@ private fun CommentItem(comment: Comment) {
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = comment.authorId.take(8),
+                        text = authorLabel,
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.weight(1f),

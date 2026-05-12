@@ -4,4 +4,10 @@ import com.helios.redshark.core.util.Result
 
 interface MediaRepository {
     suspend fun uploadAvatar(userId: String, imageBytes: ByteArray, mimeType: String): Result<String>
+    suspend fun uploadIdeaMedia(
+        ideaId: String,
+        userId: String,
+        bytes: ByteArray,
+        mimeType: String,
+    ): Result<String>
 }

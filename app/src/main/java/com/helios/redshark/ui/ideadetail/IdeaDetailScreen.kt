@@ -1,6 +1,8 @@
 package com.helios.redshark.ui.ideadetail
 
 import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -60,6 +62,9 @@ import com.helios.redshark.R
 import com.helios.redshark.domain.model.Comment
 import com.helios.redshark.domain.model.Idea
 import com.helios.redshark.domain.model.IdeaStatus
+import com.helios.redshark.domain.model.MediaAttachment
+import com.helios.redshark.domain.model.MediaType
+import com.helios.redshark.domain.model.User
 import com.helios.redshark.ui.common.AvatarImage
 import com.helios.redshark.ui.common.ErrorContent
 import com.helios.redshark.ui.common.IdeaStatusPill
@@ -68,6 +73,7 @@ import com.helios.redshark.ui.common.IssueCard
 import com.helios.redshark.ui.common.LoadingContent
 import com.helios.redshark.ui.navigation.Routes
 import com.helios.redshark.ui.theme.Dimens
+import coil.compose.AsyncImage
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -96,6 +102,11 @@ fun IdeaDetailScreen(
         shareLink,
     )
     val shareChooserTitle = stringResource(R.string.idea_share_link_title)
+    val mediaPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+    ) { uri ->
+        if (uri != null) viewModel.uploadMedia(context, ideaId, currentUserId, uri)
+    }
 
     LaunchedEffect(ideaId) {
         viewModel.loadIdea(ideaId, currentUserId)
@@ -182,11 +193,13 @@ fun IdeaDetailScreen(
                 LoadingContent(modifier = Modifier.fillMaxSize().padding(padding))
 
             uiState.errorMessage != null && uiState.idea == null ->
+                uiState.errorMessage?.let { message ->
                 ErrorContent(
-                    message = uiState.errorMessage!!,
+                    message = message,
                     onRetry = { viewModel.loadIdea(ideaId, currentUserId) },
                     modifier = Modifier.fillMaxSize().padding(padding),
                 )
+            }
 
             else -> Column(modifier = Modifier.fillMaxSize().padding(padding)) {
                 LazyColumn(
@@ -203,9 +216,18 @@ fun IdeaDetailScreen(
                                 modifier = Modifier.fillMaxWidth(),
                             ) {
                                 Box(modifier = Modifier.padding(Dimens.SpaceMd)) {
-                                    IdeaAuthorRow(idea = idea)
+                                    IdeaAuthorRow(idea = idea, user = uiState.usersById[idea.authorId])
                                 }
                             }
+                        }
+
+                        item {
+                            MediaSection(
+                                mediaAttachments = idea.mediaAttachments,
+                                canUpload = currentUserId == idea.authorId || currentUserId in idea.collaboratorIds,
+                                isUploading = uiState.isUploadingMedia,
+                                onPickMedia = { mediaPickerLauncher.launch("*/*") },
+                            )
                         }
 
                         // Description
@@ -302,7 +324,7 @@ fun IdeaDetailScreen(
                     }
 
                     items(uiState.comments, key = { it.id.toString() }) { comment ->
-                        CommentItem(comment)
+                        CommentItem(comment, uiState.usersById[comment.authorId])
                     }
 
                     item { Spacer(modifier = Modifier.height(Dimens.SpaceXs)) }
@@ -332,26 +354,27 @@ fun IdeaDetailScreen(
 }
 
 @Composable
-private fun IdeaAuthorRow(idea: Idea) {
+private fun IdeaAuthorRow(idea: Idea, user: User?) {
     val dateLabel = remember(idea.createdAt) {
         idea.createdAt
             .atZone(ZoneId.systemDefault())
             .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
     }
+    val authorLabel = user?.displayName?.takeIf { it.isNotBlank() } ?: idea.authorId.take(8)
 
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AvatarImage(
-            avatarUrl = null,
-            displayName = idea.authorId,
+            avatarUrl = user?.avatarUrl,
+            displayName = authorLabel,
             size = Dimens.AvatarSm,
         )
         Spacer(modifier = Modifier.width(Dimens.SpaceSm))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = idea.authorId.take(8),
+                text = authorLabel,
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -362,6 +385,59 @@ private fun IdeaAuthorRow(idea: Idea) {
             )
         }
         IdeaStatusPill(status = idea.status)
+    }
+}
+
+@Composable
+private fun MediaSection(
+    mediaAttachments: List<MediaAttachment>,
+    canUpload: Boolean,
+    isUploading: Boolean,
+    onPickMedia: () -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(Dimens.SpaceSm)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(R.string.idea_section_media, mediaAttachments.size),
+                style = MaterialTheme.typography.titleSmall,
+            )
+            if (canUpload) {
+                OutlinedButton(onClick = onPickMedia, enabled = !isUploading) {
+                    if (isUploading) {
+                        CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                    } else {
+                        Text(stringResource(R.string.idea_action_upload_media))
+                    }
+                }
+            }
+        }
+        mediaAttachments.forEach { media ->
+            Surface(
+                shape = MaterialTheme.shapes.medium,
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                if (media.type == MediaType.IMAGE) {
+                    AsyncImage(
+                        model = media.url,
+                        contentDescription = media.fileName,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(220.dp),
+                    )
+                } else {
+                    Text(
+                        text = media.fileName ?: stringResource(R.string.idea_video_attachment),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(Dimens.SpaceMd),
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -388,20 +464,21 @@ private fun IdeaSectionHeader(
 }
 
 @Composable
-private fun CommentItem(comment: Comment) {
+private fun CommentItem(comment: Comment, user: User?) {
     val timeLabel = remember(comment.createdAt) {
         comment.createdAt
             .atZone(ZoneId.systemDefault())
             .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT))
     }
+    val authorLabel = user?.displayName?.takeIf { it.isNotBlank() } ?: comment.authorId.take(8)
 
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.Top,
     ) {
         AvatarImage(
-            avatarUrl = null,
-            displayName = comment.authorId,
+            avatarUrl = user?.avatarUrl,
+            displayName = authorLabel,
             size = Dimens.AvatarSm,
         )
         Spacer(modifier = Modifier.width(Dimens.SpaceSm))
@@ -411,7 +488,7 @@ private fun CommentItem(comment: Comment) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = comment.authorId.take(8),
+                    text = authorLabel,
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.weight(1f),

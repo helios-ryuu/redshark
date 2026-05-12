@@ -50,10 +50,9 @@ fun ShareConversationSheetContent(
                 icon = Icons.AutoMirrored.Outlined.Chat,
             )
             uiState.isLoading -> LoadingContent()
-            uiState.errorMessage != null -> ErrorContent(
-                message = uiState.errorMessage!!,
-                onRetry = viewModel::retryList,
-            )
+            uiState.errorMessage != null -> uiState.errorMessage?.let { message ->
+                ErrorContent(message = message, onRetry = viewModel::retryList)
+            }
             uiState.conversations.isEmpty() -> EmptyContent(
                 message = stringResource(R.string.message_share_empty),
                 subtitle = stringResource(R.string.message_share_empty_subtitle),

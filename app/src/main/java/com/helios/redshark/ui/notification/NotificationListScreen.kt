@@ -62,10 +62,9 @@ fun NotificationListScreen(
     Box(modifier = modifier.fillMaxSize()) {
         when {
             uiState.isLoading -> LoadingContent()
-            uiState.errorMessage != null -> ErrorContent(
-                message = uiState.errorMessage!!,
-                onRetry = viewModel::retry,
-            )
+            uiState.errorMessage != null -> uiState.errorMessage?.let { message ->
+                ErrorContent(message = message, onRetry = viewModel::retry)
+            }
             visibleNotifications.isEmpty() -> EmptyContent(
                 message = stringResource(R.string.notification_empty),
                 subtitle = stringResource(R.string.notification_empty_subtitle),

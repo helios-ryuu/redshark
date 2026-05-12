@@ -8,6 +8,11 @@ data class ReactionUpdate(
     val deltaChange: Int,
 )
 
+data class ReactionUiMaps(
+    val reactionStates: Map<UUID, IdeaReaction>,
+    val upvoteDeltas: Map<UUID, Int>,
+)
+
 fun nextUpvoteUpdate(currentReaction: IdeaReaction): ReactionUpdate {
     val nextReaction = when (currentReaction) {
         IdeaReaction.UPVOTED -> IdeaReaction.NONE
@@ -37,7 +42,7 @@ fun applyReactionUpdate(
     upvoteDeltas: Map<UUID, Int>,
     ideaId: UUID,
     update: ReactionUpdate,
-): Pair<Map<UUID, IdeaReaction>, Map<UUID, Int>> {
+): ReactionUiMaps {
     val updatedReactions = reactionStates.toMutableMap()
     val updatedDeltas = upvoteDeltas.toMutableMap()
     val currentDelta = updatedDeltas[ideaId] ?: 0
@@ -49,6 +54,14 @@ fun applyReactionUpdate(
     if (newDelta == 0) updatedDeltas.remove(ideaId)
     else updatedDeltas[ideaId] = newDelta
 
-    return updatedReactions to updatedDeltas
+    return ReactionUiMaps(updatedReactions, updatedDeltas)
 }
 
+fun observedReactionState(
+    reactionStates: Map<UUID, IdeaReaction>,
+    ideaId: UUID,
+    reaction: IdeaReaction,
+): Map<UUID, IdeaReaction> =
+    reactionStates.toMutableMap().apply {
+        if (reaction == IdeaReaction.NONE) remove(ideaId) else put(ideaId, reaction)
+    }

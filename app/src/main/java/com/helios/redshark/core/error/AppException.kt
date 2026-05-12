@@ -66,8 +66,8 @@ sealed class AppException(message: String, cause: Throwable? = null) : Exception
     class IdeaNotActiveException :
         AppException("Không thể tạo issue trên ý tưởng đã đóng hoặc đã hủy.")
 
-    /** Thrown when a unique constraint is violated (e.g., username already taken). */
-    class ConflictException(message: String) : AppException(message)
+    /** Thrown when a unique constraint is violated (e.g., username/email already taken). */
+    class ConflictException(message: String, val field: String? = null) : AppException(message)
 
     // --- Catch-all ---
 
