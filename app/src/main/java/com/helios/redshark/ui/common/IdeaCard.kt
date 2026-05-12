@@ -1,6 +1,7 @@
 package com.helios.redshark.ui.common
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.helios.redshark.R
 import com.helios.redshark.domain.model.Idea
+import com.helios.redshark.domain.model.MediaType
 import com.helios.redshark.ui.theme.Dimens
 import java.time.LocalDate
 import java.time.ZoneId
@@ -52,12 +54,16 @@ fun IdeaCard(
     onComment: () -> Unit = {},
     onShare: () -> Unit = {},
     imageUrl: String? = null,
+    authorDisplayName: String? = null,
+    authorAvatarUrl: String? = null,
     upvoteCount: Int = 0,
     commentCount: Int = 0,
     isUpvoted: Boolean = false,
     isDownvoted: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
+    val authorLabel = authorDisplayName?.takeIf { it.isNotBlank() } ?: idea.authorId.take(8)
+    val previewMedia = idea.mediaAttachments.firstOrNull()
     val today = remember { LocalDate.now() }
     val createdDate = remember(idea.createdAt) {
         idea.createdAt.atZone(ZoneId.systemDefault()).toLocalDate()
@@ -92,14 +98,14 @@ fun IdeaCard(
                 verticalAlignment = Alignment.Top,
             ) {
                 AvatarImage(
-                    avatarUrl = null,
-                    displayName = idea.authorId,
+                    avatarUrl = authorAvatarUrl,
+                    displayName = authorLabel,
                     size = Dimens.AvatarSm,
                 )
                 Spacer(modifier = Modifier.width(Dimens.SpaceSm))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = idea.authorId.take(8),
+                        text = authorLabel,
                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Medium),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -158,16 +164,32 @@ fun IdeaCard(
             }
 
             // Optional image — edge-to-edge for visual impact
-            imageUrl?.let { url ->
+            (imageUrl ?: previewMedia?.url)?.let { url ->
                 Spacer(modifier = Modifier.height(Dimens.SpaceSm))
-                AsyncImage(
-                    model = url,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = 240.dp),
-                    contentScale = ContentScale.Crop,
-                )
+                if (previewMedia?.type == MediaType.VIDEO && imageUrl == null) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 120.dp, max = 180.dp)
+                            .padding(horizontal = Dimens.SpaceLg),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = previewMedia.fileName ?: stringResource(R.string.idea_video_attachment),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                } else {
+                    AsyncImage(
+                        model = url,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 240.dp),
+                        contentScale = ContentScale.Crop,
+                    )
+                }
             }
 
             // Footer: action buttons

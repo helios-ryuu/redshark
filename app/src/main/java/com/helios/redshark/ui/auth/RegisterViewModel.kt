@@ -105,9 +105,11 @@ class RegisterViewModel @Inject constructor(
                             )
                         }
                         ex is AppException.ConflictException -> {
-                            _uiState.value = RegisterUiState.ValidationError(
-                                usernameError = ex.message
-                            )
+                            _uiState.value = if (ex.field == "email") {
+                                RegisterUiState.ValidationError(emailError = ex.message)
+                            } else {
+                                RegisterUiState.ValidationError(usernameError = ex.message)
+                            }
                         }
                         else -> {
                             Timber.e(ex)

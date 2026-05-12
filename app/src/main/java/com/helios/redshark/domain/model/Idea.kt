@@ -5,6 +5,19 @@ import java.util.UUID
 
 enum class IdeaStatus { ACTIVE, CLOSED, CANCELLED }
 
+enum class MediaType { IMAGE, VIDEO }
+
+data class MediaAttachment(
+    val id: UUID,
+    val url: String,
+    val type: MediaType,
+    val mimeType: String,
+    val fileName: String?,
+    val sizeBytes: Long,
+    val createdBy: String,
+    val createdAt: Instant,
+)
+
 data class Idea(
     val id: UUID,
     val authorId: String,
@@ -13,6 +26,7 @@ data class Idea(
     val status: IdeaStatus,
     val tagIds: List<UUID>,
     val collaboratorIds: List<String>,
+    val mediaAttachments: List<MediaAttachment> = emptyList(),
     val upvoteCount: Int = 0,
     val commentCount: Int = 0,
     val createdAt: Instant,
@@ -23,11 +37,13 @@ data class Idea(
 data class CreateIdeaInput(
     val title: String,
     val description: String?,
-    val tagIds: List<UUID> = emptyList()
+    val tagIds: List<UUID> = emptyList(),
+    val mediaAttachments: List<MediaAttachment> = emptyList(),
 )
 
 data class UpdateIdeaInput(
     val title: String,
     val description: String?,
-    val tagIds: List<UUID> = emptyList()
+    val tagIds: List<UUID> = emptyList(),
+    val mediaAttachments: List<MediaAttachment> = emptyList(),
 )

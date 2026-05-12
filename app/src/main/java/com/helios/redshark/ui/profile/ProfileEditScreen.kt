@@ -77,11 +77,12 @@ fun ProfileEditScreen(
 
     // Sync initial values once user loads
     LaunchedEffect(uiState.user) {
-        if (displayName.isBlank() && uiState.user != null) {
-            displayName = uiState.user!!.displayName
-            bio = uiState.user!!.bio ?: ""
+        val user = uiState.user
+        if (displayName.isBlank() && user != null) {
+            displayName = user.displayName
+            bio = user.bio ?: ""
             selectedSkills.clear()
-            selectedSkills.addAll(uiState.user!!.skills)
+            selectedSkills.addAll(user.skills)
         }
     }
 

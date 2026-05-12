@@ -193,7 +193,8 @@ fun EditIssueScreen(
 
                 val assigneeNoneLabel = stringResource(R.string.issue_assignee_none)
                 val assigneeLabel = users.find { it.id == assigneeId }?.displayName
-                    ?: if (assigneeId != null) assigneeId!!.take(8) else assigneeNoneLabel
+                    ?: assigneeId?.take(8)
+                    ?: assigneeNoneLabel
                 ExposedDropdownMenuBox(
                     expanded = assigneeExpanded,
                     onExpandedChange = { assigneeExpanded = it },

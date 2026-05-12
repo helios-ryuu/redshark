@@ -2,10 +2,13 @@ package com.helios.redshark.ui.comment
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.helios.redshark.core.util.Result
 import com.helios.redshark.domain.model.Comment
 import com.helios.redshark.domain.model.CreateCommentInput
+import com.helios.redshark.domain.model.User
 import com.helios.redshark.domain.usecase.comment.CreateCommentUseCase
 import com.helios.redshark.domain.usecase.comment.GetCommentsUseCase
+import com.helios.redshark.domain.usecase.user.GetUsersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +22,7 @@ import javax.inject.Inject
 
 data class CommentUiState(
     val comments: List<Comment> = emptyList(),
+    val usersById: Map<String, User> = emptyMap(),
     val isLoading: Boolean = true,
     val errorMessage: String? = null,
     val isSubmitting: Boolean = false,
@@ -29,6 +33,7 @@ data class CommentUiState(
 class CommentViewModel @Inject constructor(
     private val getCommentsUseCase: GetCommentsUseCase,
     private val createCommentUseCase: CreateCommentUseCase,
+    private val getUsersUseCase: GetUsersUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CommentUiState())
@@ -49,7 +54,22 @@ class CommentViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(comments = comments, isLoading = false, errorMessage = null)
                     }
+                    refreshUsers(comments.map { it.authorId })
                 }
+        }
+    }
+
+    private fun refreshUsers(userIds: List<String>) {
+        viewModelScope.launch {
+            when (val result = getUsersUseCase()) {
+                is Result.Success -> {
+                    val neededIds = userIds.toSet()
+                    _uiState.update { state ->
+                        state.copy(usersById = result.data.filter { it.id in neededIds }.associateBy { it.id })
+                    }
+                }
+                else -> Unit
+            }
         }
     }
 

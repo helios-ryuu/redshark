@@ -8,7 +8,7 @@ import com.helios.redshark.domain.usecase.idea.AddSelfAsCollaboratorUseCase
 import com.helios.redshark.domain.usecase.notification.AcceptCollabUseCase
 import com.helios.redshark.domain.usecase.notification.DeleteAllNotificationsUseCase
 import com.helios.redshark.domain.usecase.notification.GetNotificationsUseCase
-import com.helios.redshark.domain.usecase.notification.GetUnreadCountUseCase
+import com.helios.redshark.domain.usecase.notification.GetUnreadNotificationCountUseCase
 import com.helios.redshark.domain.usecase.notification.MarkNotificationReadUseCase
 import com.helios.redshark.domain.usecase.notification.RejectCollabUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,7 +32,7 @@ data class NotificationUiState(
 class NotificationViewModel @Inject constructor(
     private val getNotificationsUseCase: GetNotificationsUseCase,
     private val markNotificationReadUseCase: MarkNotificationReadUseCase,
-    private val getUnreadCountUseCase: GetUnreadCountUseCase,
+    private val getUnreadNotificationCountUseCase: GetUnreadNotificationCountUseCase,
     private val addSelfAsCollaboratorUseCase: AddSelfAsCollaboratorUseCase,
     private val acceptCollabUseCase: AcceptCollabUseCase,
     private val rejectCollabUseCase: RejectCollabUseCase,
@@ -73,7 +73,7 @@ class NotificationViewModel @Inject constructor(
 
     private fun observeUnreadCount() {
         viewModelScope.launch {
-            getUnreadCountUseCase()
+            getUnreadNotificationCountUseCase()
                 .catch { }
                 .collect { count -> _uiState.update { it.copy(unreadCount = count) } }
         }

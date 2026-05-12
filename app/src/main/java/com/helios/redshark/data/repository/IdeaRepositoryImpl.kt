@@ -7,11 +7,13 @@ import com.google.firebase.firestore.Query
 import com.helios.redshark.core.error.AppException
 import com.helios.redshark.core.NetworkChecker
 import com.helios.redshark.data.mapper.toDomain
+import com.helios.redshark.data.mapper.toFirestoreMap
 import com.helios.redshark.data.remote.firestore.dto.IdeaDto
 import com.helios.redshark.domain.model.CreateIdeaInput
 import com.helios.redshark.domain.model.Idea
 import com.helios.redshark.domain.model.IdeaReaction
 import com.helios.redshark.domain.model.IdeaStatus
+import com.helios.redshark.domain.model.MediaAttachment
 import com.helios.redshark.domain.model.UpdateIdeaInput
 import com.helios.redshark.domain.repository.IdeaRepository
 import kotlinx.coroutines.channels.awaitClose
@@ -124,6 +126,7 @@ class IdeaRepositoryImpl @Inject constructor(
                 "status" to IdeaStatus.ACTIVE.name,
                 "tagIds" to input.tagIds.map { it.toString() },
                 "collaboratorIds" to emptyList<String>(),
+                "mediaAttachments" to input.mediaAttachments.map { it.toFirestoreMap() },
                 "upvoteCount" to 0,
                 "commentCount" to 0,
                 "createdAt" to FieldValue.serverTimestamp(),
@@ -151,6 +154,25 @@ class IdeaRepositoryImpl @Inject constructor(
                 "updatedAt" to FieldValue.serverTimestamp(),
             )
             ideas.document(id.toString()).update(updates).await()
+            val doc = ideas.document(id.toString()).get().await()
+            doc.toObject(IdeaDto::class.java)?.copy(id = doc.id)?.toDomain()
+                ?: throw AppException.UnknownException()
+        } catch (e: AppException) {
+            throw e
+        } catch (e: Exception) {
+            throw AppException.NetworkException(e)
+        }
+    }
+
+    override suspend fun updateMediaAttachments(id: UUID, mediaAttachments: List<MediaAttachment>): Idea {
+        if (!networkChecker.isOnline()) throw AppException.NetworkException()
+        return try {
+            ideas.document(id.toString()).update(
+                mapOf(
+                    "mediaAttachments" to mediaAttachments.map { it.toFirestoreMap() },
+                    "updatedAt" to FieldValue.serverTimestamp(),
+                )
+            ).await()
             val doc = ideas.document(id.toString()).get().await()
             doc.toObject(IdeaDto::class.java)?.copy(id = doc.id)?.toDomain()
                 ?: throw AppException.UnknownException()

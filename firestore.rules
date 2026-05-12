@@ -30,6 +30,13 @@ service cloud.firestore {
         && request.resource.data.upvoteCount >= 0;
     }
 
+    function isCollaboratorMediaUpdate() {
+      return isSignedIn()
+        && request.auth.uid in resource.data.collaboratorIds
+        && request.resource.data.diff(resource.data)
+          .changedKeys().hasOnly(["mediaAttachments", "updatedAt"]);
+    }
+
     match /users/{userId} {
       allow read: if isSignedIn();
       allow write: if isOwner(userId);
@@ -40,7 +47,8 @@ service cloud.firestore {
       allow create: if isSignedIn();
       allow update, delete: if isOwner(resource.data.authorId)
                             || isAddingSelfAsCollaborator()
-                            || isReactionCountUpdate();
+                            || isReactionCountUpdate()
+                            || isCollaboratorMediaUpdate();
 
       match /reactions/{reactionId} {
         allow read: if isSignedIn();
