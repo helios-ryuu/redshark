@@ -2,16 +2,20 @@ package com.helios.redshark.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.helios.redshark.core.util.Result
 import com.helios.redshark.domain.model.Idea
 import com.helios.redshark.domain.model.IdeaReaction
+import com.helios.redshark.domain.model.User
 import com.helios.redshark.domain.usecase.comment.GetCommentsUseCase
 import com.helios.redshark.domain.usecase.idea.GetAllIdeasUseCase
 import com.helios.redshark.domain.usecase.idea.GetIdeaReactionUseCase
 import com.helios.redshark.domain.usecase.idea.SetIdeaReactionUseCase
+import com.helios.redshark.domain.usecase.user.GetUsersUseCase
 import com.helios.redshark.ui.common.ReactionUpdate
 import com.helios.redshark.ui.common.applyReactionUpdate
 import com.helios.redshark.ui.common.nextDownvoteUpdate
 import com.helios.redshark.ui.common.nextUpvoteUpdate
+import com.helios.redshark.ui.common.observedReactionState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +32,7 @@ data class HomeUiState(
     val commentCounts: Map<UUID, Int> = emptyMap(),
     val reactionStates: Map<UUID, IdeaReaction> = emptyMap(),
     val upvoteDeltas: Map<UUID, Int> = emptyMap(),
+    val usersById: Map<String, User> = emptyMap(),
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
 )
@@ -38,6 +43,7 @@ class HomeViewModel @Inject constructor(
     private val getCommentsUseCase: GetCommentsUseCase,
     private val getIdeaReactionUseCase: GetIdeaReactionUseCase,
     private val setIdeaReactionUseCase: SetIdeaReactionUseCase,
+    private val getUsersUseCase: GetUsersUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState(isLoading = true))
@@ -77,7 +83,22 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                     syncIdeaObservers(ideas)
+                    refreshUsers(ideas.map { it.authorId } + ideas.flatMap { it.collaboratorIds })
                 }
+        }
+    }
+
+    private fun refreshUsers(userIds: List<String>) {
+        viewModelScope.launch {
+            when (val result = getUsersUseCase()) {
+                is Result.Success -> {
+                    val neededIds = userIds.toSet()
+                    _uiState.update { state ->
+                        state.copy(usersById = result.data.filter { it.id in neededIds }.associateBy { it.id })
+                    }
+                }
+                else -> Unit
+            }
         }
     }
 
@@ -119,10 +140,13 @@ class HomeViewModel @Inject constructor(
                 .catch { }
                 .collect { reaction ->
                     _uiState.update { state ->
-                        val updated = state.reactionStates.toMutableMap()
-                        if (reaction == IdeaReaction.NONE) updated.remove(ideaId)
-                        else updated[ideaId] = reaction
-                        state.copy(reactionStates = updated)
+                        state.copy(
+                            reactionStates = observedReactionState(
+                                state.reactionStates,
+                                ideaId,
+                                reaction,
+                            )
+                        )
                     }
                 }
         }
@@ -133,51 +157,26 @@ class HomeViewModel @Inject constructor(
         observeFeed()
     }
 
-    fun toggleUpvote(ideaId: UUID) {
-        var currentReaction = IdeaReaction.NONE
-        var update = ReactionUpdate(IdeaReaction.NONE, 0)
-        _uiState.update { state ->
-            currentReaction = state.reactionStates[ideaId] ?: IdeaReaction.NONE
-            update = nextUpvoteUpdate(currentReaction)
-            val (reactions, deltas) = applyReactionUpdate(
-                reactionStates = state.reactionStates,
-                upvoteDeltas = state.upvoteDeltas,
-                ideaId = ideaId,
-                update = update,
-            )
-            state.copy(reactionStates = reactions, upvoteDeltas = deltas)
-        }
-        viewModelScope.launch {
-            try {
-                setIdeaReactionUseCase(ideaId, update.nextReaction)
-            } catch (e: Exception) {
-                val rollbackUpdate = ReactionUpdate(currentReaction, -update.deltaChange)
-                _uiState.update {
-                    val (reactions, deltas) = applyReactionUpdate(
-                        reactionStates = it.reactionStates,
-                        upvoteDeltas = it.upvoteDeltas,
-                        ideaId = ideaId,
-                        update = rollbackUpdate,
-                    )
-                    it.copy(reactionStates = reactions, upvoteDeltas = deltas)
-                }
-            }
-        }
-    }
+    fun toggleUpvote(ideaId: UUID) = toggleReaction(ideaId, ::nextUpvoteUpdate)
 
-    fun toggleDownvote(ideaId: UUID) {
+    fun toggleDownvote(ideaId: UUID) = toggleReaction(ideaId, ::nextDownvoteUpdate)
+
+    private fun toggleReaction(
+        ideaId: UUID,
+        nextUpdate: (IdeaReaction) -> ReactionUpdate,
+    ) {
         var currentReaction = IdeaReaction.NONE
         var update = ReactionUpdate(IdeaReaction.NONE, 0)
         _uiState.update { state ->
             currentReaction = state.reactionStates[ideaId] ?: IdeaReaction.NONE
-            update = nextDownvoteUpdate(currentReaction)
-            val (reactions, deltas) = applyReactionUpdate(
+            update = nextUpdate(currentReaction)
+            val maps = applyReactionUpdate(
                 reactionStates = state.reactionStates,
                 upvoteDeltas = state.upvoteDeltas,
                 ideaId = ideaId,
                 update = update,
             )
-            state.copy(reactionStates = reactions, upvoteDeltas = deltas)
+            state.copy(reactionStates = maps.reactionStates, upvoteDeltas = maps.upvoteDeltas)
         }
         viewModelScope.launch {
             try {
@@ -185,13 +184,13 @@ class HomeViewModel @Inject constructor(
             } catch (e: Exception) {
                 val rollbackUpdate = ReactionUpdate(currentReaction, -update.deltaChange)
                 _uiState.update {
-                    val (reactions, deltas) = applyReactionUpdate(
+                    val maps = applyReactionUpdate(
                         reactionStates = it.reactionStates,
                         upvoteDeltas = it.upvoteDeltas,
                         ideaId = ideaId,
                         update = rollbackUpdate,
                     )
-                    it.copy(reactionStates = reactions, upvoteDeltas = deltas)
+                    it.copy(reactionStates = maps.reactionStates, upvoteDeltas = maps.upvoteDeltas)
                 }
             }
         }

@@ -9,6 +9,7 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertTrue
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import java.time.LocalDate
@@ -107,6 +108,20 @@ class SignUpEmailPasswordUseCaseTest {
         assertTrue(result is Result.Error)
         assertTrue((result as Result.Error).exception is AppException.ValidationException)
         coVerify(exactly = 0) { authRepository.signUpEmailPassword(any(), any(), any(), any(), any()) }
+    }
+
+    @Test
+    fun `invoke propagates email ConflictException when email is already taken`() = runTest {
+        stubUsernameAvailable("bob_dev")
+        coEvery { authRepository.signUpEmailPassword(any(), any(), any(), any(), any()) } returns
+            Result.Error(AppException.ConflictException("This email is already taken", "email"))
+
+        val result = useCase("Bob", "bob_dev", "bob@example.com", validDob, "Password1")
+
+        assertTrue(result is Result.Error)
+        val exception = (result as Result.Error).exception
+        assertTrue(exception is AppException.ConflictException)
+        assertEquals("email", (exception as AppException.ConflictException).field)
     }
 
     @Test

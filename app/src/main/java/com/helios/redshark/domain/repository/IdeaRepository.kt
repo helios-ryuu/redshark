@@ -4,6 +4,7 @@ import com.helios.redshark.domain.model.CreateIdeaInput
 import com.helios.redshark.domain.model.Idea
 import com.helios.redshark.domain.model.IdeaReaction
 import com.helios.redshark.domain.model.IdeaStatus
+import com.helios.redshark.domain.model.MediaAttachment
 import com.helios.redshark.domain.model.UpdateIdeaInput
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
@@ -21,6 +22,8 @@ interface IdeaRepository {
     suspend fun create(input: CreateIdeaInput): Idea
 
     suspend fun update(id: UUID, input: UpdateIdeaInput): Idea
+
+    suspend fun updateMediaAttachments(id: UUID, mediaAttachments: List<MediaAttachment>): Idea
 
     /** TC-C08: changes status (ACTIVE → CLOSED / CANCELLED). */
     suspend fun updateStatus(id: UUID, newStatus: IdeaStatus): Idea

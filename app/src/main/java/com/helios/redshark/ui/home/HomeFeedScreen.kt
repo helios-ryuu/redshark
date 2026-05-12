@@ -46,10 +46,9 @@ fun HomeFeedScreen(
     Box(modifier = modifier.fillMaxSize()) {
         when {
             uiState.isLoading -> LoadingContent()
-            uiState.errorMessage != null -> ErrorContent(
-                message = uiState.errorMessage!!,
-                onRetry = viewModel::retry,
-            )
+            uiState.errorMessage != null -> uiState.errorMessage?.let { message ->
+                ErrorContent(message = message, onRetry = viewModel::retry)
+            }
             uiState.ideas.isEmpty() -> EmptyContent(
                 message = stringResource(R.string.home_feed_empty),
                 subtitle = stringResource(R.string.home_feed_empty_subtitle),
@@ -86,6 +85,7 @@ fun HomeFeedScreen(
                     }
                 }
                 items(uiState.ideas, key = { it.id.toString() }) { idea ->
+                    val author = uiState.usersById[idea.authorId]
                     val reaction = uiState.reactionStates[idea.id] ?: IdeaReaction.NONE
                     val upvoteDelta = uiState.upvoteDeltas[idea.id] ?: 0
                     val upvoteCount = (idea.upvoteCount + upvoteDelta).coerceAtLeast(0)
@@ -97,6 +97,8 @@ fun HomeFeedScreen(
                         onDownvote = { viewModel.toggleDownvote(idea.id) },
                         onComment = { onCommentClick(idea.id) },
                         onShare = { onShareClick(idea) },
+                        authorDisplayName = author?.displayName,
+                        authorAvatarUrl = author?.avatarUrl,
                         upvoteCount = upvoteCount,
                         commentCount = commentCount,
                         isUpvoted = reaction == IdeaReaction.UPVOTED,

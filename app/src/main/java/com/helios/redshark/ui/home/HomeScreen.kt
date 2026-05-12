@@ -121,7 +121,7 @@ fun HomeScreen(
         }
     }
 
-    if (showCommentSheet && commentIdeaId != null) {
+    commentIdeaId?.takeIf { showCommentSheet }?.let { selectedIdeaId ->
         ModalBottomSheet(
             onDismissRequest = { showCommentSheet = false },
             sheetState = commentSheetState,
@@ -144,7 +144,7 @@ fun HomeScreen(
             HorizontalDivider()
             Box(modifier = Modifier.fillMaxWidth().height(Dimens.NotificationSheetMaxHeight)) {
                 CommentSheetContent(
-                    ideaId = commentIdeaId!!,
+                    ideaId = selectedIdeaId,
                     currentUserId = currentUserId ?: "",
                     modifier = Modifier.fillMaxSize(),
                 )
@@ -152,8 +152,7 @@ fun HomeScreen(
         }
     }
 
-    if (showShareSheet && shareIdea != null) {
-        val idea = shareIdea!!
+    shareIdea?.takeIf { showShareSheet }?.let { idea ->
         ModalBottomSheet(
             onDismissRequest = { showShareSheet = false },
             sheetState = shareSheetState,

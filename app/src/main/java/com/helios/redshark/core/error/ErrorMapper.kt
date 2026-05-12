@@ -24,7 +24,11 @@ object ErrorMapper {
             is IOException ->
                 AppException.NetworkException(NETWORK_MESSAGE, throwable)
             is FirebaseAuthException ->
-                AppException.AuthException(throwable.message ?: "Firebase auth error", throwable)
+                when (throwable.errorCode) {
+                    "ERROR_EMAIL_ALREADY_IN_USE" ->
+                        AppException.ConflictException("This email is already taken", "email")
+                    else -> AppException.AuthException(throwable.message ?: "Firebase auth error", throwable)
+                }
             else ->
                 AppException.UnknownException(throwable.message ?: "Unknown error", throwable)
         }

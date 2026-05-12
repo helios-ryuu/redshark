@@ -298,12 +298,12 @@ fun NavGraph(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center,
             ) {
-                if (convState.errorMessage != null) {
+                convState.errorMessage?.let { message ->
                     Text(
-                        text = convState.errorMessage!!,
+                        text = message,
                         color = MaterialTheme.colorScheme.error,
                     )
-                } else {
+                } ?: run {
                     CircularProgressIndicator()
                 }
             }

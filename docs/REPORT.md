@@ -105,8 +105,8 @@ Các nhóm dự án nhỏ thường thiếu công cụ theo dõi ý tưởng và
 - Sản phẩm: Ứng dụng Android cài đặt qua APK hoặc Google Play.
 
 ### 1.6 Phương pháp thực hiện
-- Quy trình phát triển: Lặp tăng dần theo 5 giai đoạn (xem [PLAN-1..5](PLAN-1-FOUNDATION.md)).
-- Theo dõi tiến độ, phụ thuộc và trách nhiệm công việc theo [WBS.md](WBS.md).
+- Quy trình phát triển: Lặp tăng dần theo các nhóm tính năng, tổng hợp trong [PROCESS.md](PROCESS.md).
+- Theo dõi kiểm thử và nghiệm thu theo [TESTING.md](TESTING.md).
 - Quản lý công việc: GitHub Issue kết hợp rà soát yêu cầu hợp nhất (PR review), theo chuẩn Conventional Commits.
 - Kiểm thử: Kiểm thử đơn vị (domain/data), kiểm thử giao diện (Compose), kiểm thử thủ công theo danh sách kiểm tra.
 
@@ -165,7 +165,7 @@ Luồng dữ liệu một chiều (Unidirectional Data Flow): UI event → ViewM
 ## CHƯƠNG 3. PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG
 
 ### 3.1 Phân tích yêu cầu
-Tổng hợp từ [REQUIREMENT-1-FUNCTIONAL.md](REQUIREMENT-1-FUNCTIONAL.md) và [REQUIREMENT-2-NONFUNCTIONAL.md](REQUIREMENT-2-NONFUNCTIONAL.md): 8 mô-đun chức năng và 6 nhóm yêu cầu phi chức năng (hiệu năng, bảo mật, độ tin cậy, khả năng mở rộng, khả năng bảo trì, khả dụng).
+Tổng hợp từ phạm vi hiện tại của mã nguồn và tài liệu dự án: các mô-đun Auth, Profile, Ideas, Media, Issues, Comments, Notifications, Messages cùng nhóm yêu cầu phi chức năng về hiệu năng, bảo mật, độ tin cậy, khả năng mở rộng, khả năng bảo trì và khả dụng.
 
 ### 3.2 Sơ đồ ca sử dụng (Use-Case)
 Actor chính: `User (đã đăng nhập)`, `Visitor (chưa đăng nhập)`.
@@ -198,7 +198,7 @@ Chi tiết tại [SCHEMA.md](SCHEMA.md). Gồm 9 bảng: `users`, `ideas`, `issu
 Giao diện tuân theo Material 3 với ngôn ngữ thiết kế **Fluent Minimalist**: thanh điều hướng dưới gồm 5 thẻ (Home, Ideas, Messages, Notifications, Settings), toàn bộ list items sử dụng `Surface + BorderStroke` theo pattern `IdeaCard`, không có hardcoded `dp` trong các screen files — tất cả spacing và sizing đi qua `Dimens.*` tokens. Áp dụng đồng nhất trên tất cả màn hình: Auth, Profile, Settings, Notification, Conversation.
 
 ### 3.6 Thiết kế xử lý nghiệp vụ
-Chi tiết trong [PROCESS-1-AUTH.md](PROCESS-1-AUTH.md), [PROCESS-2-CONTENT.md](PROCESS-2-CONTENT.md), [PROCESS-3-INTERACTION.md](PROCESS-3-INTERACTION.md).
+Chi tiết trong [PROCESS.md](PROCESS.md).
 
 ---
 
@@ -210,7 +210,7 @@ Chi tiết trong [PROCESS-1-AUTH.md](PROCESS-1-AUTH.md), [PROCESS-2-CONTENT.md](
 - Thiết bị kiểm thử: Trình giả lập Pixel 6, Samsung A54.
 
 ### 4.2 Cấu trúc mã nguồn
-Chi tiết tại [STRUCTURE.md](STRUCTURE.md). Mã nguồn được tổ chức theo 3 lớp `data/domain/ui` cùng nhóm thành phần dùng chung.
+Mã nguồn được tổ chức theo 3 lớp `data/domain/ui` cùng nhóm thành phần dùng chung.
 
 ### 4.3 Triển khai các module
 
@@ -238,7 +238,7 @@ Chi tiết tại [STRUCTURE.md](STRUCTURE.md). Mã nguồn được tổ chức 
 - **Google Sign-In:** Cần cấu hình SHA-1 cho bản dựng debug và bản phát hành trên Firebase Console.
 
 ### 4.5 Bảo mật và quản lý cấu hình
-Theo [SECRET.md](SECRET.md), các biến cấu hình được lưu trong `local.properties`, không mã hóa cứng trong mã nguồn và không ghi token vào nhật ký. ProGuard được bật ở bản phát hành. Quyền sở hữu dữ liệu được kiểm soát ở phía máy chủ.
+Các biến cấu hình được lưu trong `local.properties`, không mã hóa cứng trong mã nguồn và không ghi token vào nhật ký. ProGuard được bật ở bản phát hành. Quyền sở hữu dữ liệu được kiểm soát ở phía máy chủ.
 
 ---
 
@@ -247,14 +247,12 @@ Theo [SECRET.md](SECRET.md), các biến cấu hình được lưu trong `local.
 ### 5.1 Chiến lược kiểm thử
 - **Kiểm thử đơn vị:** Ca sử dụng tầng `domain` và kho dữ liệu tầng `data` (JUnit + MockK).
 - **Kiểm thử giao diện:** Compose Test (các màn hình Auth, IdeaDetail).
-- **Kiểm thử thủ công:** Theo CHECK-1/2/3.
+- **Kiểm thử thủ công:** Theo [TESTING.md](TESTING.md).
 - **Kiểm thử hiệu năng:** Android Profiler, Firebase Performance Monitoring.
 
 ### 5.2 Kịch bản kiểm thử
 Bảng tổng hợp:
-- CHECK-1: 30 trường hợp kiểm thử xác thực và hồ sơ (TC-A01..A19 Google auth + TC-A20..A30 email/password auth) — xem [CHECK-1-AUTH.md](CHECK-1-AUTH.md).
-- CHECK-2: 24 trường hợp kiểm thử nhóm nội dung — xem [CHECK-2-CONTENT.md](CHECK-2-CONTENT.md).
-- CHECK-3: 25 trường hợp kiểm thử nhóm tương tác và NFR (TC-N01..N08 + TC-M01..M10 + TC-X01..X07) — xem [CHECK-3-INTERACTION.md](CHECK-3-INTERACTION.md).
+- Toàn bộ kịch bản Auth/Profile, Ideas/Media/Issues/Comments, Notifications/Messages, UI/UX và NFR được gom trong [TESTING.md](TESTING.md).
 
 ### 5.3 Kết quả kiểm thử (điền sau khi chạy thực tế)
 | Nhóm                | Tổng TC | PASS  | FAIL  | % PASS |
@@ -266,7 +264,7 @@ Bảng tổng hợp:
 | NFR (X)             | 7       | 🔲     | —     | chờ manual |
 | **Tổng**            | **79**  | **61+**| —    | — |
 
-> **Ghi chú (05/05/2026):** PLAN-1..3 hoàn thành 61/61 TC ✅. PLAN-4-FINALIZE implement xong: Email/Password Auth domain+data+UI (domain unit tests 27/27 pass), RegisterScreen + LoginScreen redesign, IssueDetailScreen Material3 polish, 0 hardcoded dp, LeakCanary thêm, R8 enabled, deep link intent-filter. TC-A20..A30 và TC-X01..X07 (🔲) chờ kiểm thử thủ công Tuần 9 (12–17/05/2026). versionName = 1.0.0.
+> **Ghi chú cập nhật:** Checklist kiểm thử hiện được hợp nhất trong `docs/TESTING.md`; kết quả thực thi thực tế cần được cập nhật sau mỗi vòng regression.
 
 ### 5.4 Đánh giá
 Các chỉ số mục tiêu:
