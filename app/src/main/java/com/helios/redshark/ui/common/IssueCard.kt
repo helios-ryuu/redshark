@@ -20,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import com.helios.redshark.domain.model.Issue
 import com.helios.redshark.domain.model.IssuePriority
 import com.helios.redshark.ui.theme.Dimens
@@ -37,8 +36,8 @@ fun IssueCard(issue: Issue, onClick: () -> Unit, modifier: Modifier = Modifier) 
         modifier = modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(
             defaultElevation = Dimens.CardElevationRaised,
-            pressedElevation = 6.dp,
-            hoveredElevation = 4.dp,
+            pressedElevation = Dimens.CardElevationPressed,
+            hoveredElevation = Dimens.CardElevationHovered,
         ),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),

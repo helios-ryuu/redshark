@@ -27,6 +27,7 @@ class CommentRepositoryImpl @Inject constructor(
     private val comments = firestore.collection("comments")
 
     override fun getCommentsByIdea(ideaId: UUID): Flow<List<Comment>> = callbackFlow {
+        trySend(emptyList())
         val registration = comments
             .whereEqualTo("ideaId", ideaId.toString())
             .orderBy("createdAt", Query.Direction.ASCENDING)

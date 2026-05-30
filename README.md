@@ -1,6 +1,6 @@
 # RedShark Android Native
 
-RedShark là ứng dụng Android gốc hỗ trợ nhóm nhỏ quản lý ý tưởng, công việc, bình luận, thông báo, nhắn tin 1-1 và tệp media. Ứng dụng dùng Kotlin, Jetpack Compose, Firebase và Cloudflare R2.
+RedShark là ứng dụng Android gốc hỗ trợ nhóm nhỏ quản lý ý tưởng, công việc, bình luận, thông báo, nhắn tin 1-1, chia sẻ ý tưởng và theo dõi đóng góp cá nhân. Ứng dụng dùng Kotlin, Jetpack Compose, Firebase và Cloudflare R2.
 
 ## Tổng quan kỹ thuật
 
@@ -16,13 +16,13 @@ RedShark là ứng dụng Android gốc hỗ trợ nhóm nhỏ quản lý ý tư
 | Nhóm | Chức năng |
 |---|---|
 | Xác thực | Đăng nhập Google, đăng ký/đăng nhập email, kiểm tra username/email/mật khẩu/ngày sinh, đăng xuất |
-| Hồ sơ | Xem/sửa hồ sơ, giới thiệu, kỹ năng, ảnh đại diện R2 |
+| Hồ sơ | Xem/sửa hồ sơ, giới thiệu, kỹ năng, ảnh đại diện R2, biểu đồ đóng góp 12 tuần |
 | Ý tưởng | Tạo/xem/sửa/xóa mềm, trạng thái ACTIVE/CLOSED/CANCELLED, bảng tin, ý tưởng của tôi |
 | Media | Tác giả/cộng tác viên tải ảnh hoặc video vào ý tưởng |
 | Công việc | CRUD issue, state machine, giới hạn 20 công việc đang hoạt động mỗi người dùng |
 | Bình luận | Bình luận realtime với cập nhật lạc quan |
 | Thông báo | Badge chưa đọc, yêu cầu cộng tác, chấp nhận/từ chối, thông báo comment/issue |
-| Tin nhắn | Hội thoại 1-1, tìm cuộc trò chuyện, badge chưa đọc, chia sẻ deep link ý tưởng |
+| Tin nhắn | Hội thoại 1-1, tìm cuộc trò chuyện, badge chưa đọc, chia sẻ deep link ý tưởng cho nhiều người nhận |
 
 ## Cấu trúc dự án
 
@@ -33,12 +33,10 @@ app/src/main/java/com/helios/redshark
   domain/      model, repository interface, use case
   ui/          Compose screen, ViewModel, navigation, theme, component dùng chung
 docs/
-  PROCESS.md          quy trình nghiệp vụ
-  TESTING.md          kế hoạch kiểm thử
+  PROCESS.md          quy trình nghiệp vụ và kiểm thử
   SCHEMA.md           lược đồ Firestore, rules, indexes, deploy/reset
-  REPORT.md           báo cáo đồ án
-  PROJECT_CHARTER.md  tuyên ngôn dự án
-  GIT.md              quy ước Git/commit
+  REPORT.md           báo cáo đồ án và thông tin dự án
+  DELIVERABLE.md      nội dung slide, demo, tính năng, công nghệ, kết luận
 scripts/
   reset_production.py reset/verify Firestore, Firebase Auth và Cloudflare R2
 ```
@@ -93,11 +91,10 @@ Sau reset, Firestore không còn document nghiệp vụ, Firebase Authentication
 
 ## Tài liệu
 
-- [Quy trình nghiệp vụ](docs/PROCESS.md)
-- [Kế hoạch kiểm thử](docs/TESTING.md)
+- [Quy trình nghiệp vụ và kiểm thử](docs/PROCESS.md)
 - [Lược đồ Firestore và vận hành dữ liệu](docs/SCHEMA.md)
 - [Báo cáo đồ án](docs/REPORT.md)
-- [Quy ước Git](docs/GIT.md)
+- [Deliverable thuyết trình và demo](docs/DELIVERABLE.md)
 
 ## Nhóm thực hiện
 

@@ -43,7 +43,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.helios.redshark.R
@@ -251,7 +250,10 @@ private fun CommentInput(
     isSubmitting: Boolean,
     onSend: () -> Unit,
 ) {
-    Surface(shadowElevation = 4.dp, tonalElevation = 2.dp) {
+    Surface(
+        shadowElevation = Dimens.BottomBarShadowElevation,
+        tonalElevation = Dimens.BottomBarTonalElevation,
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -290,7 +292,7 @@ private fun CommentInput(
             if (isSubmitting) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(Dimens.IconMd),
-                    strokeWidth = 2.dp,
+                    strokeWidth = Dimens.ButtonProgressIndicatorStroke,
                 )
             } else {
                 FilledIconButton(

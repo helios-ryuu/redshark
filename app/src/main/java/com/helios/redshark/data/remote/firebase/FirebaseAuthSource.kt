@@ -19,6 +19,7 @@ class FirebaseAuthSource @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
 ) {
     fun observeAuthState(): Flow<FirebaseUser?> = callbackFlow {
+        trySend(firebaseAuth.currentUser)
         val listener = FirebaseAuth.AuthStateListener { auth ->
             trySend(auth.currentUser)
         }

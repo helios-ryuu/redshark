@@ -38,7 +38,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
@@ -339,7 +338,7 @@ private fun ConversationItem(
                     Spacer(modifier = Modifier.size(Dimens.SpaceXxs))
                     Box(
                         modifier = Modifier
-                            .size(10.dp)
+                            .size(Dimens.StatusDotSize)
                             .background(unreadColor, CircleShape),
                     )
                 }

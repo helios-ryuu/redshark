@@ -4,6 +4,7 @@ import com.helios.redshark.data.remote.firestore.FirestoreSource
 import com.helios.redshark.data.remote.firestore.FirestoreSourceImpl
 import com.helios.redshark.data.repository.AuthRepositoryImpl
 import com.helios.redshark.data.repository.CommentRepositoryImpl
+import com.helios.redshark.data.repository.ContributionRepositoryImpl
 import com.helios.redshark.data.repository.IdeaRepositoryImpl
 import com.helios.redshark.data.repository.IssueRepositoryImpl
 import com.helios.redshark.data.repository.MediaRepositoryImpl
@@ -12,6 +13,7 @@ import com.helios.redshark.data.repository.NotificationRepositoryImpl
 import com.helios.redshark.data.repository.ProfileRepositoryImpl
 import com.helios.redshark.domain.repository.AuthRepository
 import com.helios.redshark.domain.repository.CommentRepository
+import com.helios.redshark.domain.repository.ContributionRepository
 import com.helios.redshark.domain.repository.IdeaRepository
 import com.helios.redshark.domain.repository.IssueRepository
 import com.helios.redshark.domain.repository.MediaRepository
@@ -55,6 +57,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindCommentRepository(impl: CommentRepositoryImpl): CommentRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindContributionRepository(impl: ContributionRepositoryImpl): ContributionRepository
 
     @Binds
     @Singleton

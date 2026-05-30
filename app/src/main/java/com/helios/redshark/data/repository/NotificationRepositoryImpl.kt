@@ -32,6 +32,7 @@ class NotificationRepositoryImpl @Inject constructor(
             close(AppException.UnauthorizedException())
             return@callbackFlow
         }
+        trySend(emptyList())
         val registration = notifications
             .whereEqualTo("recipientId", uid)
             .orderBy("createdAt", Query.Direction.DESCENDING)
@@ -54,6 +55,7 @@ class NotificationRepositoryImpl @Inject constructor(
             close(AppException.UnauthorizedException())
             return@callbackFlow
         }
+        trySend(0)
         val registration = notifications
             .whereEqualTo("recipientId", uid)
             .whereEqualTo("isRead", false)

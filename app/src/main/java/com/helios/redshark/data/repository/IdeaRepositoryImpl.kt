@@ -34,6 +34,7 @@ class IdeaRepositoryImpl @Inject constructor(
     private val ideas = firestore.collection("ideas")
 
     override fun getAllIdeas(): Flow<List<Idea>> = callbackFlow {
+        trySend(emptyList())
         val registration = ideas
             .whereEqualTo("deletedAt", null)
             .orderBy("createdAt", Query.Direction.DESCENDING)
@@ -57,6 +58,7 @@ class IdeaRepositoryImpl @Inject constructor(
             close(AppException.UnauthorizedException())
             return@callbackFlow
         }
+        trySend(emptyList())
         val cache = linkedMapOf<String, Idea>()
 
         fun emitSnapshot(snapshot: com.google.firebase.firestore.QuerySnapshot?) {
@@ -286,6 +288,7 @@ class IdeaRepositoryImpl @Inject constructor(
             close(AppException.UnauthorizedException())
             return@callbackFlow
         }
+        trySend(IdeaReaction.NONE)
         val reactionRef = ideas.document(ideaId.toString())
             .collection("reactions")
             .document(uid)

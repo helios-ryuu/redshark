@@ -34,7 +34,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.helios.redshark.R
 import com.helios.redshark.domain.model.Idea
@@ -83,8 +82,8 @@ fun IdeaCard(
         modifier = modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(
             defaultElevation = Dimens.CardElevationRaised,
-            pressedElevation = 6.dp,
-            hoveredElevation = 4.dp,
+            pressedElevation = Dimens.CardElevationPressed,
+            hoveredElevation = Dimens.CardElevationHovered,
         ),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -170,7 +169,7 @@ fun IdeaCard(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .heightIn(min = 120.dp, max = 180.dp)
+                            .heightIn(min = Dimens.IdeaImageMinHeight, max = Dimens.IdeaImageMaxHeight)
                             .padding(horizontal = Dimens.SpaceLg),
                         contentAlignment = Alignment.Center,
                     ) {
@@ -186,7 +185,7 @@ fun IdeaCard(
                         contentDescription = null,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .heightIn(max = 240.dp),
+                            .heightIn(max = Dimens.IdeaVideoMaxHeight),
                         contentScale = ContentScale.Crop,
                     )
                 }
@@ -194,7 +193,7 @@ fun IdeaCard(
 
             // Footer: action buttons
             HorizontalDivider(
-                thickness = 0.5.dp,
+                thickness = Dimens.DividerHairline,
                 color = MaterialTheme.colorScheme.outlineVariant,
             )
             Row(
