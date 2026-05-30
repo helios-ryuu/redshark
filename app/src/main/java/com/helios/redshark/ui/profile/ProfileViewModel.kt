@@ -5,10 +5,12 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.helios.redshark.core.util.Result
+import com.helios.redshark.domain.model.ContributionSummary
 import com.helios.redshark.domain.model.User
 import com.helios.redshark.domain.usecase.auth.UpdateProfileUseCase
 import com.helios.redshark.domain.usecase.auth.UploadAvatarUseCase
 import com.helios.redshark.domain.repository.ProfileRepository
+import com.helios.redshark.domain.usecase.profile.GetUserContributionGraphUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +23,9 @@ import javax.inject.Inject
 data class ProfileUiState(
     val isLoading: Boolean = false,
     val user: User? = null,
+    val contributionSummary: ContributionSummary? = null,
+    val isContributionLoading: Boolean = false,
+    val contributionError: String? = null,
     val isSaving: Boolean = false,
     val isOwner: Boolean = false,
     val savedSuccess: Boolean = false,
@@ -32,12 +37,14 @@ class ProfileViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
     private val updateProfileUseCase: UpdateProfileUseCase,
     private val uploadAvatarUseCase: UploadAvatarUseCase,
+    private val getUserContributionGraphUseCase: GetUserContributionGraphUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
     fun loadProfile(userId: String, currentUserId: String?) {
+        loadContributionGraph(userId)
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             when (val result = profileRepository.getProfile(userId)) {
@@ -58,6 +65,36 @@ class ProfileViewModel @Inject constructor(
                 }
                 is Result.Loading -> Unit
             }
+        }
+    }
+
+    private fun loadContributionGraph(userId: String) {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    isContributionLoading = true,
+                    contributionError = null,
+                    contributionSummary = if (it.user?.id == userId) it.contributionSummary else null,
+                )
+            }
+            runCatching { getUserContributionGraphUseCase(userId) }
+                .onSuccess { summary ->
+                    _uiState.update {
+                        it.copy(
+                            contributionSummary = summary,
+                            isContributionLoading = false,
+                            contributionError = null,
+                        )
+                    }
+                }
+                .onFailure { error ->
+                    _uiState.update {
+                        it.copy(
+                            isContributionLoading = false,
+                            contributionError = error.message ?: "Không thể tải đóng góp.",
+                        )
+                    }
+                }
         }
     }
 

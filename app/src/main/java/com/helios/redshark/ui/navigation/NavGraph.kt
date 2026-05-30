@@ -27,6 +27,7 @@ import com.helios.redshark.ui.auth.AuthViewModel
 import com.helios.redshark.ui.auth.GoogleSignInScreen
 import com.helios.redshark.ui.auth.ProfileSetupScreen
 import com.helios.redshark.ui.auth.RegisterScreen
+import com.helios.redshark.ui.common.LoadingContent
 import com.helios.redshark.ui.home.HomeScreen
 import com.helios.redshark.ui.profile.ProfileEditScreen
 import com.helios.redshark.ui.profile.ProfileViewScreen
@@ -40,13 +41,40 @@ import java.util.UUID
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    startDestination: String = Routes.AUTH_GOOGLE,
+    startDestination: String = Routes.AUTH_GATE,
 ) {
     val authViewModel: AuthViewModel = hiltViewModel()
     val authState by authViewModel.uiState.collectAsStateWithLifecycle()
     val currentUserId = authState.user?.id
 
+    LaunchedEffect(authState.isLoading, currentUserId) {
+        if (authState.isLoading) return@LaunchedEffect
+
+        val currentRoute = navController.currentDestination?.route
+        val signedOutRoutes = setOf(Routes.AUTH_GOOGLE, Routes.REGISTER)
+        val signedInEntryRoutes = setOf(Routes.AUTH_GATE, Routes.AUTH_GOOGLE, Routes.REGISTER)
+
+        when {
+            currentUserId == null && currentRoute !in signedOutRoutes -> {
+                navController.navigate(Routes.AUTH_GOOGLE) {
+                    popUpTo(0) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+            currentUserId != null && (currentRoute == null || currentRoute in signedInEntryRoutes) -> {
+                navController.navigate(Routes.HOME) {
+                    popUpTo(0) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+        }
+    }
+
     NavHost(navController = navController, startDestination = startDestination) {
+
+        composable(Routes.AUTH_GATE) {
+            LoadingContent(modifier = Modifier.fillMaxSize())
+        }
 
         composable(Routes.AUTH_GOOGLE) {
             GoogleSignInScreen(
@@ -86,29 +114,33 @@ fun NavGraph(
         }
 
         composable(Routes.HOME) {
-            HomeScreen(
-                currentUserId = currentUserId,
-                onNavigateToProfile = { userId -> navController.navigate(Routes.profileView(userId)) },
-                onNavigateToSettings = { navController.navigate(Routes.SETTINGS) },
-                onSignOut = {
-                    navController.navigate(Routes.AUTH_GOOGLE) {
-                        popUpTo(Routes.HOME) { inclusive = true }
-                    }
-                },
-                onNavigateToIdeaDetail = { ideaId ->
-                    navController.navigate(Routes.ideaDetail(ideaId.toString()))
-                },
-                onCreateIdea = { navController.navigate(Routes.IDEA_CREATE) },
-                onIssueClick = { issueId ->
-                    navController.navigate(Routes.issueDetail(issueId.toString()))
-                },
-                onStartConversation = { peerId ->
-                    navController.navigate(Routes.conversationNew(peerId))
-                },
-                onOpenConversation = { convId ->
-                    navController.navigate(Routes.conversation(convId.toString()))
-                },
-            )
+            if (authState.isLoading && currentUserId == null) {
+                LoadingContent(modifier = Modifier.fillMaxSize())
+            } else {
+                HomeScreen(
+                    currentUserId = currentUserId,
+                    onNavigateToProfile = { userId -> navController.navigate(Routes.profileView(userId)) },
+                    onNavigateToSettings = { navController.navigate(Routes.SETTINGS) },
+                    onSignOut = {
+                        navController.navigate(Routes.AUTH_GOOGLE) {
+                            popUpTo(Routes.HOME) { inclusive = true }
+                        }
+                    },
+                    onNavigateToIdeaDetail = { ideaId ->
+                        navController.navigate(Routes.ideaDetail(ideaId.toString()))
+                    },
+                    onCreateIdea = { navController.navigate(Routes.IDEA_CREATE) },
+                    onIssueClick = { issueId ->
+                        navController.navigate(Routes.issueDetail(issueId.toString()))
+                    },
+                    onStartConversation = { peerId ->
+                        navController.navigate(Routes.conversationNew(peerId))
+                    },
+                    onOpenConversation = { convId ->
+                        navController.navigate(Routes.conversation(convId.toString()))
+                    },
+                )
+            }
         }
 
         composable(Routes.IDEA_CREATE) {
@@ -233,7 +265,11 @@ fun NavGraph(
         }
 
         composable(Routes.PROFILE_EDIT) {
-            val userId = currentUserId ?: return@composable
+            val userId = currentUserId
+            if (userId == null) {
+                LoadingContent(modifier = Modifier.fillMaxSize())
+                return@composable
+            }
             ProfileEditScreen(
                 userId = userId,
                 onNavigateBack = { navController.popBackStack() },

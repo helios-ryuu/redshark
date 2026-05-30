@@ -1,312 +1,199 @@
-# BÁO CÁO ĐỒ ÁN — ỨNG DỤNG REDSHARK ANDROID NATIVE (KOTLIN)
+# BÁO CÁO ĐỒ ÁN REDSHARK ANDROID NATIVE
 
-**Môn học:** NT118.Q22 — Lập trình ứng dụng di động
-**Nhóm thực hiện:** Sỹ (PM), Nam, Hải
-**Thời gian:** 16/03/2026 — 17/05/2026
+**Môn học:** NT118.Q22 - Lập trình ứng dụng di động  
+**Nhóm thực hiện:** Sỹ (PM), Nam, Hải  
+**Thời gian:** 16/03/2026 - 30/05/2026  
+**Sản phẩm:** Ứng dụng Android native quản lý ý tưởng, công việc và cộng tác nhóm nhỏ
 
----
+## 1. Tổng Quan Đề Tài
 
-## LỜI MỞ ĐẦU
-
-Trong bối cảnh chuyển đổi số, các ứng dụng di động hỗ trợ cộng tác và quản lý công việc trở thành công cụ thiết yếu đối với sinh viên và các nhóm dự án nhỏ. Đồ án **RedShark** được thực hiện nhằm xây dựng một ứng dụng Android gốc bằng ngôn ngữ Kotlin, hướng đến trải nghiệm người dùng tối ưu, kiến trúc rõ ràng và khả năng mở rộng cao, thông qua việc khai thác các dịch vụ không máy chủ (serverless) của Google Firebase và Cloudflare.
-
-## LỜI GIỚI THIỆU
-
-**RedShark** là ứng dụng cộng tác cho phép người dùng tạo, theo dõi các **Ý tưởng (Idea)**, quản lý **Issue (vấn đề/công việc)** và tương tác qua hệ thống **bình luận, thông báo, nhắn tin**. Hệ thống được xây dựng trên nền:
-
-- **Lớp giao diện:** Kotlin Android Native + Jetpack Compose.
-- **Lớp dịch vụ và cơ sở dữ liệu:** Firebase Authentication + Cloud Firestore.
-- **Lớp lưu trữ:** Cloudflare R2 (dịch vụ lưu trữ đối tượng tương thích S3) cho ảnh đại diện và dữ liệu đa phương tiện.
-
-Phiên bản đồ án này tập trung triển khai ứng dụng Android gốc bằng Kotlin, giúp tối ưu hiệu năng và khai thác tối đa các giao diện lập trình ứng dụng (API) sẵn có của Android.
-
-## LỜI CẢM ƠN
-
-Nhóm xin gửi lời cảm ơn sâu sắc tới:
-- Giảng viên môn NT118.Q22 đã hướng dẫn, phản biện và định hướng trong suốt quá trình thực hiện đề tài.
-- Cộng đồng mã nguồn mở Kotlin, Jetpack Compose, Firebase, Cloudflare vì các tài liệu và công cụ chất lượng.
-- Các thành viên trong nhóm đã nỗ lực cộng tác để hoàn thành đồ án đúng tiến độ.
-
-## DANH MỤC BẢNG
-
-| Số hiệu  | Tên bảng                                     | Chương |
-|----------|----------------------------------------------|--------|
-| Bảng 2.1 | So sánh các giải pháp lưu trữ object storage | 2      |
-| Bảng 3.1 | Yêu cầu chức năng tổng hợp                   | 3      |
-| Bảng 3.2 | Yêu cầu phi chức năng                        | 3      |
-| Bảng 3.3 | Danh sách bảng CSDL                          | 3      |
-| Bảng 3.4 | Ma trận phân quyền truy cập dữ liệu          | 3      |
-| Bảng 4.1 | Danh sách màn hình và route                  | 4      |
-| Bảng 4.2 | Danh sách Firestore operations               | 4      |
-| Bảng 5.1 | Tổng hợp ca kiểm thử Xác thực                | 5      |
-| Bảng 5.2 | Tổng hợp ca kiểm thử Nội dung                | 5      |
-| Bảng 5.3 | Tổng hợp ca kiểm thử Tương tác               | 5      |
-| Bảng 5.4 | Kết quả đo hiệu năng                         | 5      |
-
-## DANH MỤC HÌNH ẢNH
-
-| Số hiệu  | Tên hình                                 | Chương |
-|----------|------------------------------------------|--------|
-| Hình 2.1 | Kiến trúc Cloud Firestore                | 2      |
-| Hình 2.2 | Mô hình tương thích S3 của Cloudflare R2 | 2      |
-| Hình 3.1 | Sơ đồ use-case tổng thể                  | 3      |
-| Hình 3.2 | Sơ đồ ERD của hệ thống                   | 3      |
-| Hình 3.3 | Sơ đồ tuần tự Đăng nhập Google           | 3      |
-| Hình 3.4 | Sơ đồ trạng thái Issue                   | 3      |
-| Hình 4.1 | Cấu trúc thư mục dự án                   | 4      |
-| Hình 4.2 | Luồng điều hướng màn hình                | 4      |
-| Hình 4.3 | Giao diện Home / Ideas / Profile         | 4      |
-| Hình 5.1 | Kết quả tỷ lệ phiên không sự cố          | 5      |
-
-## DANH MỤC TỪ VIẾT TẮT
-
-| Từ viết tắt | Ý nghĩa                                      |
-|-------------|----------------------------------------------|
-| R2          | Cloudflare R2 (lưu trữ)                      |
-| SDK         | Software Development Kit                     |
-| UI          | User Interface                               |
-| UX          | User Experience                              |
-| MVVM        | Model – View – ViewModel                     |
-| CRUD        | Create – Read – Update – Delete              |
-| DTO         | Data Transfer Object                         |
-| DI          | Dependency Injection                         |
-| JWT         | JSON Web Token                               |
-| REST        | Representational State Transfer              |
-| CI/CD       | Continuous Integration / Continuous Delivery |
-| APK         | Android Package Kit                          |
-| SigV4       | AWS Signature Version 4                      |
-
-## TÓM TẮT
-
-Đồ án xây dựng ứng dụng **RedShark** trên nền tảng Android gốc (Kotlin + Jetpack Compose), áp dụng kiến trúc **Clean Architecture + MVVM**. Dữ liệu được quản lý qua **Cloud Firestore** với **Firebase Authentication** cho phân quyền, và **Cloudflare R2** cho lưu trữ dữ liệu đa phương tiện. Ứng dụng gồm 7 nhóm tính năng chính: Xác thực, Hồ sơ, Ý tưởng, Công việc, Bình luận, Thông báo, Nhắn tin. Toàn bộ dự án được triển khai trong 9 tuần bởi nhóm 3 người, đạt các tiêu chí: crash-free ≥ 99%, thời gian khởi động ≤ 3 giây, tỷ lệ đạt kiểm thử thủ công ≥ 95%.
-
----
-
-## CHƯƠNG 1. GIỚI THIỆU / TỔNG QUAN ĐỀ TÀI
+RedShark là ứng dụng Android gốc hỗ trợ sinh viên và nhóm dự án nhỏ quản lý vòng đời ý tưởng, chia nhỏ thành công việc, thảo luận, nhận thông báo, nhắn tin trực tiếp và theo dõi đóng góp cá nhân. Ứng dụng được xây dựng bằng Kotlin, Jetpack Compose, Firebase Authentication, Cloud Firestore và Cloudflare R2.
 
 ### 1.1 Đặt vấn đề
-Các nhóm dự án nhỏ thường thiếu công cụ theo dõi ý tưởng và công việc có dung lượng nhẹ, chi phí thấp và tập trung cho thiết bị di động. Nhiều nền tảng hiện tại (Jira, Trello) có chi phí tương đối cao, ưu tiên trải nghiệm trên nền tảng web và chưa tối ưu cho ngữ cảnh sử dụng trên di động.
 
-### 1.2 Lý do chọn đề tài
-- Nhu cầu thực tế trong cộng tác nhóm sinh viên.
-- Cơ hội thực hành kiến trúc Android gốc theo chuẩn công nghiệp.
-- Khám phá bộ công nghệ mới: Cloud Firestore, Cloudflare R2.
+Các nhóm nhỏ thường cần một công cụ nhẹ, dễ dùng trên điện thoại và tập trung vào luồng làm việc thực tế: ghi nhận ý tưởng, tạo công việc, thảo luận, trao đổi nhanh và nhìn lại mức độ đóng góp. Nhiều công cụ phổ biến như Jira hoặc Trello mạnh nhưng thiên về web, có nhiều cấu hình và không tối ưu cho bài toán mobile-first của nhóm sinh viên.
 
-### 1.3 Mục tiêu đề tài
-- **Mục tiêu tổng quát:** Xây dựng ứng dụng Android theo dõi ý tưởng/công việc với đầy đủ các tính năng cốt lõi.
-- **Mục tiêu cụ thể:** Hoàn thiện kiến trúc Kotlin cho Android gốc, áp dụng Clean Architecture, tích hợp 3 dịch vụ đám mây.
+### 1.2 Mục tiêu
 
-### 1.4 Phạm vi đề tài
-- **Trong phạm vi:** Xác thực, Hồ sơ, Ý tưởng, Công việc, Bình luận, Thông báo, Nhắn tin trên Android ≥ 8.0.
-- **Ngoài phạm vi:** iOS, web, FCM thời gian thực, nhóm chat nhiều người, thanh toán.
+| # | Mục tiêu | Chỉ số đo lường |
+|---|---|---|
+| O1 | Hoàn thiện app Android native bằng Kotlin + Jetpack Compose | 100% màn hình trong phạm vi đề tài có UI và logic thật |
+| O2 | Dùng Firebase Auth + Cloud Firestore làm backend chính | Schema/rules/indexes được mô tả và build pass |
+| O3 | Tích hợp Cloudflare R2 cho avatar và media idea | Upload qua R2 client, dữ liệu media lưu metadata trong Firestore |
+| O4 | Áp dụng Clean Architecture + MVVM | Domain/usecase/repository tách lớp, có unit test |
+| O5 | Hoàn thiện tài liệu bàn giao | README, REPORT, PROCESS, SCHEMA, DELIVERABLE đồng bộ trạng thái repo |
 
-### 1.5 Đối tượng nghiên cứu
-- Sinh viên và nhóm dự án nhỏ cần công cụ theo dõi công việc nhẹ.
-- Sản phẩm: Ứng dụng Android cài đặt qua APK hoặc Google Play.
+### 1.3 Phạm vi
 
-### 1.6 Phương pháp thực hiện
-- Quy trình phát triển: Lặp tăng dần theo các nhóm tính năng, tổng hợp trong [PROCESS.md](PROCESS.md).
-- Theo dõi kiểm thử và nghiệm thu theo [TESTING.md](TESTING.md).
-- Quản lý công việc: GitHub Issue kết hợp rà soát yêu cầu hợp nhất (PR review), theo chuẩn Conventional Commits.
-- Kiểm thử: Kiểm thử đơn vị (domain/data), kiểm thử giao diện (Compose), kiểm thử thủ công theo danh sách kiểm tra.
+Trong phạm vi: xác thực Google và Email/Password, hồ sơ, idea, media, issue, comment, notification, direct message, share idea nhiều người nhận, contribution graph cá nhân, deploy/reset dữ liệu.
 
----
+Ngoài phạm vi: iOS, web, thanh toán, hội thoại nhóm nhiều người, FCM push notification, backend server riêng.
 
-## CHƯƠNG 2. CƠ SỞ LÝ THUYẾT
+### 1.4 Thành viên và trách nhiệm
 
-### 2.1 Kotlin và nền tảng Android gốc
-Kotlin là ngôn ngữ chính thức của Google cho Android từ năm 2017, hỗ trợ an toàn rỗng (null-safety), coroutines, hàm mở rộng (extension functions) và DSL. Jetpack Compose là bộ công cụ xây dựng giao diện khai báo (declarative), thay thế XML trong Android gốc, cho phép phát triển giao diện hiện đại với lượng mã lặp thấp.
+| Thành viên | Vai trò | Trách nhiệm chính |
+|---|---|---|
+| Ngô Tiến Sỹ | PM, Android, kiểm thử, tài liệu | Quản lý tiến độ, auth/profile, tài liệu, kiểm thử cuối |
+| Phạm Tuấn Hải | Android | Idea, media, issue, comment, collab request |
+| Nguyễn Văn Nam | Android | Notification, message, phối hợp UI/ViewModel |
 
-**Các thư viện Jetpack được sử dụng:**
-- `Lifecycle` / `ViewModel` — quản lý vòng đời.
-- `Navigation-Compose` — điều hướng giữa các màn.
-- `DataStore` — lưu trữ preference thay SharedPreferences.
-- `Hilt` — Dependency Injection.
-- `Coil` — tải ảnh bất đồng bộ.
+## 2. Cơ Sở Công Nghệ
+
+### 2.1 Kotlin Android Native và Jetpack Compose
+
+Kotlin là ngôn ngữ chính thức cho Android, hỗ trợ null-safety, coroutine và code concise. Jetpack Compose giúp xây dựng UI khai báo, dễ chia component, dễ gắn state từ ViewModel và phù hợp với Material 3.
 
 ### 2.2 Firebase Authentication
-Đây là dịch vụ định danh được Google quản lý. Ứng dụng hỗ trợ hai phương thức xác thực: **Google Sign-In** (thông qua Credential Manager) và **Email/Password** (tạo + đăng nhập qua `createUserWithEmailAndPassword` / `signInWithEmailAndPassword`). Mã thông báo JWT được tự động làm mới. Firebase Authentication tạo `uid` duy nhất cho mỗi người dùng, làm khóa liên kết với các collection trong Firestore. Người dùng email bổ sung các trường `username`, `dateOfBirth`, `authProvider = "EMAIL"` trong Firestore document.
+
+Firebase Authentication cung cấp định danh người dùng với Google Sign-In và Email/Password. UID từ Firebase Auth là khóa chính liên kết với `users/{uid}` trong Firestore. Luồng đăng ký email kiểm tra username, email, mật khẩu và ngày sinh trước khi tạo user.
 
 ### 2.3 Cloud Firestore
-Firestore là cơ sở dữ liệu NoSQL dạng document của Firebase, cung cấp:
-- Lưu trữ dữ liệu theo dạng collection/document với ID tự sinh hoặc do ứng dụng chỉ định.
-- SDK Android native với Kotlin coroutines (`kotlinx-coroutines-play-services`, `.await()`).
-- Security Rules khai báo trực tiếp trên Firestore Console hoặc `firestore.rules`, tích hợp `request.auth`.
-- Soft delete được triển khai bằng trường `deletedAt: Timestamp?`.
-- Timestamps tự động qua `FieldValue.serverTimestamp()`.
 
-**Ưu điểm:** Tích hợp sâu với Firebase Auth, mở rộng tự động theo chiều ngang, không cần manage server.
+Firestore là cơ sở dữ liệu NoSQL dạng document. RedShark dùng collection chính: `users`, `ideas`, `issues`, `comments`, `notifications`, `conversations`, `messages` và subcollection `ideas/{ideaId}/reactions`. Security Rules kiểm soát owner, participant và collaborator.
 
 ### 2.4 Cloudflare R2
-Đây là dịch vụ lưu trữ đối tượng tương thích **S3 API**, không thu phí băng thông chiều ra (egress), với chi phí thấp hơn S3 khoảng 10 lần.
-- Xác thực: AWS Signature Version 4 (SigV4).
-- Hỗ trợ presigned URL TTL.
-- Có thể gắn custom domain + Cloudflare CDN.
 
-**Bảng 2.1 — So sánh giải pháp object storage:**
+Cloudflare R2 lưu avatar và media idea. Ứng dụng upload object qua API tương thích S3, metadata được lưu trong Firestore để UI render lại ảnh/video.
 
-| Tiêu chí | AWS S3 | Firebase Storage | Cloudflare R2 |
-|---------|--------|------------------|--------------|
-| Phí băng thông chiều ra | Có | Có | **Không** |
-| Tương thích S3 API | Native | Không | Có |
-| CDN tích hợp | CloudFront riêng | Có | **Có (miễn phí)** |
-| Free tier | 5GB/tháng | 5GB | **10GB** |
+### 2.5 Kiến trúc Clean Architecture + MVVM
 
-### 2.5 Clean Architecture + MVVM
-Phân tách 3 layer:
-- **Domain** (Use Case + Model interface) — pure Kotlin, test độc lập.
-- **Data** (cài đặt repository + nguồn dữ liệu) — phụ thuộc domain.
-- **Presentation** (ViewModel + Composable) — phụ thuộc domain.
+Luồng chính: UI event -> ViewModel -> UseCase -> Repository -> Firebase/R2 -> StateFlow -> Compose UI.
 
-Luồng dữ liệu một chiều (Unidirectional Data Flow): UI event → ViewModel intent → UseCase → Repository → StateFlow → UI.
+| Layer | Vai trò |
+|---|---|
+| UI | Compose screen, component dùng chung, theme, navigation |
+| Domain | Model, repository interface, use case, business rule |
+| Data | Repository implementation, DTO, mapper, Firebase/Firestore/R2 |
+| Core | DI, error mapping, network checker, result wrapper |
 
----
+## 3. Phân Tích Và Thiết Kế
 
-## CHƯƠNG 3. PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG
+### 3.1 Actor
 
-### 3.1 Phân tích yêu cầu
-Tổng hợp từ phạm vi hiện tại của mã nguồn và tài liệu dự án: các mô-đun Auth, Profile, Ideas, Media, Issues, Comments, Notifications, Messages cùng nhóm yêu cầu phi chức năng về hiệu năng, bảo mật, độ tin cậy, khả năng mở rộng, khả năng bảo trì và khả dụng.
+| Actor | Mô tả |
+|---|---|
+| Visitor | Người chưa đăng nhập, có thể vào flow đăng nhập/đăng ký |
+| User | Người đã đăng nhập, dùng toàn bộ chức năng nghiệp vụ |
+| Idea Author | Chủ ý tưởng, có quyền sửa/xóa/trạng thái và duyệt cộng tác |
+| Collaborator | Người tham gia idea, có quyền upload media theo rules |
 
-### 3.2 Sơ đồ ca sử dụng (Use-Case)
-Actor chính: `User (đã đăng nhập)`, `Visitor (chưa đăng nhập)`.
-Ca sử dụng chính: Đăng nhập Google, hoàn thiện hồ sơ lần đầu, Tạo/Sửa/Xóa Ý tưởng, Tạo/Sửa/Xóa Công việc, Bình luận, Gửi/Nhận Thông báo, Nhắn tin 1-1.
+### 3.2 Nhóm chức năng
 
-### 3.3 Thiết kế cơ sở dữ liệu
-Chi tiết tại [SCHEMA.md](SCHEMA.md). Gồm 9 bảng: `users`, `ideas`, `issues`, `comments`, `tags`, `skills`, `notifications`, `conversations`, `messages`. Soft delete trên `ideas`, `issues`.
+| Nhóm | Chức năng |
+|---|---|
+| Auth | Google Sign-In, đăng ký/đăng nhập email, kiểm tra username, đăng xuất |
+| Profile | Xem/sửa hồ sơ, avatar R2, bio, skills, graph đóng góp |
+| Idea | Tạo/xem/sửa/xóa mềm, status ACTIVE/CLOSED/CANCELLED, reaction |
+| Media | Upload ảnh/video cho idea bởi author/collaborator |
+| Issue | CRUD issue, priority, assignee, state machine, giới hạn 20 issue active |
+| Comment | Realtime comments, optimistic update, hiển thị tác giả |
+| Notification | Badge unread, collab request, accept/reject, comment/issue notification |
+| Message | Direct conversation, unread badge, deep link idea |
+| Share | Chọn nhiều user/conversation, tự tạo direct conversation khi cần |
 
-### 3.4 Thiết kế kiến trúc hệ thống
+### 3.3 Thiết kế dữ liệu
 
-```
-┌──────────────────────────────────────────┐
-│  UI Layer (Jetpack Compose + ViewModel)  │
-└────────────────────┬─────────────────────┘
-                     │ UseCase
-┌────────────────────▼─────────────────────┐
-│  Domain Layer (Model + Repo interface)   │
-└────────────────────┬─────────────────────┘
-                     │ Repository impl
-┌────────────────────▼─────────────────────┐
-│  Data Layer                              │
-│  ├─ FirebaseAuthSource                   │
-│  ├─ FirestoreSource (Firestore SDK)      │
-│  ├─ R2Client (S3 SigV4)                  │
-│  └─ DataStore (local prefs)              │
-└──────────────────────────────────────────┘
-```
+Chi tiết schema, rules và indexes nằm trong [SCHEMA.md](SCHEMA.md). Điểm quan trọng:
 
-### 3.5 Thiết kế giao diện
-Giao diện tuân theo Material 3 với ngôn ngữ thiết kế **Fluent Minimalist**: thanh điều hướng dưới gồm 5 thẻ (Home, Ideas, Messages, Notifications, Settings), toàn bộ list items sử dụng `Surface + BorderStroke` theo pattern `IdeaCard`, không có hardcoded `dp` trong các screen files — tất cả spacing và sizing đi qua `Dimens.*` tokens. Áp dụng đồng nhất trên tất cả màn hình: Auth, Profile, Settings, Notification, Conversation.
+- `ideas` và `issues` dùng soft delete qua `deletedAt`.
+- `conversations` là direct chat giữa 2 UID; conversation mới dùng deterministic UUID từ cặp UID để tránh tạo trùng.
+- `messages` lưu nội dung text và deep link `redshark://idea/{ideaId}`.
+- Contribution graph không thêm collection mới; dữ liệu được tổng hợp từ `ideas`, `issues`, `comments`.
 
-### 3.6 Thiết kế xử lý nghiệp vụ
-Chi tiết trong [PROCESS.md](PROCESS.md).
+### 3.4 Thiết kế UI/UX
 
----
+UI dùng Material 3, theme RedShark và các token trong `Dimens`, `Color`, `Shape`, `Type`. Đợt hoàn thiện cuối tập trung UX repair:
 
-## CHƯƠNG 4. HIỆN THỰC ĐỀ TÀI
+- Bottom navigation: Home, Ideas, Messages, Profile.
+- Bottom sheet cho notification, comment, share.
+- Component thống nhất: `IdeaCard`, `IssueCard`, `AvatarImage`, `StateContent`, `StatusPill`.
+- Các state loading/error/empty/content có UI thật, không còn placeholder chức năng.
+- Share sheet hỗ trợ search, multi-select, trạng thái partial failure.
+- Profile hiển thị contribution graph 12 tuần giống contribution calendar.
 
-### 4.1 Môi trường phát triển
-- Android Studio Iguana+, JDK 17, Kotlin 2.3.20, AGP 9.1.1, Gradle 9.4.1.
-- Kho mã nguồn GitHub phục vụ quản lý phiên bản.
-- Thiết bị kiểm thử: Trình giả lập Pixel 6, Samsung A54.
+## 4. Hiện Thực
 
-### 4.2 Cấu trúc mã nguồn
-Mã nguồn được tổ chức theo 3 lớp `data/domain/ui` cùng nhóm thành phần dùng chung.
+### 4.1 Môi trường
 
-### 4.3 Triển khai các module
+| Thành phần | Phiên bản/công nghệ |
+|---|---|
+| Language | Kotlin 2.3.20 |
+| Android | minSdk 26, target/compileSdk 36 |
+| Build | Gradle 9.4.1, AGP 9.2.0 |
+| UI | Jetpack Compose, Material 3 |
+| DI | Hilt |
+| Async | Coroutines, Flow |
+| Backend | Firebase Auth, Cloud Firestore |
+| Storage | Cloudflare R2, OkHttp |
+| Image | Coil |
+| Test | JUnit, MockK, kotlinx-coroutines-test |
 
-**Module Auth:**
-- `FirebaseAuthSource` bao bọc `FirebaseAuth.getInstance()`.
-- `GoogleSignInHelper` sử dụng Credential Manager API để đồng bộ với hướng dẫn Android hiện hành.
-- Luồng đăng nhập đầu tiên bắt buộc hoàn thiện hồ sơ lần đầu với `displayName` 3..50.
-- `AuthRepositoryImpl` cung cấp `Flow<AuthState>`.
+### 4.2 Module chính
 
-**Module Idea/Issue:**
-- Ràng buộc "20 công việc đang hoạt động" được kiểm tra trước ở tầng ca sử dụng trước khi gọi mutation.
+Auth/Profile:
+- Google Sign-In qua Credential Manager.
+- Email/Password validate email, username, password, date of birth.
+- Avatar upload qua R2, profile lưu `avatarUrl`.
 
-**Nhóm chức năng Hồ sơ/Phương tiện:**
-- Nén ảnh bằng `BitmapFactory` → JPEG quality 80 → tối đa 512×512.
-- Tải tệp lên R2 qua OkHttp với `AwsV4SigningInterceptor`.
+Idea/Issue:
+- Idea có status, media, reaction, collaborator.
+- Issue có priority, assignee, status machine: `OPEN -> IN_PROGRESS/CANCELLED`, `IN_PROGRESS -> CLOSED`.
+- Giới hạn 20 issue active do một user tạo.
 
-**Nhóm chức năng Thông báo/Nhắn tin:**
-- Cập nhật theo chu kỳ bằng `viewModelScope.launch { while (isActive) { delay(...); refresh() } }` — vòng lặp gắn với vòng đời ViewModel, tự hủy khi ViewModel bị clear.
-- Cập nhật lạc quan: thêm dữ liệu cục bộ trước, hoàn tác nếu thất bại.
-- Chia sẻ idea qua tin nhắn bằng deep link `redshark://idea/{id}`; nội dung hiển thị dạng link và mở `IdeaDetail`, Back quay lại `ConversationScreen` nếu mở trong app.
+Interaction:
+- Notification in-app theo Firestore snapshot.
+- Direct message 1-1 với unread badge.
+- Share idea gửi text gồm title, mô tả và deep link vào nhiều người nhận.
 
-### 4.4 Tích hợp dịch vụ bên ngoài
-- **Firebase:** `google-services.json` + init trong `RedSharkApp`.
-- **R2:** Thông tin xác thực được nạp qua `BuildConfig` (từ `local.properties`).
-- **Google Sign-In:** Cần cấu hình SHA-1 cho bản dựng debug và bản phát hành trên Firebase Console.
+Contribution:
+- `ContributionRepository` query `ideas`, `issues`, `comments` theo `authorId` và `createdAt`.
+- `ContributionSummaryBuilder` gom sự kiện thành 84 ngày, tính level 0..4.
+- Profile render graph 12 tuần và tổng số hoạt động.
 
-### 4.5 Bảo mật và quản lý cấu hình
-Các biến cấu hình được lưu trong `local.properties`, không mã hóa cứng trong mã nguồn và không ghi token vào nhật ký. ProGuard được bật ở bản phát hành. Quyền sở hữu dữ liệu được kiểm soát ở phía máy chủ.
+## 5. Kiểm Thử
 
----
+Chiến lược kiểm thử chi tiết nằm trong [PROCESS.md](PROCESS.md). Kết quả tự động gần nhất:
 
-## CHƯƠNG 5. KIỂM THỬ
+| Ngày | Lệnh | Kết quả |
+|---|---|---|
+| 30/05/2026 | `.\gradlew.bat compileDebugKotlin` | PASS |
+| 30/05/2026 | `.\gradlew.bat testDebugUnitTest` | PASS |
 
-### 5.1 Chiến lược kiểm thử
-- **Kiểm thử đơn vị:** Ca sử dụng tầng `domain` và kho dữ liệu tầng `data` (JUnit + MockK).
-- **Kiểm thử giao diện:** Compose Test (các màn hình Auth, IdeaDetail).
-- **Kiểm thử thủ công:** Theo [TESTING.md](TESTING.md).
-- **Kiểm thử hiệu năng:** Android Profiler, Firebase Performance Monitoring.
+Unit test hiện bao phủ các use case auth, profile, idea media, message, notification và các phần mới:
 
-### 5.2 Kịch bản kiểm thử
-Bảng tổng hợp:
-- Toàn bộ kịch bản Auth/Profile, Ideas/Media/Issues/Comments, Notifications/Messages, UI/UX và NFR được gom trong [TESTING.md](TESTING.md).
+- Share idea: validate recipient, dedupe, bỏ current user, tiếp tục khi lỗi một phần.
+- Contribution graph: bucket 12 tuần, ignore event ngoài range, level intensity ổn định.
 
-### 5.3 Kết quả kiểm thử (điền sau khi chạy thực tế)
-| Nhóm                | Tổng TC | PASS  | FAIL  | % PASS |
-|---------------------|---------|-------|-------|--------|
-| Auth (Google)       | 19      | 19    | 0     | 100%   |
-| Auth (Email)        | 11      | 🔲     | —     | chờ manual |
-| Content             | 24      | 24    | 0     | 100%   |
-| Interaction (N/M)   | 18      | 18    | 0     | 100%   |
-| NFR (X)             | 7       | 🔲     | —     | chờ manual |
-| **Tổng**            | **79**  | **61+**| —    | — |
+Manual regression cần chạy trên thiết bị/emulator trước release cuối. Tài liệu không ghi nhận manual pass khi chưa có bằng chứng chạy thực tế.
 
-> **Ghi chú cập nhật:** Checklist kiểm thử hiện được hợp nhất trong `docs/TESTING.md`; kết quả thực thi thực tế cần được cập nhật sau mỗi vòng regression.
+## 6. Rủi Ro Và Cách Xử Lý
 
-### 5.4 Đánh giá
-Các chỉ số mục tiêu:
-- Tỷ lệ phiên không sự cố ≥ 99%.
-- Khởi động nguội ≤ 3 giây.
-- Kích thước APK ≤ 25 MB.
-- Tải ảnh đại diện 1 MB ≤ 3 giây trên 4G.
+| ID | Rủi ro | Mức độ | Cách xử lý |
+|---|---|---|---|
+| R1 | Firestore rules sai gây lỗi quyền | Trung bình | Kiểm tra rules, chạy smoke test author/collaborator/participant |
+| R2 | R2 config sai làm upload fail | Trung bình | Dùng `local.properties`, kiểm tra biến môi trường trước demo |
+| R3 | Google Sign-In thiếu SHA-1 | Trung bình | Kiểm tra Firebase Console trước khi build demo |
+| R4 | Query contribution thiếu index | Trung bình | Cập nhật `firestore.indexes.json` và deploy indexes |
+| R5 | Manual regression chưa đủ | Cao | Dùng checklist trong PROCESS trước khi nộp/release |
 
----
+## 7. Kết Luận
 
-## CHƯƠNG 6. KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
+RedShark hoàn thiện một ứng dụng Android native có đủ luồng cộng tác cốt lõi: quản lý ý tưởng, công việc, trao đổi, thông báo, chia sẻ và thống kê đóng góp. Dự án thể hiện khả năng kết hợp Clean Architecture, MVVM, Firebase serverless, R2 object storage và Jetpack Compose để tạo một sản phẩm mobile-first có tính thực tiễn cho nhóm nhỏ.
 
-### 6.1 Kết quả đạt được
-- Ứng dụng RedShark Android native hoàn chỉnh, đáp ứng đầy đủ 7 nhóm tính năng.
-- Kiến trúc Clean Architecture + MVVM rõ ràng, dễ mở rộng.
-- Kho mã nguồn công khai, đúng chuẩn Conventional Commits.
-- Tài liệu kỹ thuật đầy đủ trong thư mục `/docs`.
+Hướng phát triển tiếp theo:
 
-### 6.2 Hạn chế
-- Chưa tích hợp thông báo đẩy FCM (đang dùng cập nhật theo chu kỳ).
-- Chưa hỗ trợ hội thoại nhóm > 2 người.
-- Chưa có quy trình kiểm thử giao diện dạng instrumented tự động (UI test hiện chạy trên trình giả lập).
-- Chưa tích hợp Firebase Performance + Crashlytics để giám sát môi trường vận hành thực tế.
+- Thêm FCM push notification.
+- Thêm group conversation và đính kèm media trong message.
+- Thêm offline-first với Room.
+- Mở rộng dashboard thống kê cho chủ idea.
+- Tự động hóa UI test/instrumented test trên emulator.
 
-### 6.3 Hướng phát triển
-- Tích hợp FCM kết hợp cơ chế gần thời gian thực dựa trên snapshot Firestore.
-- Thêm hội thoại nhóm, đính kèm phương tiện trong tin nhắn.
-- Mở rộng sang iOS (Kotlin Multiplatform Mobile).
-- Nhóm chức năng báo cáo/thống kê cho chủ ý tưởng.
-- Hỗ trợ offline-first với Room + sync.
+## 8. Tài Liệu Tham Khảo
 
----
-
-## TÀI LIỆU THAM KHẢO
-
-1. Google. *Android Developers Documentation.* https://developer.android.com/
-2. JetBrains. *Kotlin Language Reference.* https://kotlinlang.org/docs/
-3. Google. *Jetpack Compose.* https://developer.android.com/jetpack/compose
-4. Firebase. *Cloud Firestore Documentation.* https://firebase.google.com/docs/firestore
-5. Firebase. *Firebase Authentication.* https://firebase.google.com/docs/auth
-6. Cloudflare. *R2 Object Storage — S3 API Compatibility.* https://developers.cloudflare.com/r2/
-7. Robert C. Martin. *Clean Architecture: A Craftsman's Guide to Software Structure and Design.* Prentice Hall, 2017.
-8. Google. *Guide to App Architecture.* https://developer.android.com/topic/architecture
-9. Square. *OkHttp.* https://square.github.io/okhttp/
-10. Material Design 3. https://m3.material.io/
+1. Android Developers Documentation: https://developer.android.com/
+2. Kotlin Documentation: https://kotlinlang.org/docs/
+3. Jetpack Compose: https://developer.android.com/jetpack/compose
+4. Firebase Authentication: https://firebase.google.com/docs/auth
+5. Cloud Firestore: https://firebase.google.com/docs/firestore
+6. Cloudflare R2: https://developers.cloudflare.com/r2/
+7. Material Design 3: https://m3.material.io/

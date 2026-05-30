@@ -29,6 +29,7 @@ class IssueRepositoryImpl @Inject constructor(
     private val issues = firestore.collection("issues")
 
     override fun getIssuesByIdea(ideaId: UUID): Flow<List<Issue>> = callbackFlow {
+        trySend(emptyList())
         val registration = issues
             .whereEqualTo("ideaId", ideaId.toString())
             .orderBy("createdAt", Query.Direction.DESCENDING)
@@ -53,6 +54,7 @@ class IssueRepositoryImpl @Inject constructor(
             close(AppException.UnauthorizedException())
             return@callbackFlow
         }
+        trySend(emptyList())
         val registration = issues
             .whereEqualTo("status", IssueStatus.OPEN.name)
             .orderBy("createdAt", Query.Direction.DESCENDING)

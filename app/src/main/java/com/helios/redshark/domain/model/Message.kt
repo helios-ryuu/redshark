@@ -15,3 +15,16 @@ data class SendMessageInput(
     val conversationId: UUID,
     val content: String,
 )
+
+data class ShareMessageFailure(
+    val recipientUserId: String,
+    val message: String,
+)
+
+data class ShareMessageResult(
+    val sentCount: Int,
+    val totalCount: Int,
+    val failures: List<ShareMessageFailure>,
+) {
+    val isComplete: Boolean = failures.isEmpty() && sentCount == totalCount
+}

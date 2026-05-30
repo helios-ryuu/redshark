@@ -2,9 +2,7 @@ package com.helios.redshark.ui.auth
 
 import android.app.Activity
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -47,9 +45,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -108,35 +103,6 @@ fun GoogleSignInScreen(
 
     Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
-            // Decorative background blobs
-            Box(
-                modifier = Modifier
-                    .size(360.dp)
-                    .align(Alignment.TopEnd)
-                    .background(
-                        brush = Brush.radialGradient(
-                            listOf(
-                                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
-                                Color.Transparent,
-                            )
-                        ),
-                        shape = CircleShape,
-                    ),
-            )
-            Box(
-                modifier = Modifier
-                    .size(240.dp)
-                    .align(Alignment.BottomStart)
-                    .background(
-                        brush = Brush.radialGradient(
-                            listOf(
-                                MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f),
-                                Color.Transparent,
-                            )
-                        ),
-                        shape = CircleShape,
-                    ),
-            )
             Column(
                 modifier = Modifier
                     .fillMaxSize()

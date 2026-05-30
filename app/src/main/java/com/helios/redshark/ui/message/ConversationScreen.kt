@@ -254,7 +254,10 @@ fun ConversationScreen(
                     }
                     Spacer(modifier = Modifier.width(Dimens.SpaceSm))
                     if (uiState.isSending) {
-                        CircularProgressIndicator(modifier = Modifier.size(Dimens.IconMd), strokeWidth = 2.dp)
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(Dimens.IconMd),
+                            strokeWidth = Dimens.ButtonProgressIndicatorStroke,
+                        )
                     } else {
                         FilledIconButton(
                             onClick = {
