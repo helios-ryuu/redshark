@@ -14,13 +14,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 data class AuthUiState(
-    val isLoading: Boolean = false,
+    val isLoading: Boolean = true,
     val user: User? = null,
     val errorMessage: String? = null,
     val navigateTo: AuthDestination? = null,
@@ -45,9 +46,20 @@ class AuthViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            observeAuthStateUseCase().collect { user ->
-                _uiState.update { it.copy(user = user) }
-            }
+            observeAuthStateUseCase()
+                .catch { error ->
+                    Timber.e(error)
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            user = null,
+                            errorMessage = error.message,
+                        )
+                    }
+                }
+                .collect { user ->
+                    _uiState.update { it.copy(isLoading = false, user = user) }
+                }
         }
     }
 
@@ -110,7 +122,7 @@ class AuthViewModel @Inject constructor(
     fun onSignOutClicked() {
         viewModelScope.launch {
             signOutUseCase()
-            _uiState.update { AuthUiState() }
+            _uiState.update { AuthUiState(isLoading = false) }
         }
     }
 

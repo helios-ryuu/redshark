@@ -55,7 +55,6 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.helios.redshark.R
@@ -272,7 +271,10 @@ fun IdeaDetailScreen(
                                     ) {
                                         when (collabState) {
                                             is CollabRequestState.Sending ->
-                                                CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                                                CircularProgressIndicator(
+                                                    modifier = Modifier.size(Dimens.IconSm),
+                                                    strokeWidth = Dimens.ButtonProgressIndicatorStroke,
+                                                )
                                             is CollabRequestState.Sent ->
                                                 Text(stringResource(R.string.idea_action_collab_sent))
                                             else ->
@@ -408,7 +410,10 @@ private fun MediaSection(
             if (canUpload) {
                 OutlinedButton(onClick = onPickMedia, enabled = !isUploading) {
                     if (isUploading) {
-                        CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(Dimens.IconSm),
+                            strokeWidth = Dimens.ButtonProgressIndicatorStroke,
+                        )
                     } else {
                         Text(stringResource(R.string.idea_action_upload_media))
                     }
@@ -427,7 +432,7 @@ private fun MediaSection(
                         contentDescription = media.fileName,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(220.dp),
+                            .height(Dimens.MediaPreviewHeight),
                     )
                 } else {
                     Text(
@@ -515,7 +520,10 @@ private fun CommentInput(
     isSubmitting: Boolean,
     onSend: () -> Unit,
 ) {
-    Surface(shadowElevation = 4.dp, tonalElevation = 2.dp) {
+    Surface(
+        shadowElevation = Dimens.BottomBarShadowElevation,
+        tonalElevation = Dimens.BottomBarTonalElevation,
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -552,7 +560,10 @@ private fun CommentInput(
             }
             Spacer(modifier = Modifier.width(Dimens.SpaceSm))
             if (isSubmitting) {
-                CircularProgressIndicator(modifier = Modifier.size(Dimens.IconMd), strokeWidth = 2.dp)
+                CircularProgressIndicator(
+                    modifier = Modifier.size(Dimens.IconMd),
+                    strokeWidth = Dimens.ButtonProgressIndicatorStroke,
+                )
             } else {
                 FilledIconButton(
                     onClick = onSend,

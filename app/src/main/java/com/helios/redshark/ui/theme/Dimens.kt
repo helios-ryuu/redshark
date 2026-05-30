@@ -13,7 +13,10 @@ object Dimens {
 
     val CardElevation = 0.dp
     val CardElevationRaised = 2.dp
+    val CardElevationHovered = 4.dp
+    val CardElevationPressed = 6.dp
     val CardBorderWidth = 1.dp
+    val DividerHairline = 0.5.dp
 
     val IconSm = 16.dp
     val IconMd = 24.dp
@@ -24,16 +27,23 @@ object Dimens {
     val AvatarLg = 96.dp
 
     val UnreadDotSize = 8.dp
+    val StatusDotSize = 10.dp
     val NotificationAccentBar = 4.dp
 
     val ListBottomPaddingWithFab = 88.dp
     val InputFieldHeightMultiline = 160.dp
     val InputFieldHeightMultilineSm = 120.dp
+    val IdeaImageMinHeight = 120.dp
+    val IdeaImageMaxHeight = 180.dp
+    val IdeaVideoMaxHeight = 240.dp
+    val MediaPreviewHeight = 220.dp
 
     // Buttons & brand
     val ButtonHeight = 52.dp
     val ButtonProgressIndicatorSize = 18.dp
     val ButtonProgressIndicatorStroke = 2.dp
+    val BottomBarShadowElevation = 4.dp
+    val BottomBarTonalElevation = 2.dp
     val BrandIconContainer = 88.dp
     val BrandIconInner = 44.dp
     val BrandLogoSize = 120.dp
@@ -53,6 +63,9 @@ object Dimens {
     val CardAccentBarWidth      = 4.dp
     val ProfileHeroBannerHeight = 160.dp
     val ProfileAvatarOverlap    = 48.dp
+    val ProfileAvatarRingPadding = 4.dp
+    val ContributionCellSize     = 12.dp
+    val ContributionCellGap      = 3.dp
     val EmptyStateIconSize      = 80.dp
     val DrawerHeaderHeight      = 120.dp
     val FormBrandStripHeight    = 4.dp

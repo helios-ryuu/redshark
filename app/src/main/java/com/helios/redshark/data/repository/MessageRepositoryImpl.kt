@@ -34,6 +34,7 @@ class MessageRepositoryImpl @Inject constructor(
             close(AppException.UnauthorizedException())
             return@callbackFlow
         }
+        trySend(emptyList())
         val registration = conversations
             .whereArrayContains("participantIds", uid)
             .orderBy("lastMessageAt", Query.Direction.DESCENDING)
@@ -51,6 +52,7 @@ class MessageRepositoryImpl @Inject constructor(
     }
 
     override fun getMessages(conversationId: UUID): Flow<List<Message>> = callbackFlow {
+        trySend(emptyList())
         val registration = messages
             .whereEqualTo("conversationId", conversationId.toString())
             .orderBy("createdAt", Query.Direction.ASCENDING)
@@ -100,6 +102,13 @@ class MessageRepositoryImpl @Inject constructor(
     override suspend fun findDirectConversation(peerId: String): Conversation? {
         val uid = auth.currentUser?.uid ?: throw AppException.UnauthorizedException()
         return try {
+            val deterministicDoc = conversations.document(directConversationId(uid, peerId).toString()).get().await()
+            if (deterministicDoc.exists()) {
+                return deterministicDoc.toObject(ConversationDto::class.java)
+                    ?.copy(id = deterministicDoc.id)
+                    ?.toDomain()
+            }
+
             val snapshot = conversations
                 .whereEqualTo("type", "DIRECT")
                 .whereArrayContains("participantIds", uid)
@@ -119,7 +128,13 @@ class MessageRepositoryImpl @Inject constructor(
     override suspend fun createDirectConversation(peerId: String): Conversation {
         val uid = auth.currentUser?.uid ?: throw AppException.UnauthorizedException()
         return try {
-            val newId = UUID.randomUUID().toString()
+            val newId = directConversationId(uid, peerId).toString()
+            val existingDoc = conversations.document(newId).get().await()
+            if (existingDoc.exists()) {
+                return existingDoc.toObject(ConversationDto::class.java)?.copy(id = existingDoc.id)?.toDomain()
+                    ?: throw AppException.UnknownException()
+            }
+
             val data = mapOf(
                 "participantIds" to listOf(uid, peerId),
                 "type" to "DIRECT",
@@ -127,6 +142,7 @@ class MessageRepositoryImpl @Inject constructor(
                 "lastMessagePreview" to null,
                 "lastMessageSenderId" to null,
                 "hasUnread" to false,
+                "createdAt" to FieldValue.serverTimestamp(),
             )
             conversations.document(newId).set(data).await()
             val doc = conversations.document(newId).get().await()
@@ -148,4 +164,9 @@ class MessageRepositoryImpl @Inject constructor(
             throw AppException.NetworkException(e)
         }
     }
+}
+
+private fun directConversationId(firstUserId: String, secondUserId: String): UUID {
+    val pairKey = listOf(firstUserId, secondUserId).sorted().joinToString(separator = ":")
+    return UUID.nameUUIDFromBytes("DIRECT:$pairKey".toByteArray(Charsets.UTF_8))
 }

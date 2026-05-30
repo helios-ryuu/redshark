@@ -1,6 +1,7 @@
 package com.helios.redshark.ui.navigation
 
 object Routes {
+    const val AUTH_GATE = "auth/gate"
     const val AUTH_GOOGLE = "auth/google"
     const val REGISTER = "auth/register"
     const val PROFILE_SETUP = "profile/setup"

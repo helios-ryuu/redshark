@@ -1,6 +1,6 @@
 # SCHEMA.md — Lược đồ CSDL (Cloud Firestore)
 
-Mọi collection đều dùng document ID Firestore (tự sinh UUID hoặc bằng Firebase Auth UID cho `users`). `createdAt` và `updatedAt` dùng `FieldValue.serverTimestamp()` — được Firestore server điền tự động.
+Mọi collection đều dùng document ID Firestore dạng UUID hoặc Firebase Auth UID cho `users`. Riêng direct conversation mới dùng deterministic UUID sinh từ cặp UID đã sort để tránh tạo trùng. `createdAt` và `updatedAt` dùng `FieldValue.serverTimestamp()` do Firestore server điền tự động.
 
 ---
 
@@ -122,7 +122,7 @@ Mọi collection đều dùng document ID Firestore (tự sinh UUID hoặc bằn
 
 | Thuộc tính     | Kiểu Firestore  | Ràng buộc                               | Toàn vẹn |
 |----------------|------------------|-----------------------------------------|----------|
-| id                 | String (auto)    | NOT NULL                                    | Strong   |
+| id                 | String (UUID)    | deterministic UUID cho conversation mới; UUID cũ vẫn đọc được | Strong   |
 | type               | String (Enum)    | {DIRECT}, default DIRECT                    | Strong   |
 | participantIds     | Array\<String\>  | → `users`, size = 2                         | Strong   |
 | lastMessageAt      | Timestamp?       | NULL đến khi có tin nhắn đầu                | Medium   |
@@ -142,7 +142,19 @@ Mọi collection đều dùng document ID Firestore (tự sinh UUID hoặc bằn
 
 ---
 
-## 10. Firestore Operations (pattern CRUD)
+## 10. Contribution Graph
+
+Contribution graph không có collection riêng. App tổng hợp dữ liệu runtime từ:
+
+| Nguồn | Điều kiện tính | Ngày dùng để gom |
+|---|---|---|
+| `ideas` | `authorId == userId` và `deletedAt == null` | `createdAt` |
+| `issues` | `authorId == userId` và `deletedAt == null` | `createdAt` |
+| `comments` | `authorId == userId` | `createdAt` |
+
+`ContributionSummaryBuilder` gom 84 ngày gần nhất (12 tuần), tính `count` và `level` 0..4 ở client. Không cần migration hoặc backfill.
+
+## 11. Firestore Operations (pattern CRUD)
 
 ### users
 ```kotlin
@@ -177,7 +189,7 @@ firestore.collection("ideas").document(ideaId)
 
 ---
 
-## 11. Security Rules (cơ bản)
+## 12. Security Rules (cơ bản)
 
 ```
 rules_version = '2';
@@ -227,7 +239,7 @@ service cloud.firestore {
       allow read: if isOwner(resource.data.recipientId);
       allow create: if isSignedIn();
       allow update: if isOwner(resource.data.recipientId);
-      allow delete: if false;
+      allow delete: if isOwner(resource.data.recipientId);
     }
     match /conversations/{conversationId} {
       allow get: if isSignedIn()
@@ -257,7 +269,7 @@ service cloud.firestore {
 
 ---
 
-## 12. Composite Indexes (Firestore)
+## 13. Composite Indexes (Firestore)
 
 | Collection      | Fields                                            | Mục đích                              |
 |-----------------|---------------------------------------------------|---------------------------------------|
@@ -265,7 +277,9 @@ service cloud.firestore {
 | `issues`        | `ideaId` ASC, `createdAt` DESC                    | List issues of one idea               |
 | `issues`        | `status` ASC, `createdAt` DESC                    | Filter issues by status               |
 | `issues`        | `authorId` ASC, `status` ASC                      | Count active issues per user          |
+| `issues`        | `authorId` ASC, `createdAt` DESC                  | Contribution graph                    |
 | `comments`      | `ideaId` ASC, `createdAt` ASC                     | List comments in idea detail          |
+| `comments`      | `authorId` ASC, `createdAt` DESC                  | Contribution graph                    |
 | `notifications` | `recipientId` ASC, `createdAt` DESC               | Notification inbox                    |
 | `notifications` | `recipientId` ASC, `isRead` ASC                   | Unread badge / read filter            |
 | `conversations` | `participantIds` (array-contains), `lastMessageAt` DESC | Conversation list ordering     |
@@ -273,7 +287,7 @@ service cloud.firestore {
 
 ---
 
-## 13. Firebase Operations
+## 14. Firebase Operations
 
 ### Prerequisites
 

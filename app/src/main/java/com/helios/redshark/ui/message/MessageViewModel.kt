@@ -11,6 +11,7 @@ import com.helios.redshark.domain.usecase.message.GetConversationsUseCase
 import com.helios.redshark.domain.usecase.message.GetMessagesUseCase
 import com.helios.redshark.domain.usecase.message.SendMessageUseCase
 import com.helios.redshark.domain.usecase.message.MarkConversationReadUseCase
+import com.helios.redshark.domain.usecase.message.ShareMessageToRecipientsUseCase
 import com.helios.redshark.domain.usecase.user.GetUsersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,6 +39,14 @@ data class ConversationUiState(
     val navigateToConversation: UUID? = null,
 )
 
+data class ShareSheetUiState(
+    val searchQuery: String = "",
+    val selectedUserIds: Set<String> = emptySet(),
+    val failedUserIds: Set<String> = emptySet(),
+    val isSending: Boolean = false,
+    val statusMessage: String? = null,
+)
+
 @HiltViewModel
 class MessageViewModel @Inject constructor(
     private val getConversationsUseCase: GetConversationsUseCase,
@@ -46,6 +55,7 @@ class MessageViewModel @Inject constructor(
     private val findOrCreateDirectConversationUseCase: FindOrCreateDirectConversationUseCase,
     private val getUsersUseCase: GetUsersUseCase,
     private val markConversationReadUseCase: MarkConversationReadUseCase,
+    private val shareMessageToRecipientsUseCase: ShareMessageToRecipientsUseCase,
 ) : ViewModel() {
 
     private val _listState = MutableStateFlow(ConversationListUiState())
@@ -53,6 +63,9 @@ class MessageViewModel @Inject constructor(
 
     private val _convState = MutableStateFlow(ConversationUiState())
     val convState: StateFlow<ConversationUiState> = _convState.asStateFlow()
+
+    private val _shareState = MutableStateFlow(ShareSheetUiState())
+    val shareState: StateFlow<ShareSheetUiState> = _shareState.asStateFlow()
 
     init {
         observeConversations()
@@ -144,5 +157,68 @@ class MessageViewModel @Inject constructor(
     fun clearError() {
         _convState.update { it.copy(errorMessage = null) }
         _listState.update { it.copy(errorMessage = null) }
+    }
+
+    fun resetShareState() {
+        _shareState.value = ShareSheetUiState()
+    }
+
+    fun setShareSearchQuery(query: String) {
+        _shareState.update { it.copy(searchQuery = query) }
+    }
+
+    fun toggleShareRecipient(userId: String) {
+        _shareState.update { state ->
+            val selected = state.selectedUserIds.toMutableSet()
+            if (!selected.add(userId)) selected.remove(userId)
+            state.copy(
+                selectedUserIds = selected,
+                failedUserIds = state.failedUserIds - userId,
+                statusMessage = null,
+            )
+        }
+    }
+
+    fun sendSharedMessage(messageText: String, onSent: () -> Unit) {
+        val recipients = _shareState.value.selectedUserIds
+        if (recipients.isEmpty()) {
+            _shareState.update { it.copy(statusMessage = "Chọn ít nhất một người nhận.") }
+            return
+        }
+        if (_shareState.value.isSending) return
+
+        viewModelScope.launch {
+            _shareState.update { it.copy(isSending = true, statusMessage = null, failedUserIds = emptySet()) }
+            runCatching {
+                shareMessageToRecipientsUseCase(messageText, recipients)
+            }.onSuccess { result ->
+                if (result.isComplete) {
+                    resetShareState()
+                    onSent()
+                } else {
+                    val failedIds = result.failures.map { it.recipientUserId }.toSet()
+                    val message = if (result.sentCount > 0) {
+                        "Đã gửi ${result.sentCount}/${result.totalCount}. Người nhận lỗi vẫn được chọn."
+                    } else {
+                        "Không gửi được. Vui lòng thử lại."
+                    }
+                    _shareState.update {
+                        it.copy(
+                            selectedUserIds = failedIds,
+                            failedUserIds = failedIds,
+                            isSending = false,
+                            statusMessage = message,
+                        )
+                    }
+                }
+            }.onFailure { error ->
+                _shareState.update {
+                    it.copy(
+                        isSending = false,
+                        statusMessage = error.message ?: "Không gửi được. Vui lòng thử lại.",
+                    )
+                }
+            }
+        }
     }
 }
