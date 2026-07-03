@@ -275,3 +275,11 @@ Kiến trúc hiện tại có thể mở rộng thêm FCM push notification, gro
 RedShark hoàn thiện mục tiêu xây dựng một ứng dụng Android native có tính thực tiễn, kiến trúc rõ ràng và đủ các luồng cộng tác quan trọng. Dự án chứng minh khả năng áp dụng Kotlin, Jetpack Compose, Firebase và Cloudflare R2 để tạo sản phẩm mobile-first cho nhóm nhỏ.
 
 Điểm nổi bật của phiên bản cuối là UX được thống nhất hơn, không còn tính năng dạng placeholder, có share idea nhiều người nhận và contribution graph cá nhân. Đây là nền tảng tốt để tiếp tục phát triển thành công cụ cộng tác hoàn chỉnh hơn trong tương lai.
+
+## Phụ Lục - Bàn Giao 1.0.0
+
+- Version Android: `versionName = "1.0.0"`, `versionCode = 2`.
+- Branch release local: `release/v1.0.0`.
+- Tag release local: `v1.0.0`.
+- Nội dung bàn giao bổ sung: release notes, sửa lỗi username đăng ký, contribution graph, notification read state, profile clear bio, My Ideas realtime cache, UI token refresh và unit test bổ sung.
+- Người nhận bàn giao chỉ cần push các branch/tag local sau khi kiểm tra lại remote mong muốn.

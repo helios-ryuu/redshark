@@ -197,3 +197,9 @@ Hướng phát triển tiếp theo:
 5. Cloud Firestore: https://firebase.google.com/docs/firestore
 6. Cloudflare R2: https://developers.cloudflare.com/r2/
 7. Material Design 3: https://m3.material.io/
+
+## Phụ Lục - Phiên Bản 1.0.0
+
+Bản 1.0.0 chốt trạng thái ổn định đầu tiên của RedShark. Các điểm hardening chính gồm: sửa lỗi đăng ký username bị báo trùng khi Firestore check thất bại, sửa contribution graph bị rơi vào trạng thái lỗi tải, chuẩn hóa notification read state, cho phép clear bio hồ sơ, tránh stale cache ở My Ideas và refresh các token UI/UX dùng chung.
+
+Baseline kiểm thử của bản này gồm `compileDebugKotlin`, `testDebugUnitTest` và `assembleDebug`. Unit test đã bổ sung cho username availability failure, username conflict field mapping và clear bio profile.
