@@ -59,17 +59,25 @@ class IdeaRepositoryImpl @Inject constructor(
             return@callbackFlow
         }
         trySend(emptyList())
-        val cache = linkedMapOf<String, Idea>()
 
-        fun emitSnapshot(snapshot: com.google.firebase.firestore.QuerySnapshot?) {
-            val list = snapshot?.documents
+        var authoredIdeas = emptyMap<String, Idea>()
+        var collaboratedIdeas = emptyMap<String, Idea>()
+
+        fun parseSnapshot(snapshot: com.google.firebase.firestore.QuerySnapshot?): Map<String, Idea> =
+            snapshot?.documents
                 ?.mapNotNull { doc ->
                     doc.toObject(IdeaDto::class.java)?.copy(id = doc.id)?.toDomain()
                 }
                 ?.filter { it.deletedAt == null }
-                ?: emptyList()
-            list.forEach { cache[it.id.toString()] = it }
-            trySend(cache.values.sortedByDescending { it.createdAt })
+                ?.associateBy { it.id.toString() }
+                ?: emptyMap()
+
+        fun emitCombined() {
+            trySend(
+                (authoredIdeas + collaboratedIdeas)
+                    .values
+                    .sortedByDescending { it.createdAt }
+            )
         }
 
         val authorRegistration = ideas
@@ -80,7 +88,8 @@ class IdeaRepositoryImpl @Inject constructor(
                     close(AppException.NetworkException(error))
                     return@addSnapshotListener
                 }
-                emitSnapshot(snapshot)
+                authoredIdeas = parseSnapshot(snapshot)
+                emitCombined()
             }
 
         val collaboratorRegistration = ideas
@@ -91,7 +100,8 @@ class IdeaRepositoryImpl @Inject constructor(
                     close(AppException.NetworkException(error))
                     return@addSnapshotListener
                 }
-                emitSnapshot(snapshot)
+                collaboratedIdeas = parseSnapshot(snapshot)
+                emitCombined()
             }
 
         awaitClose {

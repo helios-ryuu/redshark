@@ -103,7 +103,9 @@ class NotificationRepositoryImpl @Inject constructor(
 
     override suspend fun markAsRead(id: UUID) {
         try {
-            notifications.document(id.toString()).delete().await()
+            notifications.document(id.toString())
+                .update("isRead", true)
+                .await()
         } catch (e: Exception) {
             throw AppException.NetworkException(e)
         }

@@ -84,6 +84,19 @@ class UpdateProfileUseCaseTest {
         coVerify { profileRepository.updateProfile(userId, "Alice", null, emptyList()) }
     }
 
+
+    @Test
+    fun `invoke converts blank bio to null so profile can be cleared`() = runTest {
+        coEvery {
+            profileRepository.updateProfile(userId, "Alice", null, emptyList())
+        } returns Result.Success(testUser.copy(bio = null, skills = emptyList()))
+
+        val result = useCase(userId, "Alice", "   ", emptyList())
+
+        assertTrue(result is Result.Success)
+        coVerify { profileRepository.updateProfile(userId, "Alice", null, emptyList()) }
+    }
+
     @Test
     fun `invoke accepts null bio`() = runTest {
         coEvery {

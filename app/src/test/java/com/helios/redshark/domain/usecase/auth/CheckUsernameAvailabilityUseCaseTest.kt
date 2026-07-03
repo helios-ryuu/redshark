@@ -43,6 +43,18 @@ class CheckUsernameAvailabilityUseCaseTest {
         assertEquals(false, (result as Result.Success).data)
     }
 
+
+    @Test
+    fun `invoke propagates repository error when username check fails`() = runTest {
+        coEvery { authRepository.checkUsernameAvailability("alice.dev") } returns
+            Result.Error(AppException.UnknownException("Failed to check username"))
+
+        val result = useCase("alice.dev")
+
+        assertTrue(result is Result.Error)
+        assertTrue((result as Result.Error).exception is AppException.UnknownException)
+    }
+
     @Test
     fun `invoke returns ValidationError when username is too short`() = runTest {
         val result = useCase("ab")

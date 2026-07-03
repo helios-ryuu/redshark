@@ -124,12 +124,6 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun checkUsernameAvailability(username: String): Result<Boolean> {
-        return try {
-            val available = firestoreSource.isUsernameAvailable(username)
-            Result.Success(available)
-        } catch (e: Exception) {
-            Result.Error(AppException.UnknownException(e.message ?: "Failed to check username", e))
-        }
-    }
+    override suspend fun checkUsernameAvailability(username: String): Result<Boolean> =
+        firestoreSource.isUsernameAvailable(username)
 }

@@ -33,7 +33,7 @@ class SignUpEmailPasswordUseCase @Inject constructor(
         when (val check = checkUsernameAvailability(trimmedUsername)) {
             is Result.Error -> return check
             is Result.Success -> if (!check.data) {
-                return Result.Error(AppException.ConflictException("This username is already taken"))
+                return Result.Error(AppException.ConflictException("This username is already taken", "username"))
             }
             else -> Unit
         }

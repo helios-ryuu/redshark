@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -217,6 +218,11 @@ fun RegisterScreen(
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.error,
                         )
+                        UsernameAvailability.CheckFailed -> Icon(
+                            Icons.Filled.Warning,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.tertiary,
+                        )
                         UsernameAvailability.Idle -> Unit
                     }
                 },
@@ -232,6 +238,9 @@ fun RegisterScreen(
                     }
                     usernameAvailability == UsernameAvailability.Checking -> {
                         { Text(stringResource(R.string.auth_username_checking), color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                    }
+                    usernameAvailability == UsernameAvailability.CheckFailed -> {
+                        { Text(stringResource(R.string.auth_username_check_failed), color = MaterialTheme.colorScheme.tertiary) }
                     }
                     else -> null
                 },

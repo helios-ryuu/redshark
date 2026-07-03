@@ -68,19 +68,8 @@ class ProfileRepositoryImpl @Inject constructor(
                     userPreferences.saveUser(user.id, user.displayName)
                     Result.Success(user)
                 }
-                is Result.Error -> {
-                    userPreferences.saveUser(userId, displayName)
-                    Result.Success(
-                        User(
-                            id = userId,
-                            email = "",
-                            displayName = displayName,
-                            avatarUrl = null,
-                            bio = bio,
-                            skills = skills,
-                        )
-                    )
-                }
+                is Result.Error -> result
+
                 is Result.Loading -> Result.Loading
             }
         } catch (e: Exception) {
