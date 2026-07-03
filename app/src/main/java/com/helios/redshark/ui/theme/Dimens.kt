@@ -67,6 +67,7 @@ object Dimens {
     val ContributionCellSize     = 12.dp
     val ContributionCellGap      = 3.dp
     val EmptyStateIconSize      = 80.dp
+    val EmptyStateMaxWidth      = 360.dp
     val DrawerHeaderHeight      = 120.dp
     val FormBrandStripHeight    = 4.dp
 }

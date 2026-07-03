@@ -55,6 +55,7 @@ class FirestoreSourceImpl @Inject constructor(
                 "username" to username,
                 "dateOfBirth" to dateOfBirth,
                 "authProvider" to "EMAIL",
+                "createdAt" to FieldValue.serverTimestamp(),
                 "updatedAt" to FieldValue.serverTimestamp(),
             )
             users.document(userId).set(data, SetOptions.merge()).await()
@@ -90,12 +91,12 @@ class FirestoreSourceImpl @Inject constructor(
         avatarUrl: String?,
     ): Result<UserDto> {
         return try {
-            val updates = mutableMapOf<String, Any>(
+            val updates = mutableMapOf<String, Any?>(
                 "displayName" to displayName,
+                "bio" to bio,
                 "skills" to skills,
                 "updatedAt" to FieldValue.serverTimestamp(),
             )
-            bio?.let { updates["bio"] = it }
             avatarUrl?.let { updates["avatarUrl"] = it }
             users.document(userId).update(updates).await()
             Timber.d("Firestore: updateProfile uid=$userId")
@@ -133,13 +134,13 @@ class FirestoreSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun isUsernameAvailable(username: String): Boolean {
+    override suspend fun isUsernameAvailable(username: String): Result<Boolean> {
         return try {
             val snapshot = users.whereEqualTo("username", username).limit(1).get().await()
-            snapshot.isEmpty
+            Result.Success(snapshot.isEmpty)
         } catch (e: Exception) {
             Timber.w(e, "Firestore: isUsernameAvailable failed username=$username")
-            false
+            Result.Error(AppException.UnknownException(e.message ?: "Failed to check username", e))
         }
     }
 }
