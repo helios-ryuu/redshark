@@ -193,12 +193,15 @@ fun HomeScreen(
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet {
+            ModalDrawerSheet(
+                drawerContainerColor = MaterialTheme.colorScheme.surface,
+                drawerContentColor = MaterialTheme.colorScheme.onSurface,
+            ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(Dimens.DrawerHeaderHeight)
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.36f))
                         .padding(horizontal = Dimens.SpaceLg, vertical = Dimens.SpaceMd),
                     contentAlignment = Alignment.BottomStart,
                 ) {
@@ -285,7 +288,10 @@ fun HomeScreen(
                 )
             },
             bottomBar = {
-                NavigationBar {
+                NavigationBar(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    tonalElevation = Dimens.BottomBarTonalElevation,
+                ) {
                     NavigationBarItem(
                         selected = selectedTab == HomeTab.HOME,
                         onClick = { selectedTab = HomeTab.HOME },

@@ -22,5 +22,5 @@ interface FirestoreSource {
         avatarUrl: String?,
     ): Result<UserDto>
     suspend fun updateAvatarUrl(userId: String, avatarUrl: String): Result<UserDto>
-    suspend fun isUsernameAvailable(username: String): Boolean
+    suspend fun isUsernameAvailable(username: String): Result<Boolean>
 }

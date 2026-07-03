@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -55,7 +56,10 @@ fun ErrorContent(
         modifier = modifier.fillMaxSize().padding(Dimens.SpaceLg),
         contentAlignment = Alignment.Center,
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.widthIn(max = Dimens.EmptyStateMaxWidth),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
             Box(
                 modifier = Modifier
                     .size(Dimens.EmptyStateIconSize)
@@ -95,7 +99,10 @@ fun EmptyContent(
         modifier = modifier.fillMaxSize().padding(Dimens.SpaceLg),
         contentAlignment = Alignment.Center,
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.widthIn(max = Dimens.EmptyStateMaxWidth),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
             Box(
                 modifier = Modifier
                     .size(Dimens.EmptyStateIconSize)

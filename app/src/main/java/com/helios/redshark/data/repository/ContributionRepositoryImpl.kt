@@ -2,7 +2,6 @@ package com.helios.redshark.data.repository
 
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.helios.redshark.core.error.AppException
 import com.helios.redshark.domain.model.ContributionSummary
 import com.helios.redshark.domain.model.ContributionSummaryBuilder
@@ -55,13 +54,13 @@ class ContributionRepositoryImpl @Inject constructor(
         hasSoftDelete: Boolean,
     ) = firestore.collection(collectionName)
         .whereEqualTo("authorId", userId)
-        .whereGreaterThanOrEqualTo("createdAt", startTimestamp)
-        .orderBy("createdAt", Query.Direction.DESCENDING)
         .get()
         .await()
         .documents
         .asSequence()
         .filter { doc -> !hasSoftDelete || doc.getTimestamp("deletedAt") == null }
-        .mapNotNull { doc -> doc.getTimestamp("createdAt")?.toDate()?.toInstant() }
+        .mapNotNull { doc -> doc.getTimestamp("createdAt") }
+        .filter { createdAt -> createdAt.compareTo(startTimestamp) >= 0 }
+        .map { createdAt -> createdAt.toDate().toInstant() }
         .toList()
 }

@@ -99,6 +99,32 @@ class SignUpEmailPasswordUseCaseTest {
         coVerify(exactly = 0) { authRepository.signUpEmailPassword(any(), any(), any(), any(), any()) }
     }
 
+
+    @Test
+    fun `invoke marks username conflict with username field`() = runTest {
+        coEvery { authRepository.checkUsernameAvailability("taken") } returns Result.Success(false)
+
+        val result = useCase("Bob", "taken", "bob@example.com", validDob, "Password1")
+
+        assertTrue(result is Result.Error)
+        val exception = (result as Result.Error).exception
+        assertTrue(exception is AppException.ConflictException)
+        assertEquals("username", (exception as AppException.ConflictException).field)
+        coVerify(exactly = 0) { authRepository.signUpEmailPassword(any(), any(), any(), any(), any()) }
+    }
+
+    @Test
+    fun `invoke propagates username availability failure without signing up`() = runTest {
+        coEvery { authRepository.checkUsernameAvailability("bob_dev") } returns
+            Result.Error(AppException.UnknownException("Failed to check username"))
+
+        val result = useCase("Bob", "bob_dev", "bob@example.com", validDob, "Password1")
+
+        assertTrue(result is Result.Error)
+        assertTrue((result as Result.Error).exception is AppException.UnknownException)
+        coVerify(exactly = 0) { authRepository.signUpEmailPassword(any(), any(), any(), any(), any()) }
+    }
+
     @Test
     fun `invoke returns ValidationError when email is invalid`() = runTest {
         stubUsernameAvailable("bob_dev")

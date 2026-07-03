@@ -21,7 +21,7 @@ class UpdateProfileUseCase @Inject constructor(
                 AppException.ValidationException("displayName must be 3–50 characters")
             )
         }
-        val trimmedBio = bio?.trim()
+        val trimmedBio = bio?.trim()?.ifBlank { null }
         if (trimmedBio != null && trimmedBio.length > 280) {
             return Result.Error(
                 AppException.ValidationException("bio must be 280 characters or fewer")

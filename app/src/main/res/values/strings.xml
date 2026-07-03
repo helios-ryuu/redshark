@@ -35,6 +35,7 @@
     <string name="auth_username_available">Có thể sử dụng</string>
     <string name="auth_username_taken">Tên người dùng đã tồn tại</string>
     <string name="auth_username_checking">Đang kiểm tra...</string>
+    <string name="auth_username_check_failed">Không thể kiểm tra tên người dùng lúc này</string>
     <string name="auth_dob_label">Ngày sinh</string>
     <string name="auth_dob_placeholder">Chọn ngày</string>
     <string name="auth_confirm_password_label">Xác nhận mật khẩu</string>

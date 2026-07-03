@@ -33,7 +33,7 @@ sealed interface RegisterUiState {
     data class NetworkError(val message: String) : RegisterUiState
 }
 
-enum class UsernameAvailability { Idle, Checking, Available, Taken }
+enum class UsernameAvailability { Idle, Checking, Available, Taken, CheckFailed }
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
@@ -66,7 +66,7 @@ class RegisterViewModel @Inject constructor(
                         UsernameAvailability.Taken
                     }
                 }
-                is Result.Error -> _usernameAvailability.value = UsernameAvailability.Idle
+                is Result.Error -> _usernameAvailability.value = UsernameAvailability.CheckFailed
                 is Result.Loading -> Unit
             }
         }
