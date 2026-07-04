@@ -1,12 +1,17 @@
 package com.helios.redshark.domain.model
 
+// File nay mo ta du lieu nghiep vu va trang thai chinh cua ung dung.
+
 import java.time.Instant
 import java.util.UUID
 
+// Enum nay gioi han cac gia tri hop le de tranh dung chuoi tuy tien.
 enum class IdeaStatus { ACTIVE, CLOSED, CANCELLED }
 
+// Enum nay gioi han cac gia tri hop le de tranh dung chuoi tuy tien.
 enum class MediaType { IMAGE, VIDEO }
 
+// Model du lieu nay giu cac truong can truyen giua cac lop.
 data class MediaAttachment(
     val id: UUID,
     val url: String,
@@ -18,6 +23,7 @@ data class MediaAttachment(
     val createdAt: Instant,
 )
 
+// Model du lieu nay giu cac truong can truyen giua cac lop.
 data class Idea(
     val id: UUID,
     val authorId: String,
@@ -34,6 +40,7 @@ data class Idea(
     val deletedAt: Instant?              // null = not soft-deleted
 )
 
+// Model du lieu nay giu cac truong can truyen giua cac lop.
 data class CreateIdeaInput(
     val title: String,
     val description: String?,
@@ -41,6 +48,7 @@ data class CreateIdeaInput(
     val mediaAttachments: List<MediaAttachment> = emptyList(),
 )
 
+// Model du lieu nay giu cac truong can truyen giua cac lop.
 data class UpdateIdeaInput(
     val title: String,
     val description: String?,

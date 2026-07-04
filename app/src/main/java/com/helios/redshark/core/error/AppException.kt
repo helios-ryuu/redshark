@@ -1,5 +1,7 @@
 package com.helios.redshark.core.error
 
+// File nay chuan hoa loi de cac tang xu ly thong nhat.
+
 sealed class AppException(message: String, cause: Throwable? = null) : Exception(message, cause) {
 
     // --- Auth errors ---
@@ -7,12 +9,15 @@ sealed class AppException(message: String, cause: Throwable? = null) : Exception
     class AuthException(message: String, cause: Throwable? = null) :
         AppException(message, cause)
 
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     class UserCancelledException(message: String = "User cancelled the operation") :
         AppException(message)
 
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     class NoCredentialException(message: String = "No credential available") :
         AppException(message)
 
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     class UnauthorizedException :
         AppException("Bạn không có quyền thực hiện thao tác này.")
 
@@ -25,9 +30,11 @@ sealed class AppException(message: String, cause: Throwable? = null) : Exception
         constructor(cause: Throwable) : this("Lỗi kết nối mạng.", cause)
     }
 
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     class ServerException(val code: Int, message: String) :
         AppException(message)
 
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     class RemoteException(message: String, cause: Throwable? = null) :
         AppException(message, cause)
 

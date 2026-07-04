@@ -276,10 +276,10 @@ RedShark hoàn thiện mục tiêu xây dựng một ứng dụng Android native
 
 Điểm nổi bật của phiên bản cuối là UX được thống nhất hơn, không còn tính năng dạng placeholder, có share idea nhiều người nhận và contribution graph cá nhân. Đây là nền tảng tốt để tiếp tục phát triển thành công cụ cộng tác hoàn chỉnh hơn trong tương lai.
 
-## Phụ Lục - Bàn Giao 1.0.0
+## Phụ Lục - Bàn Giao 1.0.1
 
-- Version Android: `versionName = "1.0.0"`, `versionCode = 2`.
-- Branch release local: `release/v1.0.0`.
-- Tag release local: `v1.0.0`.
-- Nội dung bàn giao bổ sung: release notes, sửa lỗi username đăng ký, contribution graph, notification read state, profile clear bio, My Ideas realtime cache, UI token refresh và unit test bổ sung.
-- Người nhận bàn giao chỉ cần push các branch/tag local sau khi kiểm tra lại remote mong muốn.
+- Version Android: `versionName = "1.0.1"`, `versionCode = 3`.
+- Branch hotfix local: `hotfix/v1.0.1`.
+- Tag release local: `v1.0.1`.
+- Nội dung bàn giao bổ sung: comment giải thích trên toàn bộ Kotlin/XML không tạo sinh, refactor nhỏ helper upvote trong repository, cập nhật README/release notes/tài liệu bàn giao cho 1.0.1.
+- Người nhận bàn giao chỉ cần push branch/tag local sau khi kiểm tra lại remote mong muốn.

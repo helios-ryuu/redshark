@@ -1,5 +1,7 @@
 package com.helios.redshark.data.mapper
 
+// File nay chuyen doi giua DTO luu tru va model domain.
+
 import com.helios.redshark.data.remote.firestore.dto.IdeaDto
 import com.helios.redshark.data.remote.firestore.dto.MediaAttachmentDto
 import com.helios.redshark.domain.model.Idea
@@ -9,6 +11,7 @@ import com.helios.redshark.domain.model.MediaType
 import java.time.Instant
 import java.util.UUID
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 fun IdeaDto.toDomain(): Idea = Idea(
     id = UUID.fromString(id),
     authorId = authorId,
@@ -25,6 +28,7 @@ fun IdeaDto.toDomain(): Idea = Idea(
     deletedAt = deletedAt?.toDate()?.toInstant(),
 )
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 fun MediaAttachmentDto.toDomainOrNull(): MediaAttachment? {
     val attachmentId = runCatching { UUID.fromString(id) }.getOrNull() ?: return null
     val mediaType = runCatching { MediaType.valueOf(type) }.getOrDefault(MediaType.IMAGE)
@@ -40,6 +44,7 @@ fun MediaAttachmentDto.toDomainOrNull(): MediaAttachment? {
     )
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 fun MediaAttachment.toFirestoreMap(): Map<String, Any?> = mapOf(
     "id" to id.toString(),
     "url" to url,

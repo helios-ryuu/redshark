@@ -1,5 +1,7 @@
 package com.helios.redshark.data.remote.firestore
 
+// File nay dong goi cach goi dich vu ben ngoai.
+
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -12,6 +14,7 @@ import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 @Singleton
 class FirestoreSourceImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
@@ -19,6 +22,7 @@ class FirestoreSourceImpl @Inject constructor(
 
     private val users = firestore.collection("users")
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun upsertUser(
         userId: String,
         email: String,
@@ -40,6 +44,7 @@ class FirestoreSourceImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun upsertEmailUser(
         userId: String,
         email: String,
@@ -67,6 +72,7 @@ class FirestoreSourceImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun getUser(userId: String): Result<UserDto> {
         return try {
             val doc = users.document(userId).get().await()
@@ -83,6 +89,7 @@ class FirestoreSourceImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun updateProfile(
         userId: String,
         displayName: String,
@@ -107,6 +114,7 @@ class FirestoreSourceImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun getUsers(): Result<List<UserDto>> {
         return try {
             val snapshot = users.get().await()
@@ -120,6 +128,7 @@ class FirestoreSourceImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun updateAvatarUrl(userId: String, avatarUrl: String): Result<UserDto> {
         return try {
             users.document(userId).update(mapOf(
@@ -134,6 +143,7 @@ class FirestoreSourceImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun isUsernameAvailable(username: String): Result<Boolean> {
         return try {
             val snapshot = users.whereEqualTo("username", username).limit(1).get().await()

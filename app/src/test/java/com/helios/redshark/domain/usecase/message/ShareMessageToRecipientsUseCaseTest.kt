@@ -1,5 +1,7 @@
 package com.helios.redshark.domain.usecase.message
 
+// File nay gom mot hanh dong nghiep vu nho de ViewModel goi ro rang.
+
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.helios.redshark.core.error.AppException
@@ -19,6 +21,7 @@ import org.junit.Test
 import java.time.Instant
 import java.util.UUID
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 class ShareMessageToRecipientsUseCaseTest {
 
     private lateinit var auth: FirebaseAuth
@@ -29,6 +32,7 @@ class ShareMessageToRecipientsUseCaseTest {
     private val currentUserId = "current_uid"
     private val messageText = "Idea: Build RedShark"
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     @Before
     fun setUp() {
         auth = mockk()
@@ -102,6 +106,7 @@ class ShareMessageToRecipientsUseCaseTest {
         assertEquals(listOf(failedPeer), result.failures.map { it.recipientUserId })
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun conversation(peerId: String) = Conversation(
         id = UUID.randomUUID(),
         participantIds = listOf(currentUserId, peerId),
@@ -112,6 +117,7 @@ class ShareMessageToRecipientsUseCaseTest {
         type = ConversationType.DIRECT,
     )
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun message(conversationId: UUID) = Message(
         id = UUID.randomUUID(),
         conversationId = conversationId,

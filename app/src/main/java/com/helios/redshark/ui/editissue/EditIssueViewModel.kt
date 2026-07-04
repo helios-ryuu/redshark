@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.editissue
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.helios.redshark.core.error.AppException
@@ -19,17 +21,25 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
+// Sealed type nay liet ke cac trang thai hop le ma code can xu ly du.
 sealed interface EditIssueUiState {
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Idle : EditIssueUiState
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Loading : EditIssueUiState
+    // Model du lieu nay giu cac truong can truyen giua cac lop.
     data class Loaded(val issue: Issue) : EditIssueUiState
     /** TC-C11: mutation OK — screen pops back to issue detail. */
     data object Success : EditIssueUiState
+    // Model du lieu nay giu cac truong can truyen giua cac lop.
     data class ValidationError(val message: String) : EditIssueUiState
+    // Model du lieu nay giu cac truong can truyen giua cac lop.
     data class NetworkError(val message: String) : EditIssueUiState
+    // Model du lieu nay giu cac truong can truyen giua cac lop.
     data class Error(val message: String) : EditIssueUiState
 }
 
+// Quan ly state va goi use case de man hinh chi can render du lieu.
 @HiltViewModel
 class EditIssueViewModel @Inject constructor(
     private val getIssueDetailUseCase: GetIssueDetailUseCase,
@@ -43,6 +53,7 @@ class EditIssueViewModel @Inject constructor(
     private val _users = MutableStateFlow<List<User>>(emptyList())
     val users: StateFlow<List<User>> = _users.asStateFlow()
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun loadIssue(id: UUID) {
         viewModelScope.launch {
             _uiState.value = EditIssueUiState.Loading
@@ -58,6 +69,7 @@ class EditIssueViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun saveIssue(
         id: UUID,
         title: String,
@@ -82,6 +94,7 @@ class EditIssueViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun resetState() {
         _uiState.value = EditIssueUiState.Idle
     }

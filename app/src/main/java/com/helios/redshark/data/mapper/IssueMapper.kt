@@ -1,5 +1,7 @@
 package com.helios.redshark.data.mapper
 
+// File nay chuyen doi giua DTO luu tru va model domain.
+
 import com.helios.redshark.data.remote.firestore.dto.IssueDto
 import com.helios.redshark.domain.model.Issue
 import com.helios.redshark.domain.model.IssuePriority
@@ -7,6 +9,7 @@ import com.helios.redshark.domain.model.IssueStatus
 import java.time.Instant
 import java.util.UUID
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 fun IssueDto.toDomain(): Issue = Issue(
     id = UUID.fromString(id),
     ideaId = UUID.fromString(ideaId),

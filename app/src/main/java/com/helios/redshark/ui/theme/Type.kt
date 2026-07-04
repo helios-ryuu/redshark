@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.theme
 
+// File nay tap trung token giao dien dung chung cho Compose.
+
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily

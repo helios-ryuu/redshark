@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.common
 
+// File nay chua composable dung lai de cac man hinh khong lap boilerplate.
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +26,7 @@ import com.helios.redshark.domain.model.Issue
 import com.helios.redshark.domain.model.IssuePriority
 import com.helios.redshark.ui.theme.Dimens
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 fun IssueCard(issue: Issue, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val barColor = when (issue.priority) {

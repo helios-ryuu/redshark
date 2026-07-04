@@ -450,9 +450,10 @@ Firestore không hỗ trợ rename. Quy trình:
 - [ ] Status index là **Enabled** trong Firebase Console trước khi ship release
 - [ ] `serviceAccountKey.json` có trong `.gitignore` và **không** bị commit
 
-## 15. Ghi Chú Schema 1.0.0
+## 15. Ghi Chú Schema 1.0.1
 
-- `users.createdAt` được ghi khi đăng ký bằng Email/Password; user Google cũ có thể không có field này và app phải xử lý nullable an toàn.
+- 1.0.1 không thay đổi schema Firestore, rules hay indexes so với baseline 1.0.0.
+- `users.createdAt` vẫn được ghi khi đăng ký bằng Email/Password; user Google cũ có thể không có field này và app phải xử lý nullable an toàn.
 - Username uniqueness vẫn được enforce ở tầng app bằng query `users.username`; lỗi query không được xem là username đã tồn tại.
-- Contribution graph 1.0.0 đọc theo `authorId` rồi lọc `createdAt` trong client cho cửa sổ 12 tuần để giảm phụ thuộc vào trạng thái composite index khi demo/release.
+- Contribution graph tiếp tục đọc theo `authorId` rồi lọc `createdAt` trong client cho cửa sổ 12 tuần để giảm phụ thuộc vào trạng thái composite index khi demo/release.
 - `notifications.isRead` là trạng thái đọc chính thức. Đánh dấu đã đọc dùng update field này; xóa hàng loạt vẫn là thao tác riêng.

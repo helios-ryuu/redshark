@@ -1,5 +1,7 @@
 package com.helios.redshark.data.remote.firebase
 
+// File nay dong goi cach goi dich vu ben ngoai.
+
 import android.content.Context
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
@@ -16,12 +18,14 @@ import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 @Singleton
 class GoogleSignInHelper @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
     private val credentialManager = CredentialManager.create(context)
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     suspend fun requestGoogleIdToken(activityContext: Context): Result<String> {
         // Step 1: Try One Tap (accounts already on device)
         val oneTapResult = tryOneTap(activityContext)
@@ -36,6 +40,7 @@ class GoogleSignInHelper @Inject constructor(
         return oneTapResult
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private suspend fun tryOneTap(activityContext: Context): Result<String> {
         return try {
             val googleIdOption = GetGoogleIdOption.Builder()
@@ -62,6 +67,7 @@ class GoogleSignInHelper @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private suspend fun trySignInWithGoogle(activityContext: Context): Result<String> {
         return try {
             val signInWithGoogleOption = GetSignInWithGoogleOption.Builder(

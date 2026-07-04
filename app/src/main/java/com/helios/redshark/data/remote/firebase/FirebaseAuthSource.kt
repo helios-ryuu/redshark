@@ -1,5 +1,7 @@
 package com.helios.redshark.data.remote.firebase
 
+// File nay dong goi cach goi dich vu ben ngoai.
+
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
@@ -14,9 +16,11 @@ import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 @Singleton
 class FirebaseAuthSource @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 ) {
     fun observeAuthState(): Flow<FirebaseUser?> = callbackFlow {
         trySend(firebaseAuth.currentUser)
@@ -27,6 +31,7 @@ class FirebaseAuthSource @Inject constructor(
         awaitClose { firebaseAuth.removeAuthStateListener(listener) }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     suspend fun signInWithGoogle(idToken: String): Result<FirebaseUser> {
         return try {
             val credential = GoogleAuthProvider.getCredential(idToken, null)
@@ -41,6 +46,7 @@ class FirebaseAuthSource @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     suspend fun signUpEmailPassword(email: String, password: String): Result<FirebaseUser> {
         return try {
             val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
@@ -54,6 +60,7 @@ class FirebaseAuthSource @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     suspend fun signInEmailPassword(email: String, password: String): Result<FirebaseUser> {
         return try {
             val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
@@ -67,6 +74,7 @@ class FirebaseAuthSource @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     suspend fun signOut(): Result<Unit> {
         return try {
             firebaseAuth.signOut()
@@ -76,5 +84,6 @@ class FirebaseAuthSource @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun getCurrentUser(): FirebaseUser? = firebaseAuth.currentUser
 }

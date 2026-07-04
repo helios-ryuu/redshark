@@ -1,5 +1,7 @@
 package com.helios.redshark.domain.usecase.auth
 
+// File nay gom mot hanh dong nghiep vu nho de ViewModel goi ro rang.
+
 import com.helios.redshark.core.error.AppException
 import com.helios.redshark.core.util.Result
 import com.helios.redshark.domain.repository.MediaRepository
@@ -12,6 +14,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 class UploadAvatarUseCaseTest {
 
     private lateinit var mediaRepository: MediaRepository
@@ -21,6 +24,7 @@ class UploadAvatarUseCaseTest {
     private val smallBytes = ByteArray(100 * 1024) // 100 KB
     private val largeBytes = ByteArray(6 * 1024 * 1024) // 6 MB
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     @Before
     fun setUp() {
         mediaRepository = mockk()

@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.common
 
+// File nay chua composable dung lai de cac man hinh khong lap boilerplate.
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -17,6 +19,7 @@ import androidx.compose.ui.unit.Dp
 import coil.compose.SubcomposeAsyncImage
 import com.helios.redshark.ui.theme.Dimens
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 fun AvatarImage(
     avatarUrl: String?,
@@ -39,6 +42,7 @@ fun AvatarImage(
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 private fun AvatarPlaceholder(
     displayName: String,

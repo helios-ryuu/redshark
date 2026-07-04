@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.createidea
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.helios.redshark.core.error.AppException
@@ -13,19 +15,27 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
+// Sealed type nay liet ke cac trang thai hop le ma code can xu ly du.
 sealed interface CreateIdeaUiState {
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Idle : CreateIdeaUiState
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Loading : CreateIdeaUiState
+    // Model du lieu nay giu cac truong can truyen giua cac lop.
     data class Success(val ideaId: UUID) : CreateIdeaUiState
 
+    // Sealed type nay liet ke cac trang thai hop le ma code can xu ly du.
     sealed interface Failure : CreateIdeaUiState {
+        // Model du lieu nay giu cac truong can truyen giua cac lop.
         data class ValidationError(val message: String) : Failure
         /** TC-C21: network gone while submitting — form data must be preserved in the VM. */
         data class NetworkError(val message: String) : Failure
+        // Model du lieu nay giu cac truong can truyen giua cac lop.
         data class GenericError(val message: String) : Failure
     }
 }
 
+// Quan ly state va goi use case de man hinh chi can render du lieu.
 @HiltViewModel
 class CreateIdeaViewModel @Inject constructor(
     private val createIdeaUseCase: CreateIdeaUseCase
@@ -43,6 +53,7 @@ class CreateIdeaViewModel @Inject constructor(
     var draftDescription: String? = null
         private set
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun createIdea(title: String, description: String?, tagIds: List<UUID> = emptyList()) {
         if (_uiState.value is CreateIdeaUiState.Loading) return
 
@@ -65,6 +76,7 @@ class CreateIdeaViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun resetState() {
         _uiState.value = CreateIdeaUiState.Idle
     }

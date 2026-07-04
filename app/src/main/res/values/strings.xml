@@ -1,4 +1,5 @@
 <resources>
+    <!-- File nay gom cac gia tri tai nguyen duoc UI va theme tham chieu truc tiep. -->
     <string name="app_name">RedShark</string>
 
     <!-- Thao tác chung -->

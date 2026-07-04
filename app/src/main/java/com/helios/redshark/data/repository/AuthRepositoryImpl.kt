@@ -1,5 +1,7 @@
 package com.helios.redshark.data.repository
 
+// File nay noi nghiep vu voi Firebase, cache hoac nguon du lieu ben ngoai.
+
 import com.helios.redshark.core.error.AppException
 import com.helios.redshark.core.util.Result
 import com.helios.redshark.data.local.datastore.UserPreferences
@@ -16,6 +18,7 @@ import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 @Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuthSource: FirebaseAuthSource,
@@ -23,11 +26,13 @@ class AuthRepositoryImpl @Inject constructor(
     private val userPreferences: UserPreferences,
 ) : AuthRepository {
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override fun observeAuthState(): Flow<User?> =
         firebaseAuthSource.observeAuthState().map { firebaseUser ->
             firebaseUser?.toDomain()
         }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun signInWithGoogle(idToken: String): Result<User> {
         return when (val result = firebaseAuthSource.signInWithGoogle(idToken)) {
             is Result.Success -> {
@@ -51,6 +56,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun signOut(): Result<Unit> {
         return when (val result = firebaseAuthSource.signOut()) {
             is Result.Success -> {
@@ -62,6 +68,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun getCurrentUser(): Result<User?> {
         return try {
             val user = firebaseAuthSource.getCurrentUser()?.toDomain()
@@ -71,6 +78,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun signUpEmailPassword(
         email: String,
         password: String,
@@ -106,6 +114,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun signInEmailPassword(email: String, password: String): Result<User> {
         return when (val result = firebaseAuthSource.signInEmailPassword(email, password)) {
             is Result.Success -> {
@@ -124,6 +133,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun checkUsernameAvailability(username: String): Result<Boolean> =
         firestoreSource.isUsernameAvailable(username)
 }

@@ -1,5 +1,7 @@
 package com.helios.redshark.data.repository
 
+// File nay noi nghiep vu voi Firebase, cache hoac nguon du lieu ben ngoai.
+
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -19,6 +21,7 @@ import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 @Singleton
 class NotificationRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
@@ -27,6 +30,7 @@ class NotificationRepositoryImpl @Inject constructor(
 
     private val notifications = firestore.collection("notifications")
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override fun getMyNotifications(): Flow<List<Notification>> = callbackFlow {
         val uid = auth.currentUser?.uid ?: run {
             close(AppException.UnauthorizedException())
@@ -50,6 +54,7 @@ class NotificationRepositoryImpl @Inject constructor(
         awaitClose { registration.remove() }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override fun getUnreadCount(): Flow<Int> = callbackFlow {
         val uid = auth.currentUser?.uid ?: run {
             close(AppException.UnauthorizedException())
@@ -69,6 +74,7 @@ class NotificationRepositoryImpl @Inject constructor(
         awaitClose { registration.remove() }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun create(input: CreateNotificationInput): Notification {
         return try {
             val newId = UUID.randomUUID().toString()
@@ -101,6 +107,7 @@ class NotificationRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun markAsRead(id: UUID) {
         try {
             notifications.document(id.toString())
@@ -111,6 +118,7 @@ class NotificationRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun deleteAll() {
         val uid = auth.currentUser?.uid ?: throw AppException.UnauthorizedException()
         try {

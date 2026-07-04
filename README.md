@@ -1,8 +1,8 @@
 # RedShark Android Native
 
-## Phiên bản 1.0.0
+## Phiên bản 1.0.1
 
-RedShark 1.0.0 là bản ổn định đầu tiên: hoàn thiện luồng đăng ký email/username, contribution graph, profile, notification, My Ideas realtime, test unit trọng điểm và refresh UI/UX dùng chung. Chi tiết xem [Release Notes](docs/RELEASE_NOTES.md).
+RedShark 1.0.1 là bản bảo trì tập trung vào khả năng đọc mã nguồn: bổ sung comment giải thích cho Kotlin/XML, rút gọn helper nhỏ ít rủi ro, cập nhật tài liệu bàn giao và giữ baseline build/test cho bản 1.0.1. Chi tiết xem [Release Notes](docs/RELEASE_NOTES.md).
 
 RedShark là ứng dụng Android gốc hỗ trợ nhóm nhỏ quản lý ý tưởng, công việc, bình luận, thông báo, nhắn tin 1-1, chia sẻ ý tưởng và theo dõi đóng góp cá nhân. Ứng dụng dùng Kotlin, Jetpack Compose, Firebase và Cloudflare R2.
 

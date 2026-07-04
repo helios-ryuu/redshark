@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.navigation
 
+// File nay dieu phoi route va man hinh trong ung dung mot Activity.
+
 object Routes {
     const val AUTH_GATE = "auth/gate"
     const val AUTH_GOOGLE = "auth/google"
@@ -22,14 +24,24 @@ object Routes {
     const val CONVERSATION = "conversation/{conversationId}"
     const val CONVERSATION_NEW = "conversation/new?peerId={peerId}"
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun profileView(userId: String) = "profile/$userId"
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun ideaDetail(ideaId: String) = "ideas/$ideaId"
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun ideaDeepLink(ideaId: String) = "redshark://idea/$ideaId"
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun ideaEdit(ideaId: String) = "ideas/$ideaId/edit"
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun ideaComments(ideaId: String) = "ideas/$ideaId/comments"
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun issueCreate(ideaId: String) = "ideas/$ideaId/issues/create"
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun issueDetail(issueId: String) = "issues/$issueId"
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun issueEdit(issueId: String) = "issues/$issueId/edit"
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun conversation(conversationId: String) = "conversation/$conversationId"
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun conversationNew(peerId: String) = "conversation/new?peerId=$peerId"
 }

@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.profile
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
@@ -20,6 +22,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+// Model du lieu nay giu cac truong can truyen giua cac lop.
 data class ProfileUiState(
     val isLoading: Boolean = false,
     val user: User? = null,
@@ -32,6 +35,7 @@ data class ProfileUiState(
     val errorMessage: String? = null,
 )
 
+// Quan ly state va goi use case de man hinh chi can render du lieu.
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
@@ -43,6 +47,7 @@ class ProfileViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun loadProfile(userId: String, currentUserId: String?) {
         loadContributionGraph(userId)
         viewModelScope.launch {
@@ -68,6 +73,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun loadContributionGraph(userId: String) {
         viewModelScope.launch {
             _uiState.update {
@@ -98,6 +104,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun onSaveProfile(userId: String, displayName: String, bio: String, skills: List<String>) {
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true, errorMessage = null) }
@@ -117,6 +124,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun onUploadAvatar(context: Context, userId: String, uri: Uri) {
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true, errorMessage = null) }
@@ -154,10 +162,12 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun onSavedHandled() {
         _uiState.update { it.copy(savedSuccess = false) }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun onErrorDismissed() {
         _uiState.update { it.copy(errorMessage = null) }
     }

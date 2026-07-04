@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.auth
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,6 +22,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+// Model du lieu nay giu cac truong can truyen giua cac lop.
 data class AuthUiState(
     val isLoading: Boolean = true,
     val user: User? = null,
@@ -27,11 +30,15 @@ data class AuthUiState(
     val navigateTo: AuthDestination? = null,
 )
 
+// Sealed type nay liet ke cac trang thai hop le ma code can xu ly du.
 sealed class AuthDestination {
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Home : AuthDestination()
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object ProfileSetup : AuthDestination()
 }
 
+// Quan ly state va goi use case de man hinh chi can render du lieu.
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val signInGoogleUseCase: SignInGoogleUseCase,
@@ -63,6 +70,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun onSignInClicked(activityContext: Context) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
@@ -100,6 +108,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun onCompleteProfile(userId: String, displayName: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
@@ -119,6 +128,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun onSignOutClicked() {
         viewModelScope.launch {
             signOutUseCase()
@@ -126,10 +136,12 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun onNavigationHandled() {
         _uiState.update { it.copy(navigateTo = null) }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun onErrorDismissed() {
         _uiState.update { it.copy(errorMessage = null) }
     }

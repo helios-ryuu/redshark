@@ -1,5 +1,7 @@
 package com.helios.redshark.data.repository
 
+// File nay noi nghiep vu voi Firebase, cache hoac nguon du lieu ben ngoai.
+
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -18,6 +20,7 @@ import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 @Singleton
 class CommentRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
@@ -26,6 +29,7 @@ class CommentRepositoryImpl @Inject constructor(
 
     private val comments = firestore.collection("comments")
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override fun getCommentsByIdea(ideaId: UUID): Flow<List<Comment>> = callbackFlow {
         trySend(emptyList())
         val registration = comments
@@ -45,6 +49,7 @@ class CommentRepositoryImpl @Inject constructor(
         awaitClose { registration.remove() }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun create(input: CreateCommentInput): Comment {
         val uid = auth.currentUser?.uid ?: throw AppException.UnauthorizedException()
         return try {

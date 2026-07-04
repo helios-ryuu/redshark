@@ -1,5 +1,7 @@
 package com.helios.redshark.domain.repository
 
+// File nay dinh nghia hop dong du lieu ma tang domain can su dung.
+
 import com.helios.redshark.domain.model.CreateIdeaInput
 import com.helios.redshark.domain.model.Idea
 import com.helios.redshark.domain.model.IdeaReaction
@@ -9,6 +11,7 @@ import com.helios.redshark.domain.model.UpdateIdeaInput
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 interface IdeaRepository {
     /** Emits a live list of ideas authored by the current user (deletedAt IS NULL). */
     fun getMyIdeas(): Flow<List<Idea>>
@@ -16,13 +19,16 @@ interface IdeaRepository {
     /** Emits a live list of all non-deleted ideas ordered by createdAt desc, for the home feed. */
     fun getAllIdeas(): Flow<List<Idea>>
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     suspend fun getIdeaDetail(id: UUID): Idea
 
     /** Inserts a new idea with status=ACTIVE. Validation occurs in the use-case layer. */
     suspend fun create(input: CreateIdeaInput): Idea
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     suspend fun update(id: UUID, input: UpdateIdeaInput): Idea
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     suspend fun updateMediaAttachments(id: UUID, mediaAttachments: List<MediaAttachment>): Idea
 
     /** TC-C08: changes status (ACTIVE → CLOSED / CANCELLED). */

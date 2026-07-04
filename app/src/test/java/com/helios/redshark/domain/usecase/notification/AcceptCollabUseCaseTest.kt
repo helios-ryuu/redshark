@@ -1,5 +1,7 @@
 package com.helios.redshark.domain.usecase.notification
 
+// File nay gom mot hanh dong nghiep vu nho de ViewModel goi ro rang.
+
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.helios.redshark.core.error.AppException
@@ -20,6 +22,7 @@ import org.junit.Test
 import java.time.Instant
 import java.util.UUID
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 class AcceptCollabUseCaseTest {
 
     private lateinit var ideaRepository: IdeaRepository
@@ -44,6 +47,7 @@ class AcceptCollabUseCaseTest {
         createdAt = Instant.now()
     )
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     @Before
     fun setUp() {
         ideaRepository = mockk(relaxed = true)

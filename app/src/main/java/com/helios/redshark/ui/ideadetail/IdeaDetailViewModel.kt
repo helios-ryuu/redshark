@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.ideadetail
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
@@ -33,6 +35,7 @@ import java.time.Instant
 import java.util.UUID
 import javax.inject.Inject
 
+// Model du lieu nay giu cac truong can truyen giua cac lop.
 data class IdeaDetailUiState(
     val idea: Idea? = null,
     val issues: List<Issue> = emptyList(),
@@ -51,20 +54,31 @@ data class IdeaDetailUiState(
     val navigateBack: Boolean = false,
 )
 
+// Sealed type nay liet ke cac trang thai hop le ma code can xu ly du.
 sealed interface CommentSubmitState {
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Idle : CommentSubmitState
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Submitting : CommentSubmitState
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Success : CommentSubmitState
+    // Model du lieu nay giu cac truong can truyen giua cac lop.
     data class Error(val message: String) : CommentSubmitState
 }
 
+// Sealed type nay liet ke cac trang thai hop le ma code can xu ly du.
 sealed interface CollabRequestState {
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Idle : CollabRequestState
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Sending : CollabRequestState
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Sent : CollabRequestState
+    // Model du lieu nay giu cac truong can truyen giua cac lop.
     data class Error(val message: String) : CollabRequestState
 }
 
+// Quan ly state va goi use case de man hinh chi can render du lieu.
 @HiltViewModel
 class IdeaDetailViewModel @Inject constructor(
     private val getIdeaDetailUseCase: GetIdeaDetailUseCase,
@@ -82,6 +96,7 @@ class IdeaDetailViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(IdeaDetailUiState())
     val uiState: StateFlow<IdeaDetailUiState> = _uiState.asStateFlow()
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun loadIdea(ideaId: UUID, currentUserId: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoadingIdea = true, errorMessage = null) }
@@ -104,6 +119,7 @@ class IdeaDetailViewModel @Inject constructor(
         observeIssues(ideaId)
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun refreshUsers(userIds: List<String>) {
         viewModelScope.launch {
             when (val result = getUsersUseCase()) {
@@ -118,6 +134,7 @@ class IdeaDetailViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun observeIssues(ideaId: UUID) {
         viewModelScope.launch {
             getIssuesByIdeaUseCase(ideaId)
@@ -133,6 +150,7 @@ class IdeaDetailViewModel @Inject constructor(
         _uiState.update { it.copy(isRetrying = false) }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun observeComments(ideaId: UUID) {
         viewModelScope.launch {
             getCommentsUseCase(ideaId)
@@ -145,6 +163,7 @@ class IdeaDetailViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun uploadMedia(context: Context, ideaId: UUID, currentUserId: String, uri: Uri) {
         val idea = _uiState.value.idea ?: return
         if (currentUserId != idea.authorId && currentUserId !in idea.collaboratorIds) {
@@ -238,6 +257,7 @@ class IdeaDetailViewModel @Inject constructor(
         createdAt = Instant.now()
     )
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun changeStatus(ideaId: UUID, newStatus: IdeaStatus) {
         viewModelScope.launch {
             try {
@@ -249,6 +269,7 @@ class IdeaDetailViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun deleteIdea(ideaId: UUID) {
         viewModelScope.launch {
             try {
@@ -260,6 +281,7 @@ class IdeaDetailViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun requestCollab(ideaId: UUID) {
         if (_uiState.value.collabRequestState is CollabRequestState.Sending) return
         _uiState.update { it.copy(collabRequestState = CollabRequestState.Sending) }
@@ -273,14 +295,17 @@ class IdeaDetailViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun clearCommentState() {
         _uiState.update { it.copy(commentSubmitState = CommentSubmitState.Idle) }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun clearCollabRequestState() {
         _uiState.update { it.copy(collabRequestState = CollabRequestState.Idle) }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun clearError() {
         _uiState.update { it.copy(errorMessage = null) }
     }

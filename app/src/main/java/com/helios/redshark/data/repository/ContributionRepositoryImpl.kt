@@ -1,5 +1,7 @@
 package com.helios.redshark.data.repository
 
+// File nay noi nghiep vu voi Firebase, cache hoac nguon du lieu ben ngoai.
+
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.helios.redshark.core.error.AppException
@@ -13,11 +15,13 @@ import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 @Singleton
 class ContributionRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
 ) : ContributionRepository {
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun getUserContributionSummary(
         userId: String,
         weeks: Int,
@@ -47,6 +51,7 @@ class ContributionRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private suspend fun queryCreatedAt(
         collectionName: String,
         userId: String,

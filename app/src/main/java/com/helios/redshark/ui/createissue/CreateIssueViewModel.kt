@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.createissue
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.helios.redshark.core.error.AppException
@@ -16,10 +18,14 @@ import javax.inject.Inject
 
 /** Represents every distinct UI outcome so the screen reacts without any string matching. */
 sealed interface CreateIssueUiState {
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Idle : CreateIssueUiState
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Loading : CreateIssueUiState
+    // Model du lieu nay giu cac truong can truyen giua cac lop.
     data class Success(val issueId: UUID) : CreateIssueUiState
 
+    // Sealed type nay liet ke cac trang thai hop le ma code can xu ly du.
     sealed interface Failure : CreateIssueUiState {
         /** User already has 20 active issues — show "Đạt giới hạn 20 issue" toast. */
         data object LimitExceeded : Failure
@@ -32,6 +38,7 @@ sealed interface CreateIssueUiState {
     }
 }
 
+// Quan ly state va goi use case de man hinh chi can render du lieu.
 @HiltViewModel
 class CreateIssueViewModel @Inject constructor(
     private val createIssueUseCase: CreateIssueUseCase

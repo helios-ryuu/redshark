@@ -4,6 +4,7 @@
    for details.
 -->
 <data-extraction-rules>
+    <!-- File nay mo ta cau hinh tai nguyen Android duoc build tools doc khi dong goi app. -->
     <cloud-backup>
         <!-- TODO: Use <include> and <exclude> to control what is backed up.
         <include .../>

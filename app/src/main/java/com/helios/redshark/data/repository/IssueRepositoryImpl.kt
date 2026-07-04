@@ -1,5 +1,7 @@
 package com.helios.redshark.data.repository
 
+// File nay noi nghiep vu voi Firebase, cache hoac nguon du lieu ben ngoai.
+
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,6 +22,7 @@ import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 @Singleton
 class IssueRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
@@ -28,6 +31,7 @@ class IssueRepositoryImpl @Inject constructor(
 
     private val issues = firestore.collection("issues")
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override fun getIssuesByIdea(ideaId: UUID): Flow<List<Issue>> = callbackFlow {
         trySend(emptyList())
         val registration = issues
@@ -49,6 +53,7 @@ class IssueRepositoryImpl @Inject constructor(
         awaitClose { registration.remove() }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override fun getOpenIssuesFromOthers(): Flow<List<Issue>> = callbackFlow {
         val uid = auth.currentUser?.uid ?: run {
             close(AppException.UnauthorizedException())
@@ -74,6 +79,7 @@ class IssueRepositoryImpl @Inject constructor(
         awaitClose { registration.remove() }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun getIssueDetail(id: UUID): Issue {
         return try {
             val doc = issues.document(id.toString()).get().await()
@@ -87,6 +93,7 @@ class IssueRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun countMyActiveIssues(): Int {
         val uid = auth.currentUser?.uid ?: throw AppException.UnauthorizedException()
         return try {
@@ -101,6 +108,7 @@ class IssueRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun create(input: CreateIssueInput): Issue {
         val uid = auth.currentUser?.uid ?: throw AppException.UnauthorizedException()
         return try {
@@ -128,6 +136,7 @@ class IssueRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun update(id: UUID, input: UpdateIssueInput): Issue {
         return try {
             val updates = mutableMapOf<String, Any?>(
@@ -148,6 +157,7 @@ class IssueRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun updateStatus(id: UUID, newStatus: IssueStatus): Issue {
         return try {
             issues.document(id.toString()).update(
@@ -166,6 +176,7 @@ class IssueRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun softDelete(id: UUID) {
         try {
             issues.document(id.toString()).update(

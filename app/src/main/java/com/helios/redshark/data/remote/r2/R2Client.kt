@@ -1,5 +1,7 @@
 package com.helios.redshark.data.remote.r2
 
+// File nay dong goi cach goi dich vu ben ngoai.
+
 import com.helios.redshark.BuildConfig
 import com.helios.redshark.core.error.AppException
 import com.helios.redshark.core.util.Result
@@ -20,6 +22,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 @Singleton
 class R2Client @Inject constructor(
     private val okHttpClient: OkHttpClient,
@@ -30,6 +33,7 @@ class R2Client @Inject constructor(
     private val secretAccessKey = BuildConfig.CLOUDFLARE_R2_SECRET_ACCESS_KEY
     private val publicBaseUrl = BuildConfig.CLOUDFLARE_R2_PUBLIC_BASE_URL
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     suspend fun putObject(key: String, bytes: ByteArray, contentType: String): Result<String> {
         return withContext(Dispatchers.IO) { try {
             val now = Date()
@@ -106,6 +110,7 @@ class R2Client @Inject constructor(
         } }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun deriveSigningKey(
         secret: String,
         dateStamp: String,
@@ -118,22 +123,27 @@ class R2Client @Inject constructor(
         return hmacSha256(kService, "aws4_request")
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun hmacSha256(key: ByteArray, data: String): ByteArray {
         val mac = Mac.getInstance("HmacSHA256")
         mac.init(SecretKeySpec(key, "HmacSHA256"))
         return mac.doFinal(data.toByteArray())
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun hmacSha256Hex(key: ByteArray, data: String): String =
         hmacSha256(key, data).toHex()
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun sha256Hex(bytes: ByteArray): String {
         val digest = MessageDigest.getInstance("SHA-256")
         return digest.digest(bytes).toHex()
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun sha256Hex(input: String): String = sha256Hex(input.toByteArray())
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun ByteArray.toHex(): String = joinToString("") { "%02x".format(it) }
 
     companion object {

@@ -198,8 +198,8 @@ Hướng phát triển tiếp theo:
 6. Cloudflare R2: https://developers.cloudflare.com/r2/
 7. Material Design 3: https://m3.material.io/
 
-## Phụ Lục - Phiên Bản 1.0.0
+## Phụ Lục - Phiên Bản 1.0.1
 
-Bản 1.0.0 chốt trạng thái ổn định đầu tiên của RedShark. Các điểm hardening chính gồm: sửa lỗi đăng ký username bị báo trùng khi Firestore check thất bại, sửa contribution graph bị rơi vào trạng thái lỗi tải, chuẩn hóa notification read state, cho phép clear bio hồ sơ, tránh stale cache ở My Ideas và refresh các token UI/UX dùng chung.
+Bản 1.0.1 là bản bảo trì sau 1.0.0, tập trung vào chất lượng đọc hiểu và bàn giao mã nguồn. Thay đổi chính gồm bổ sung comment giải thích cho Kotlin/XML không tạo sinh, giữ logic nghiệp vụ ổn định, rút gọn helper tính upvote theo biểu thức delta rõ hơn và cập nhật tài liệu phát hành.
 
-Baseline kiểm thử của bản này gồm `compileDebugKotlin`, `testDebugUnitTest` và `assembleDebug`. Unit test đã bổ sung cho username availability failure, username conflict field mapping và clear bio profile.
+Baseline kiểm thử của bản này gồm `compileDebugKotlin`, `testDebugUnitTest` và `assembleDebug`. Nhánh local dùng cho bản này là `hotfix/v1.0.1`, tag local là `v1.0.1`.

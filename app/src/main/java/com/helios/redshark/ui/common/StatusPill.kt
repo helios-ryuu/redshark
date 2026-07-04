@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.common
 
+// File nay chua composable dung lai de cac man hinh khong lap boilerplate.
+
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -12,6 +14,7 @@ import com.helios.redshark.domain.model.IssuePriority
 import com.helios.redshark.domain.model.IssueStatus
 import com.helios.redshark.ui.theme.Dimens
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 fun StatusPill(
     label: String,
@@ -32,6 +35,7 @@ fun StatusPill(
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 fun IdeaStatusPill(status: IdeaStatus, modifier: Modifier = Modifier) {
     val (label, color) = when (status) {
@@ -42,6 +46,7 @@ fun IdeaStatusPill(status: IdeaStatus, modifier: Modifier = Modifier) {
     StatusPill(label = label, color = color, modifier = modifier)
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 fun IssueStatusPill(status: IssueStatus, modifier: Modifier = Modifier) {
     val (label, color) = when (status) {
@@ -53,6 +58,7 @@ fun IssueStatusPill(status: IssueStatus, modifier: Modifier = Modifier) {
     StatusPill(label = label, color = color, modifier = modifier)
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 fun IssuePriorityPill(priority: IssuePriority, modifier: Modifier = Modifier) {
     val (label, color) = when (priority) {

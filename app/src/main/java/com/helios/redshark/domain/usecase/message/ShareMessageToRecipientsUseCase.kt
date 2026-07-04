@@ -1,5 +1,7 @@
 package com.helios.redshark.domain.usecase.message
 
+// File nay gom mot hanh dong nghiep vu nho de ViewModel goi ro rang.
+
 import com.google.firebase.auth.FirebaseAuth
 import com.helios.redshark.core.error.AppException
 import com.helios.redshark.domain.model.SendMessageInput
@@ -7,10 +9,12 @@ import com.helios.redshark.domain.model.ShareMessageFailure
 import com.helios.redshark.domain.model.ShareMessageResult
 import javax.inject.Inject
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 class ShareMessageToRecipientsUseCase @Inject constructor(
     private val auth: FirebaseAuth,
     private val findOrCreateDirectConversationUseCase: FindOrCreateDirectConversationUseCase,
     private val sendMessageUseCase: SendMessageUseCase,
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 ) {
     suspend operator fun invoke(
         messageText: String,
