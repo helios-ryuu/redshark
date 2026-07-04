@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.issuedetail
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.helios.redshark.core.error.AppException
@@ -20,6 +22,7 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
+// Model du lieu nay giu cac truong can truyen giua cac lop.
 data class IssueDetailUiState(
     val issue: Issue? = null,
     val isLoading: Boolean = false,
@@ -35,15 +38,21 @@ data class IssueDetailUiState(
     val assigneeUser: User? = null,
 )
 
+// Sealed type nay liet ke cac trang thai hop le ma code can xu ly du.
 sealed interface StatusUpdateState {
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Idle : StatusUpdateState
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Updating : StatusUpdateState
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Success : StatusUpdateState
     /** TC-C14: carries the human-readable reason for invalid transition. */
     data class InvalidTransition(val message: String) : StatusUpdateState
+    // Model du lieu nay giu cac truong can truyen giua cac lop.
     data class Error(val message: String) : StatusUpdateState
 }
 
+// Quan ly state va goi use case de man hinh chi can render du lieu.
 @HiltViewModel
 class IssueDetailViewModel @Inject constructor(
     private val getIssueDetailUseCase: GetIssueDetailUseCase,
@@ -55,6 +64,7 @@ class IssueDetailViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(IssueDetailUiState())
     val uiState: StateFlow<IssueDetailUiState> = _uiState.asStateFlow()
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun loadIssue(issueId: UUID, currentUserId: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
@@ -79,6 +89,7 @@ class IssueDetailViewModel @Inject constructor(
         issue.assigneeId?.let { loadAssigneeProfile(it) }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun loadAssigneeProfile(userId: String) {
         viewModelScope.launch {
             val result = profileRepository.getProfile(userId)
@@ -128,10 +139,12 @@ class IssueDetailViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun clearStatusState() {
         _uiState.update { it.copy(statusUpdateState = StatusUpdateState.Idle) }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun clearError() {
         _uiState.update { it.copy(errorMessage = null) }
     }

@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.auth
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.helios.redshark.core.error.AppException
@@ -18,9 +20,13 @@ import timber.log.Timber
 import java.time.LocalDate
 import javax.inject.Inject
 
+// Sealed type nay liet ke cac trang thai hop le ma code can xu ly du.
 sealed interface RegisterUiState {
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Idle : RegisterUiState
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Loading : RegisterUiState
+    // Model du lieu nay giu cac truong can truyen giua cac lop.
     data class ValidationError(
         val displayNameError: String? = null,
         val usernameError: String? = null,
@@ -28,13 +34,17 @@ sealed interface RegisterUiState {
         val dobError: String? = null,
         val passwordError: String? = null,
         val confirmPasswordError: String? = null,
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     ) : RegisterUiState
     data object Success : RegisterUiState
+    // Model du lieu nay giu cac truong can truyen giua cac lop.
     data class NetworkError(val message: String) : RegisterUiState
 }
 
+// Enum nay gioi han cac gia tri hop le de tranh dung chuoi tuy tien.
 enum class UsernameAvailability { Idle, Checking, Available, Taken, CheckFailed }
 
+// Quan ly state va goi use case de man hinh chi can render du lieu.
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val signUpEmailPasswordUseCase: SignUpEmailPasswordUseCase,
@@ -49,6 +59,7 @@ class RegisterViewModel @Inject constructor(
 
     private var usernameCheckJob: Job? = null
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun onUsernameChanged(username: String) {
         usernameCheckJob?.cancel()
         if (username.trim().length < 3) {
@@ -72,6 +83,7 @@ class RegisterViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun onSubmit(
         displayName: String,
         username: String,
@@ -122,6 +134,7 @@ class RegisterViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun clearError() {
         if (_uiState.value is RegisterUiState.NetworkError) {
             _uiState.value = RegisterUiState.Idle

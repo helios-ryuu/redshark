@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.navigation
 
+// File nay dieu phoi route va man hinh trong ung dung mot Activity.
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -38,6 +40,7 @@ import com.helios.redshark.ui.message.ConversationScreen
 import com.helios.redshark.ui.message.MessageViewModel
 import java.util.UUID
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 fun NavGraph(
     navController: NavHostController,

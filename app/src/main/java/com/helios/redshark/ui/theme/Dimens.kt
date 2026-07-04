@@ -1,7 +1,10 @@
 package com.helios.redshark.ui.theme
 
+// File nay tap trung token giao dien dung chung cho Compose.
+
 import androidx.compose.ui.unit.dp
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 object Dimens {
     val SpaceXxs = 2.dp
     val SpaceXs = 4.dp

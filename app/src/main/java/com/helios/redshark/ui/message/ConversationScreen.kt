@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.message
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -73,13 +75,17 @@ import java.time.format.FormatStyle
 import java.util.Locale
 import java.util.UUID
 
+// Sealed type nay liet ke cac trang thai hop le ma code can xu ly du.
 private sealed interface ConvListItem {
+    // Model du lieu nay giu cac truong can truyen giua cac lop.
     data class DateSeparator(val date: LocalDate) : ConvListItem
+    // Model du lieu nay giu cac truong can truyen giua cac lop.
     data class MessageItem(val message: Message, val showAvatar: Boolean) : ConvListItem
 }
 
 private val IdeaLinkRegex = Regex("redshark://idea/[0-9a-fA-F-]{36}")
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConversationScreen(
@@ -96,6 +102,7 @@ fun ConversationScreen(
     val defaultUriHandler = LocalUriHandler.current
     val internalUriHandler = remember(defaultUriHandler, onOpenIdea) {
         object : UriHandler {
+            // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
             override fun openUri(uri: String) {
                 if (uri.startsWith("redshark://idea/")) {
                     val ideaId = uri.substringAfter("redshark://idea/")
@@ -285,6 +292,7 @@ fun ConversationScreen(
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 private fun buildConvListItems(messages: List<Message>, currentUserId: String): List<ConvListItem> {
     val result = mutableListOf<ConvListItem>()
     var lastDate: LocalDate? = null
@@ -302,6 +310,7 @@ private fun buildConvListItems(messages: List<Message>, currentUserId: String): 
     return result
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 private fun DateSeparatorRow(date: LocalDate) {
     val today = remember { LocalDate.now() }
@@ -332,6 +341,7 @@ private fun DateSeparatorRow(date: LocalDate) {
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 private fun MessageBubble(
     message: Message,
@@ -420,6 +430,7 @@ private fun MessageBubble(
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 private fun buildMessageAnnotatedString(message: String, linkColor: Color): AnnotatedString {
     if (!IdeaLinkRegex.containsMatchIn(message)) {
         return AnnotatedString(message)

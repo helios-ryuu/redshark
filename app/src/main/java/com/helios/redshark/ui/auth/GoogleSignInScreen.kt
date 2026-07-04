@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.auth
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -60,6 +62,7 @@ import com.helios.redshark.R
 import com.helios.redshark.ui.common.InlineErrorText
 import com.helios.redshark.ui.theme.Dimens
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 fun GoogleSignInScreen(
     onNavigateToHome: () -> Unit,

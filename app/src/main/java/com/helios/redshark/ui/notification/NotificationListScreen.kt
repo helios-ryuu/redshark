@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.notification
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -48,6 +50,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 fun NotificationListScreen(
     modifier: Modifier = Modifier,
@@ -106,6 +109,7 @@ fun NotificationListScreen(
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 private fun NotificationItem(
     notification: Notification,
@@ -198,6 +202,7 @@ private fun NotificationItem(
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 private fun NotificationType.labelRes(): Int = when (this) {
     NotificationType.ISSUE_CREATED -> R.string.notification_type_issue_created
     NotificationType.COLLAB_REQUEST -> R.string.notification_type_collab_request

@@ -1,5 +1,7 @@
 package com.helios.redshark.core.di
 
+// File nay khai bao dependency injection dung chung cho Hilt.
+
 import com.helios.redshark.data.remote.firestore.FirestoreSource
 import com.helios.redshark.data.remote.firestore.FirestoreSourceImpl
 import com.helios.redshark.data.repository.AuthRepositoryImpl
@@ -26,6 +28,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {

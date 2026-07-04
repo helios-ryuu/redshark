@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- File nay gom cac gia tri tai nguyen duoc UI va theme tham chieu truc tiep. -->
 
     <style name="Theme.RedShark" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>

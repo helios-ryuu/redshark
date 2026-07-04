@@ -1,4 +1,6 @@
-﻿package com.helios.redshark.ui.comment
+package com.helios.redshark.ui.comment
+
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -59,6 +61,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.UUID
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentListScreen(
@@ -112,6 +115,7 @@ fun CommentListScreen(
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 fun CommentSheetContent(
     ideaId: UUID,
@@ -141,6 +145,7 @@ fun CommentSheetContent(
     )
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 private fun CommentBody(
     uiState: CommentUiState,
@@ -188,6 +193,7 @@ private fun CommentBody(
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 private fun CommentItem(comment: Comment, user: User?) {
     val timeLabel = remember(comment.createdAt) {
@@ -243,6 +249,7 @@ private fun CommentItem(comment: Comment, user: User?) {
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 private fun CommentInput(
     value: String,

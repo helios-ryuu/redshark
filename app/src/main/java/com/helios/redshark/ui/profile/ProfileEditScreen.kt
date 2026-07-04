@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.profile
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -58,6 +60,7 @@ private val PREDEFINED_SKILLS = listOf(
     "DevOps", "Data", "Security", "Product",
 )
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun ProfileEditScreen(

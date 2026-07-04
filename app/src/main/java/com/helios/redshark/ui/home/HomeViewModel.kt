@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.home
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.helios.redshark.core.util.Result
@@ -27,6 +29,7 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
+// Model du lieu nay giu cac truong can truyen giua cac lop.
 data class HomeUiState(
     val ideas: List<Idea> = emptyList(),
     val commentCounts: Map<UUID, Int> = emptyMap(),
@@ -37,6 +40,7 @@ data class HomeUiState(
     val errorMessage: String? = null,
 )
 
+// Quan ly state va goi use case de man hinh chi can render du lieu.
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getAllIdeasUseCase: GetAllIdeasUseCase,
@@ -57,6 +61,7 @@ class HomeViewModel @Inject constructor(
         observeFeed()
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun observeFeed() {
         viewModelScope.launch {
             getAllIdeasUseCase()
@@ -88,6 +93,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun refreshUsers(userIds: List<String>) {
         viewModelScope.launch {
             when (val result = getUsersUseCase()) {
@@ -102,6 +108,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun syncIdeaObservers(ideas: List<Idea>) {
         val activeIds = ideas.map { it.id }.toSet()
         val removedIds = commentJobs.keys - activeIds
@@ -122,6 +129,7 @@ class HomeViewModel @Inject constructor(
         missingReactionIds.forEach { ideaId -> observeReaction(ideaId) }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun observeCommentCount(ideaId: UUID) {
         commentJobs[ideaId] = viewModelScope.launch {
             getCommentsUseCase(ideaId)
@@ -134,6 +142,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun observeReaction(ideaId: UUID) {
         reactionJobs[ideaId] = viewModelScope.launch {
             getIdeaReactionUseCase(ideaId)
@@ -152,15 +161,19 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun retry() {
         _uiState.update { it.copy(isLoading = true, errorMessage = null) }
         observeFeed()
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun toggleUpvote(ideaId: UUID) = toggleReaction(ideaId, ::nextUpvoteUpdate)
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun toggleDownvote(ideaId: UUID) = toggleReaction(ideaId, ::nextDownvoteUpdate)
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun toggleReaction(
         ideaId: UUID,
         nextUpdate: (IdeaReaction) -> ReactionUpdate,

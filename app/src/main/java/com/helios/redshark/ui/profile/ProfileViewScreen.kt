@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.profile
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -52,6 +54,7 @@ import com.helios.redshark.domain.model.ContributionSummary
 import com.helios.redshark.ui.common.AvatarImage
 import com.helios.redshark.ui.theme.Dimens
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun ProfileViewScreen(
@@ -221,6 +224,7 @@ fun ProfileViewScreen(
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 private fun ContributionGraphSection(
     summary: ContributionSummary?,
@@ -285,6 +289,7 @@ private fun ContributionGraphSection(
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 private fun ContributionGrid(summary: ContributionSummary?) {
     val days = summary?.days.orEmpty()
@@ -301,6 +306,7 @@ private fun ContributionGrid(summary: ContributionSummary?) {
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 private fun ContributionCell(day: ContributionDay) {
     val description = stringResource(
@@ -316,6 +322,7 @@ private fun ContributionCell(day: ContributionDay) {
     )
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 private fun contributionColor(level: Int) = when (level) {
     1 -> MaterialTheme.colorScheme.secondaryContainer

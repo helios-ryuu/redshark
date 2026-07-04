@@ -1,5 +1,7 @@
 package com.helios.redshark.domain.repository
 
+// File nay dinh nghia hop dong du lieu ma tang domain can su dung.
+
 import com.helios.redshark.domain.model.CreateIssueInput
 import com.helios.redshark.domain.model.Issue
 import com.helios.redshark.domain.model.IssueStatus
@@ -7,6 +9,7 @@ import com.helios.redshark.domain.model.UpdateIssueInput
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 interface IssueRepository {
     /** Live list of issues attached to a specific idea (deletedAt IS NULL). */
     fun getIssuesByIdea(ideaId: UUID): Flow<List<Issue>>
@@ -14,6 +17,7 @@ interface IssueRepository {
     /** Live feed of OPEN issues created by other users (home screen). */
     fun getOpenIssuesFromOthers(): Flow<List<Issue>>
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     suspend fun getIssueDetail(id: UUID): Issue
 
     /**

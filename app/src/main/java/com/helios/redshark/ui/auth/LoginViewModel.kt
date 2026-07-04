@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.auth
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,22 +19,32 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+// Sealed type nay liet ke cac trang thai hop le ma code can xu ly du.
 sealed interface LoginUiState {
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Idle : LoginUiState
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Loading : LoginUiState
+    // Model du lieu nay giu cac truong can truyen giua cac lop.
     data class ValidationError(
         val emailError: String? = null,
         val passwordError: String? = null,
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     ) : LoginUiState
     data object Success : LoginUiState
+    // Model du lieu nay giu cac truong can truyen giua cac lop.
     data class NetworkError(val message: String) : LoginUiState
 }
 
+// Sealed type nay liet ke cac trang thai hop le ma code can xu ly du.
 sealed class LoginDestination {
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Home : LoginDestination()
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object ProfileSetup : LoginDestination()
 }
 
+// Quan ly state va goi use case de man hinh chi can render du lieu.
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val signInEmailPasswordUseCase: SignInEmailPasswordUseCase,
@@ -46,6 +58,7 @@ class LoginViewModel @Inject constructor(
     private val _destination = MutableStateFlow<LoginDestination?>(null)
     val destination: StateFlow<LoginDestination?> = _destination.asStateFlow()
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun signInEmail(email: String, password: String) {
         viewModelScope.launch {
             _uiState.value = LoginUiState.Loading
@@ -76,6 +89,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun signInGoogle(activityContext: Context) {
         viewModelScope.launch {
             _uiState.value = LoginUiState.Loading
@@ -110,12 +124,14 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun clearError() {
         if (_uiState.value is LoginUiState.NetworkError || _uiState.value is LoginUiState.ValidationError) {
             _uiState.value = LoginUiState.Idle
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun onNavigationHandled() {
         _destination.value = null
     }

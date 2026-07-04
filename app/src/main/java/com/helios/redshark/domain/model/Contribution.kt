@@ -1,15 +1,19 @@
 package com.helios.redshark.domain.model
 
+// File nay mo ta du lieu nghiep vu va trang thai chinh cua ung dung.
+
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 
+// Model du lieu nay giu cac truong can truyen giua cac lop.
 data class ContributionDay(
     val date: LocalDate,
     val count: Int,
     val level: Int,
 )
 
+// Model du lieu nay giu cac truong can truyen giua cac lop.
 data class ContributionSummary(
     val userId: String,
     val weeks: Int,
@@ -19,7 +23,9 @@ data class ContributionSummary(
     val maxCount: Int,
 )
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 object ContributionSummaryBuilder {
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun build(
         userId: String,
         weeks: Int,
@@ -56,6 +62,7 @@ object ContributionSummaryBuilder {
         )
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun contributionLevel(count: Int): Int = when {
         count <= 0 -> 0
         count == 1 -> 1

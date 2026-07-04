@@ -1,18 +1,23 @@
 package com.helios.redshark.ui.common
 
+// File nay chua composable dung lai de cac man hinh khong lap boilerplate.
+
 import com.helios.redshark.domain.model.IdeaReaction
 import java.util.UUID
 
+// Model du lieu nay giu cac truong can truyen giua cac lop.
 data class ReactionUpdate(
     val nextReaction: IdeaReaction,
     val deltaChange: Int,
 )
 
+// Model du lieu nay giu cac truong can truyen giua cac lop.
 data class ReactionUiMaps(
     val reactionStates: Map<UUID, IdeaReaction>,
     val upvoteDeltas: Map<UUID, Int>,
 )
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 fun nextUpvoteUpdate(currentReaction: IdeaReaction): ReactionUpdate {
     val nextReaction = when (currentReaction) {
         IdeaReaction.UPVOTED -> IdeaReaction.NONE
@@ -25,6 +30,7 @@ fun nextUpvoteUpdate(currentReaction: IdeaReaction): ReactionUpdate {
     return ReactionUpdate(nextReaction, deltaChange)
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 fun nextDownvoteUpdate(currentReaction: IdeaReaction): ReactionUpdate {
     val nextReaction = when (currentReaction) {
         IdeaReaction.DOWNVOTED -> IdeaReaction.NONE
@@ -37,6 +43,7 @@ fun nextDownvoteUpdate(currentReaction: IdeaReaction): ReactionUpdate {
     return ReactionUpdate(nextReaction, deltaChange)
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 fun applyReactionUpdate(
     reactionStates: Map<UUID, IdeaReaction>,
     upvoteDeltas: Map<UUID, Int>,
@@ -57,6 +64,7 @@ fun applyReactionUpdate(
     return ReactionUiMaps(updatedReactions, updatedDeltas)
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 fun observedReactionState(
     reactionStates: Map<UUID, IdeaReaction>,
     ideaId: UUID,

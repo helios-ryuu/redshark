@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.common
 
+// File nay chua composable dung lai de cac man hinh khong lap boilerplate.
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.helios.redshark.R
 import com.helios.redshark.ui.theme.Dimens
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 fun LoadingContent(modifier: Modifier = Modifier) {
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -45,6 +48,7 @@ fun LoadingContent(modifier: Modifier = Modifier) {
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 fun ErrorContent(
     message: String,
@@ -88,6 +92,7 @@ fun ErrorContent(
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 fun EmptyContent(
     message: String,
@@ -136,6 +141,7 @@ fun EmptyContent(
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 fun InlineErrorText(message: String, modifier: Modifier = Modifier) {
     Text(

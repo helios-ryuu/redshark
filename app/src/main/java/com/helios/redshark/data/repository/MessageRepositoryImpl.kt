@@ -1,5 +1,7 @@
 package com.helios.redshark.data.repository
 
+// File nay noi nghiep vu voi Firebase, cache hoac nguon du lieu ben ngoai.
+
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,6 +22,7 @@ import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 @Singleton
 class MessageRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
@@ -29,6 +32,7 @@ class MessageRepositoryImpl @Inject constructor(
     private val conversations = firestore.collection("conversations")
     private val messages = firestore.collection("messages")
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override fun getConversations(): Flow<List<Conversation>> = callbackFlow {
         val uid = auth.currentUser?.uid ?: run {
             close(AppException.UnauthorizedException())
@@ -51,6 +55,7 @@ class MessageRepositoryImpl @Inject constructor(
         awaitClose { registration.remove() }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override fun getMessages(conversationId: UUID): Flow<List<Message>> = callbackFlow {
         trySend(emptyList())
         val registration = messages
@@ -69,6 +74,7 @@ class MessageRepositoryImpl @Inject constructor(
         awaitClose { registration.remove() }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun sendMessage(input: SendMessageInput): Message {
         val uid = auth.currentUser?.uid ?: throw AppException.UnauthorizedException()
         return try {
@@ -99,6 +105,7 @@ class MessageRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun findDirectConversation(peerId: String): Conversation? {
         val uid = auth.currentUser?.uid ?: throw AppException.UnauthorizedException()
         return try {
@@ -125,6 +132,7 @@ class MessageRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun createDirectConversation(peerId: String): Conversation {
         val uid = auth.currentUser?.uid ?: throw AppException.UnauthorizedException()
         return try {
@@ -155,6 +163,7 @@ class MessageRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun markConversationRead(conversationId: UUID) {
         try {
             conversations.document(conversationId.toString())
@@ -166,6 +175,7 @@ class MessageRepositoryImpl @Inject constructor(
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 private fun directConversationId(firstUserId: String, secondUserId: String): UUID {
     val pairKey = listOf(firstUserId, secondUserId).sorted().joinToString(separator = ":")
     return UUID.nameUUIDFromBytes("DIRECT:$pairKey".toByteArray(Charsets.UTF_8))

@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.common
 
+// File nay chua composable dung lai de cac man hinh khong lap boilerplate.
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +46,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 fun IdeaCard(
     idea: Idea,

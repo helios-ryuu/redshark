@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.theme
 
+// File nay tap trung token giao dien dung chung cho Compose.
+
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -73,6 +75,7 @@ private val DarkColorScheme = darkColorScheme(
     outlineVariant = NeutralOutlineVariantDark,
 )
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 fun RedSharkTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

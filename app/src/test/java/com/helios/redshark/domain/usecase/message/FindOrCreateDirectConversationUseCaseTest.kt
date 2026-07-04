@@ -1,5 +1,7 @@
 package com.helios.redshark.domain.usecase.message
 
+// File nay gom mot hanh dong nghiep vu nho de ViewModel goi ro rang.
+
 import com.helios.redshark.domain.model.Conversation
 import com.helios.redshark.domain.model.ConversationType
 import com.helios.redshark.domain.repository.MessageRepository
@@ -12,6 +14,7 @@ import org.junit.Before
 import org.junit.Test
 import java.util.UUID
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 class FindOrCreateDirectConversationUseCaseTest {
 
     private lateinit var messageRepository: MessageRepository
@@ -28,6 +31,7 @@ class FindOrCreateDirectConversationUseCaseTest {
         type = ConversationType.DIRECT
     )
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     @Before
     fun setUp() {
         messageRepository = mockk()

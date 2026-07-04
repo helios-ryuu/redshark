@@ -246,11 +246,9 @@ firebase deploy --only firestore:rules,firestore:indexes
 - Firestore rules/indexes đồng bộ với query đang dùng.
 - Manual regression các mục liên quan thay đổi mới được chạy trước khi demo/release.
 
-## 10. Ghi Chú Phiên Bản 1.0.0
+## 10. Ghi Chú Phiên Bản 1.0.1
 
-- Đăng ký email/password phải phân biệt rõ username đã tồn tại với lỗi không kiểm tra được username.
-- Contribution graph phải hiển thị được trạng thái rỗng hợp lệ, không quy mọi lỗi query thành lỗi biểu đồ thường trực.
-- Notification đã đọc được cập nhật `isRead = true`; chỉ thao tác `deleteAll` mới xóa document.
-- My Ideas phải phản ánh snapshot mới nhất, bao gồm trường hợp idea bị soft-delete hoặc không còn thuộc author/collaborator query.
-- Profile update phải trả lỗi thật khi Firestore update thất bại và phải cho phép xóa bio bằng giá trị rỗng.
-- Baseline 1.0.0 yêu cầu `compileDebugKotlin`, `testDebugUnitTest`, `assembleDebug` pass trước khi tag.
+- 1.0.1 giữ nguyên baseline nghiệp vụ của 1.0.0 và tập trung vào khả năng đọc, review và bàn giao mã nguồn.
+- Kotlin/XML không tạo sinh cần có comment giải thích ở mức vừa cao để người đọc mới hiểu vai trò file, class, use case, repository, ViewModel và resource chính.
+- Refactor trong 1.0.1 chỉ được phép là thay đổi nhỏ, tường minh hơn, có rủi ro thấp và phải giữ nguyên hành vi.
+- Baseline 1.0.1 yêu cầu `compileDebugKotlin`, `testDebugUnitTest`, `assembleDebug` pass trước khi push/merge/tag remote.

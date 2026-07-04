@@ -1,11 +1,14 @@
 package com.helios.redshark.domain.model
 
+// File nay mo ta du lieu nghiep vu va trang thai chinh cua ung dung.
+
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 class ContributionSummaryBuilderTest {
 
     private val zoneId = ZoneId.of("Asia/Ho_Chi_Minh")
@@ -60,6 +63,7 @@ class ContributionSummaryBuilderTest {
         assertEquals(4, summary.days.first { it.date == seven }.level)
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun instantAt(date: LocalDate) =
         date.atTime(LocalTime.NOON).atZone(zoneId).toInstant()
 }

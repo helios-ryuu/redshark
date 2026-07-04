@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.home
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
@@ -44,8 +46,10 @@ import com.helios.redshark.ui.theme.Dimens
 import kotlinx.coroutines.launch
 import java.util.UUID
 
+// Enum nay gioi han cac gia tri hop le de tranh dung chuoi tuy tien.
 private enum class HomeTab { HOME, IDEAS, MESSAGES }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(

@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.message
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.helios.redshark.domain.model.Conversation
@@ -24,6 +26,7 @@ import java.time.Instant
 import java.util.UUID
 import javax.inject.Inject
 
+// Model du lieu nay giu cac truong can truyen giua cac lop.
 data class ConversationListUiState(
     val conversations: List<Conversation> = emptyList(),
     val usersById: Map<String, User> = emptyMap(),
@@ -31,6 +34,7 @@ data class ConversationListUiState(
     val errorMessage: String? = null,
 )
 
+// Model du lieu nay giu cac truong can truyen giua cac lop.
 data class ConversationUiState(
     val messages: List<Message> = emptyList(),
     val isLoading: Boolean = true,
@@ -39,6 +43,7 @@ data class ConversationUiState(
     val navigateToConversation: UUID? = null,
 )
 
+// Model du lieu nay giu cac truong can truyen giua cac lop.
 data class ShareSheetUiState(
     val searchQuery: String = "",
     val selectedUserIds: Set<String> = emptySet(),
@@ -47,6 +52,7 @@ data class ShareSheetUiState(
     val statusMessage: String? = null,
 )
 
+// Quan ly state va goi use case de man hinh chi can render du lieu.
 @HiltViewModel
 class MessageViewModel @Inject constructor(
     private val getConversationsUseCase: GetConversationsUseCase,
@@ -72,6 +78,7 @@ class MessageViewModel @Inject constructor(
         loadUsers()
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun loadUsers() {
         viewModelScope.launch {
             when (val result = getUsersUseCase()) {
@@ -84,11 +91,13 @@ class MessageViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun retryList() {
         _listState.update { it.copy(isLoading = true, errorMessage = null) }
         observeConversations()
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun observeConversations() {
         viewModelScope.launch {
             getConversationsUseCase()
@@ -101,6 +110,7 @@ class MessageViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun loadMessages(conversationId: UUID) {
         viewModelScope.launch {
             _convState.update { it.copy(isLoading = true, errorMessage = null) }
@@ -115,6 +125,7 @@ class MessageViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun sendMessage(conversationId: UUID, content: String, currentUserId: String) {
         if (_convState.value.isSending) return
         val rollback = _convState.value.messages
@@ -137,6 +148,7 @@ class MessageViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun findOrCreateConversation(peerId: String) {
         viewModelScope.launch {
             _convState.update { it.copy(isLoading = true, errorMessage = null) }
@@ -150,23 +162,28 @@ class MessageViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun clearNavigation() {
         _convState.update { it.copy(navigateToConversation = null) }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun clearError() {
         _convState.update { it.copy(errorMessage = null) }
         _listState.update { it.copy(errorMessage = null) }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun resetShareState() {
         _shareState.value = ShareSheetUiState()
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun setShareSearchQuery(query: String) {
         _shareState.update { it.copy(searchQuery = query) }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun toggleShareRecipient(userId: String) {
         _shareState.update { state ->
             val selected = state.selectedUserIds.toMutableSet()
@@ -179,6 +196,7 @@ class MessageViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun sendSharedMessage(messageText: String, onSent: () -> Unit) {
         val recipients = _shareState.value.selectedUserIds
         if (recipients.isEmpty()) {

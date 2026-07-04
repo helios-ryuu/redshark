@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.editidea
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.helios.redshark.core.error.AppException
@@ -15,17 +17,25 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
+// Sealed type nay liet ke cac trang thai hop le ma code can xu ly du.
 sealed interface EditIdeaUiState {
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Idle : EditIdeaUiState
+    // Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
     data object Loading : EditIdeaUiState
+    // Model du lieu nay giu cac truong can truyen giua cac lop.
     data class Loaded(val idea: Idea) : EditIdeaUiState
     /** TC-C05: mutation succeeded — screen navigates back to detail. */
     data object Success : EditIdeaUiState
+    // Model du lieu nay giu cac truong can truyen giua cac lop.
     data class ValidationError(val message: String) : EditIdeaUiState
+    // Model du lieu nay giu cac truong can truyen giua cac lop.
     data class NetworkError(val message: String) : EditIdeaUiState
+    // Model du lieu nay giu cac truong can truyen giua cac lop.
     data class Error(val message: String) : EditIdeaUiState
 }
 
+// Quan ly state va goi use case de man hinh chi can render du lieu.
 @HiltViewModel
 class EditIdeaViewModel @Inject constructor(
     private val getIdeaDetailUseCase: GetIdeaDetailUseCase,
@@ -35,6 +45,7 @@ class EditIdeaViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<EditIdeaUiState>(EditIdeaUiState.Idle)
     val uiState: StateFlow<EditIdeaUiState> = _uiState.asStateFlow()
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun loadIdea(id: UUID) {
         viewModelScope.launch {
             _uiState.value = EditIdeaUiState.Loading
@@ -46,6 +57,7 @@ class EditIdeaViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun saveIdea(id: UUID, title: String, description: String?, tagIds: List<UUID> = emptyList()) {
         if (_uiState.value is EditIdeaUiState.Loading) return
 
@@ -64,6 +76,7 @@ class EditIdeaViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun resetState() {
         _uiState.value = EditIdeaUiState.Idle
     }

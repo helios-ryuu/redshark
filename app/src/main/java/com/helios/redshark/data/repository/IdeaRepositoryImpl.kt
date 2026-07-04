@@ -1,4 +1,6 @@
-package com.helios.redshark.data.repository
+﻿package com.helios.redshark.data.repository
+
+// File nay noi nghiep vu voi Firebase, cache hoac nguon du lieu ben ngoai.
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -24,6 +26,7 @@ import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 @Singleton
 class IdeaRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
@@ -33,6 +36,7 @@ class IdeaRepositoryImpl @Inject constructor(
 
     private val ideas = firestore.collection("ideas")
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override fun getAllIdeas(): Flow<List<Idea>> = callbackFlow {
         trySend(emptyList())
         val registration = ideas
@@ -53,6 +57,7 @@ class IdeaRepositoryImpl @Inject constructor(
         awaitClose { registration.remove() }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override fun getMyIdeas(): Flow<List<Idea>> = callbackFlow {
         val uid = auth.currentUser?.uid ?: run {
             close(AppException.UnauthorizedException())
@@ -63,6 +68,7 @@ class IdeaRepositoryImpl @Inject constructor(
         var authoredIdeas = emptyMap<String, Idea>()
         var collaboratedIdeas = emptyMap<String, Idea>()
 
+        // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
         fun parseSnapshot(snapshot: com.google.firebase.firestore.QuerySnapshot?): Map<String, Idea> =
             snapshot?.documents
                 ?.mapNotNull { doc ->
@@ -72,6 +78,7 @@ class IdeaRepositoryImpl @Inject constructor(
                 ?.associateBy { it.id.toString() }
                 ?: emptyMap()
 
+        // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
         fun emitCombined() {
             trySend(
                 (authoredIdeas + collaboratedIdeas)
@@ -110,6 +117,7 @@ class IdeaRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun getIdeaDetail(id: UUID): Idea {
         return try {
             val doc = ideas.document(id.toString()).get().await()
@@ -126,6 +134,7 @@ class IdeaRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun create(input: CreateIdeaInput): Idea {
         if (!networkChecker.isOnline()) throw AppException.NetworkException()
         val uid = auth.currentUser?.uid ?: throw AppException.UnauthorizedException()
@@ -156,6 +165,7 @@ class IdeaRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun update(id: UUID, input: UpdateIdeaInput): Idea {
         if (!networkChecker.isOnline()) throw AppException.NetworkException()
         return try {
@@ -176,6 +186,7 @@ class IdeaRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun updateMediaAttachments(id: UUID, mediaAttachments: List<MediaAttachment>): Idea {
         if (!networkChecker.isOnline()) throw AppException.NetworkException()
         return try {
@@ -195,6 +206,7 @@ class IdeaRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun updateStatus(id: UUID, newStatus: IdeaStatus): Idea {
         if (!networkChecker.isOnline()) throw AppException.NetworkException()
         return try {
@@ -214,6 +226,7 @@ class IdeaRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun softDelete(id: UUID) {
         if (!networkChecker.isOnline()) throw AppException.NetworkException()
         try {
@@ -228,6 +241,7 @@ class IdeaRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun addCollaborator(ideaId: UUID, userId: String): Idea {
         if (!networkChecker.isOnline()) throw AppException.NetworkException()
         return try {
@@ -247,6 +261,7 @@ class IdeaRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override suspend fun setReaction(ideaId: UUID, reaction: IdeaReaction) {
         if (!networkChecker.isOnline()) throw AppException.NetworkException()
         val uid = auth.currentUser?.uid ?: throw AppException.UnauthorizedException()
@@ -293,6 +308,7 @@ class IdeaRepositoryImpl @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     override fun getReaction(ideaId: UUID): Flow<IdeaReaction> = callbackFlow {
         val uid = auth.currentUser?.uid ?: run {
             close(AppException.UnauthorizedException())
@@ -315,20 +331,19 @@ class IdeaRepositoryImpl @Inject constructor(
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 private fun reactionFromString(value: String?): IdeaReaction =
     runCatching { value?.let(IdeaReaction::valueOf) }.getOrNull() ?: IdeaReaction.NONE
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 private fun computeNextUpvoteCount(
     currentCount: Int,
     currentReaction: IdeaReaction,
     targetReaction: IdeaReaction,
-): Int {
-    var nextCount = currentCount
-    if (currentReaction == IdeaReaction.UPVOTED && targetReaction != IdeaReaction.UPVOTED) {
-        nextCount -= 1
+): Int = (
+    currentCount + when {
+        currentReaction == IdeaReaction.UPVOTED && targetReaction != IdeaReaction.UPVOTED -> -1
+        currentReaction != IdeaReaction.UPVOTED && targetReaction == IdeaReaction.UPVOTED -> 1
+        else -> 0
     }
-    if (currentReaction != IdeaReaction.UPVOTED && targetReaction == IdeaReaction.UPVOTED) {
-        nextCount += 1
-    }
-    return nextCount.coerceAtLeast(0)
-}
+).coerceAtLeast(0)

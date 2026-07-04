@@ -1,5 +1,7 @@
 package com.helios.redshark
 
+// File nay kiem thu tich hop chay tren thiet bi hoac emulator.
+
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 
@@ -15,6 +17,7 @@ import org.junit.Assert.*
  */
 @RunWith(AndroidJUnit4::class)
 class ExampleInstrumentedTest {
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     @Test
     fun useAppContext() {
         // Context of the app under test.

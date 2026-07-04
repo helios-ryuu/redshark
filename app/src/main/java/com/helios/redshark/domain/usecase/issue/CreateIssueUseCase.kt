@@ -1,5 +1,7 @@
 package com.helios.redshark.domain.usecase.issue
 
+// File nay gom mot hanh dong nghiep vu nho de ViewModel goi ro rang.
+
 import com.helios.redshark.core.error.AppException
 import com.helios.redshark.domain.model.CreateIssueInput
 import com.helios.redshark.domain.model.CreateNotificationInput
@@ -14,6 +16,7 @@ import javax.inject.Inject
 
 private const val ACTIVE_ISSUE_LIMIT = 20
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 class CreateIssueUseCase @Inject constructor(
     private val issueRepository: IssueRepository,
     private val ideaRepository: IdeaRepository,
@@ -59,12 +62,14 @@ class CreateIssueUseCase @Inject constructor(
         return issue
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private suspend fun enforceActiveIssueLimit() {
         val count = issueRepository.countMyActiveIssues()
         if (count >= ACTIVE_ISSUE_LIMIT)
             throw AppException.IssueLimitExceededException(ACTIVE_ISSUE_LIMIT)
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun validateInput(input: CreateIssueInput) {
         if (input.title.length !in 3..120)
             throw AppException.ValidationException("title", "Tiêu đề phải từ 3 đến 120 ký tự.")

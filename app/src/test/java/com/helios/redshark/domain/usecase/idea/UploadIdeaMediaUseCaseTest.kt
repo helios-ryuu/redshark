@@ -1,5 +1,7 @@
 package com.helios.redshark.domain.usecase.idea
 
+// File nay gom mot hanh dong nghiep vu nho de ViewModel goi ro rang.
+
 import com.helios.redshark.core.error.AppException
 import com.helios.redshark.core.util.Result
 import com.helios.redshark.domain.model.MediaType
@@ -14,6 +16,7 @@ import org.junit.Before
 import org.junit.Test
 import java.util.UUID
 
+// Khoi code nay tap trung mot nhiem vu cu the de cac noi khac de goi va de doc.
 class UploadIdeaMediaUseCaseTest {
 
     private lateinit var mediaRepository: MediaRepository
@@ -21,6 +24,7 @@ class UploadIdeaMediaUseCaseTest {
 
     private val ideaId = UUID.randomUUID()
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     @Before
     fun setUp() {
         mediaRepository = mockk()

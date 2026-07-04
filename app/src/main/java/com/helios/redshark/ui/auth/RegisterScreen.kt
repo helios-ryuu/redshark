@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.auth
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -69,6 +71,7 @@ import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
@@ -411,6 +414,7 @@ fun RegisterScreen(
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 private fun PasswordStrengthIndicator(password: String) {
     val score = passwordStrengthScore(password)
@@ -434,6 +438,7 @@ private fun PasswordStrengthIndicator(password: String) {
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 private fun passwordStrengthScore(password: String): Int {
     var score = 0
     if (password.length >= 8) score++

@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.issuedetail
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -57,6 +59,7 @@ import com.helios.redshark.ui.common.LoadingContent
 import com.helios.redshark.ui.theme.Dimens
 import java.util.UUID
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IssueDetailScreen(
@@ -252,6 +255,7 @@ fun IssueDetailScreen(
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 private fun AssigneeRow(user: User?, fallbackId: String?) {
     Row(

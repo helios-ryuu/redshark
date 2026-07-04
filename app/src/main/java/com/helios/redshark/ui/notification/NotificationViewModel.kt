@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.notification
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.helios.redshark.domain.model.Notification
@@ -20,6 +22,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+// Model du lieu nay giu cac truong can truyen giua cac lop.
 data class NotificationUiState(
     val notifications: List<Notification> = emptyList(),
     val unreadCount: Int = 0,
@@ -28,6 +31,7 @@ data class NotificationUiState(
     val actionError: String? = null,
 )
 
+// Quan ly state va goi use case de man hinh chi can render du lieu.
 @HiltViewModel
 class NotificationViewModel @Inject constructor(
     private val getNotificationsUseCase: GetNotificationsUseCase,
@@ -47,11 +51,13 @@ class NotificationViewModel @Inject constructor(
         observeUnreadCount()
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun retry() {
         _uiState.update { it.copy(isLoading = true, errorMessage = null) }
         observeNotifications()
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun observeNotifications() {
         viewModelScope.launch {
             getNotificationsUseCase()
@@ -71,6 +77,7 @@ class NotificationViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     private fun observeUnreadCount() {
         viewModelScope.launch {
             getUnreadNotificationCountUseCase()
@@ -79,6 +86,7 @@ class NotificationViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun markAsRead(notification: Notification) {
         if (notification.isRead) return
         viewModelScope.launch {
@@ -106,6 +114,7 @@ class NotificationViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun acceptCollab(notification: Notification) {
         if (notification.type != NotificationType.COLLAB_REQUEST) return
         viewModelScope.launch {
@@ -125,6 +134,7 @@ class NotificationViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun rejectCollab(notification: Notification) {
         if (notification.type != NotificationType.COLLAB_REQUEST) return
         viewModelScope.launch {
@@ -144,6 +154,7 @@ class NotificationViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun deleteAll() {
         viewModelScope.launch {
             runCatching { deleteAllNotificationsUseCase() }
@@ -154,6 +165,7 @@ class NotificationViewModel @Inject constructor(
         }
     }
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun clearActionError() {
         _uiState.update { it.copy(actionError = null) }
     }

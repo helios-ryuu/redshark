@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.theme
 
+// File nay tap trung token giao dien dung chung cho Compose.
+
 import androidx.compose.ui.graphics.Color
 
 val RedSharkRed = Color(0xFFD7263D)

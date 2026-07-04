@@ -1,12 +1,17 @@
 package com.helios.redshark.domain.model
 
+// File nay mo ta du lieu nghiep vu va trang thai chinh cua ung dung.
+
 import java.time.Instant
 import java.util.UUID
 
+// Enum nay gioi han cac gia tri hop le de tranh dung chuoi tuy tien.
 enum class IssueStatus { OPEN, IN_PROGRESS, CLOSED, CANCELLED }
 
+// Enum nay gioi han cac gia tri hop le de tranh dung chuoi tuy tien.
 enum class IssuePriority { LOW, MEDIUM, HIGH }
 
+// Model du lieu nay giu cac truong can truyen giua cac lop.
 data class Issue(
     val id: UUID,
     val ideaId: UUID,
@@ -35,6 +40,7 @@ val ISSUE_STATE_MACHINE: Map<IssueStatus, Set<IssueStatus>> = mapOf(
     IssueStatus.CANCELLED   to emptySet()
 )
 
+// Model du lieu nay giu cac truong can truyen giua cac lop.
 data class CreateIssueInput(
     val ideaId: UUID,
     val title: String,
@@ -43,6 +49,7 @@ data class CreateIssueInput(
     val assigneeId: String? = null
 )
 
+// Model du lieu nay giu cac truong can truyen giua cac lop.
 data class UpdateIssueInput(
     val title: String,
     val description: String?,

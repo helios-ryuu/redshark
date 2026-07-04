@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.ideadetail
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -78,6 +80,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.UUID
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IdeaDetailScreen(
@@ -355,6 +358,7 @@ fun IdeaDetailScreen(
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 private fun IdeaAuthorRow(idea: Idea, user: User?) {
     val dateLabel = remember(idea.createdAt) {
@@ -390,6 +394,7 @@ private fun IdeaAuthorRow(idea: Idea, user: User?) {
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 private fun MediaSection(
     mediaAttachments: List<MediaAttachment>,
@@ -446,6 +451,7 @@ private fun MediaSection(
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 private fun IdeaSectionHeader(
     title: String,
@@ -468,6 +474,7 @@ private fun IdeaSectionHeader(
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 private fun CommentItem(comment: Comment, user: User?) {
     val timeLabel = remember(comment.createdAt) {
@@ -513,6 +520,7 @@ private fun CommentItem(comment: Comment, user: User?) {
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 private fun CommentInput(
     value: String,

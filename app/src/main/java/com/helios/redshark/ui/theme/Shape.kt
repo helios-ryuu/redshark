@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.theme
 
+// File nay tap trung token giao dien dung chung cho Compose.
+
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes
 import androidx.compose.ui.unit.dp

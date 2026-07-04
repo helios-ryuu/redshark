@@ -1,5 +1,7 @@
 package com.helios.redshark.ui.message
 
+// File nay xu ly trang thai va giao dien nguoi dung cho mot tinh nang.
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +50,7 @@ import com.helios.redshark.ui.common.LoadingContent
 import com.helios.redshark.ui.theme.Dimens
 import java.util.UUID
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 fun ShareConversationSheetContent(
     currentUserId: String?,
@@ -182,6 +185,7 @@ fun ShareConversationSheetContent(
     }
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 @Composable
 private fun ShareTargetRow(
     target: ShareTarget,
@@ -253,6 +257,7 @@ private fun ShareTargetRow(
     }
 }
 
+// Model du lieu nay giu cac truong can truyen giua cac lop.
 private data class ShareTarget(
     val userId: String,
     val displayName: String,
@@ -262,12 +267,14 @@ private data class ShareTarget(
 ) {
     val hasConversation: Boolean = conversationId != null
 
+    // Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
     fun matches(query: String): Boolean =
         displayName.lowercase().contains(query)
             || email.lowercase().contains(query)
             || userId.lowercase().contains(query)
 }
 
+// Ham nay gom mot buoc xu ly ro rang de phan con lai co the goi lai.
 private fun buildShareTargets(
     conversations: List<Conversation>,
     usersById: Map<String, User>,
